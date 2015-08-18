@@ -93,6 +93,10 @@ class Flight_by_Canto {
 		// Handle localisation
 		$this->load_plugin_textdomain();
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
+
+		// Add Ajax functions
+		add_action( 'wp_ajax_fbc_getMetadata', array($this, 'getMetadata') );
+
 	} // End __construct ()
 	
 
@@ -130,35 +134,43 @@ class Flight_by_Canto {
 		return $output;
 	}
 
-
-
-	public function getMetaData(){
+	public function getMetaData($fbc_id  ){
   	  check_ajax_referer( 'flight-by-canto','nonce');
+//	var_dump(empty($fbc_id));
+//var_dump($fbc_id);
+//	wp_die();
+	  if ( empty ( $fbc_id ) ) {
+	  	$fbc_id = stripslashes(htmlspecialchars($_POST['fbc_id']));
+	  } else {
+	    echo "Passsed by value: ";	
+	    $fbc_id = stripslashes(htmlspecialchars($fbc_id));
+	  }
 	  $flight['token']        = '18a91e5134f54e78a1138ad26800df4a';
 	  $flight['header']       = array('Authorization: Bearer '.$flight['token']);
 	  $flight['agent']        = 'Canto Dev Team';
 	
 	  $flight['api_url'] = 'https://'. get_option('fbc_flight_domain') .'.staging.cantoflight.com/api/v1/';
 
-	  $fbc_id = stripslashes(htmlspecialchars($_POST['fbc_id']));
 	
 //Get the metadata from the server to send off the the library form.
-	  $result = Flight_by_Canto()->curl_action($flight['api_url'].'image/'.$fbc_id, $flight['header'], $flight['agent'],0);
-	
+	  $result = $this->curl_action($flight['api_url'].'image/'.$fbc_id, $flight['header'], $flight['agent'],0);
+
 	  $result = json_decode($result);
 	//Build out the array
 //print_r( $result);	
 //	echo( $result->metadata->{'Image Width'});i
-
+/*
 	$data =  array(
 		'height' 	=> $result->metadata->{'Horizontal Pixels'},
 		'width' 	=> $result->metadata->{'Vertical Pixels'},
-		'mime' 		=> $result->metadata->{'MIME Type'},
+//		'mime' 		=> $result->metadata->{'MIME Type'},
 		'height' 	=> $result->metadata->{'Horizontal Pixels'}
 	);
-		print_r(json_encode($data));
+*/
+		//print_r(json_encode($data));
 	  //echo $_POST['fbc_id'];
- 
+ 	//echo json_encode($result->metadata);
+ 	echo json_encode($result);
 	  wp_die();
 	}
 
@@ -361,6 +373,4 @@ class Flight_by_Canto {
 	} // End _log_version_number ()
 
 }
-
-add_action( 'wp_ajax_fbc_getMetadata', 'Flight_by_Canto::getMetadata' );
 

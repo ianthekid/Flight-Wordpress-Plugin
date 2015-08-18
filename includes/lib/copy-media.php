@@ -14,7 +14,7 @@ if (!current_user_can('upload_files'))
 // $blog_id is global var in WP
 
 if( isset( $_POST['send'] ) ) {
-	$nsm_blog_id = (int) $_GET['blog_id'];
+//	$nsm_blog_id = (int) $_GET['blog_id'];
 	reset( $_POST['send'] );
 	$nsm_send_id = (int) key( $_POST['send'] );
 }
@@ -41,18 +41,110 @@ $flight['header']       = array('Authorization: Bearer '.$flight['token']);
 $flight['agent']        = 'Canto Dev Team';
 
 //INIT PULL
-$flight['api_url']      = 'https://'.$flight['url'].'.staging.cantoflight.com/api/v1/';
-$flight['api_url2']     = 'https://'.$flight['url'].'.staging.cantoflight.com/api_binary/v1/';
-$flight['req']          = $flight['api_url'].'image/' . $_POST['fbc_id'] .'/download';
+$flight['api_url']      = 'https://'.get_option('fbc_flight_domain').'.staging.cantoflight.com/api/v1/';
+$flight['api_url2']     = 'https://'.get_option('fbc_flight_domain').'.staging.cantoflight.com/api_binary/v1/';
+$flight['req']          = $flight['api_url'].'image/' . $_POST['fbc_id'];// .'/download';
 
 
-$response = Flight_by_Canto()->curl_action($flight['req'],$flight['header'],$flight['agent'],0);
+$instance = Flight_by_Canto::instance();
+$response = $instance->curl_action($flight['req'],$flight['header'],$flight['agent'],0);
+$response  = (json_decode($response));
 
-$metadata = Flight_by_Canto()->getMetadata($_POST['fbc_id']);
+//Get the download url
+$detail = $response->url->download;
+$detail = $instance->curl_action($detail, $flight['header'],$flight['agent'],1);
 
-//echo $response;
-echo "hello";
-wp_die();
+//echo(json_encode($response));
+//echo($detail);
+//exit();
+
+                list($httpheader) = explode("\r\n\r\n", $detail, 2);
+                $matches = array();
+                preg_match('/(Location:|URI:)(.*?)\n/', $httpheader, $matches);
+                $location = trim(str_replace("Location: ","",$matches[0]));
+
+
+
+
+
+
+
+    $tmp = download_url( $location );
+    $file_array = array(
+        'name' => basename( $location ),
+        'tmp_name' => $tmp
+    );
+var_dump($file_array);
+exit();
+    // Check for download errors
+    if ( is_wp_error( $tmp ) ) {
+        @unlink( $file_array[ 'tmp_name' ] );
+        return $tmp;
+    }
+
+    $id = media_handle_sideload( $file_array, 0 );
+var_dump($id);
+exit();
+    // Check for handle sideload errors.
+    if ( is_wp_error( $id ) ) {
+        @unlink( $file_array['tmp_name'] );
+        return $id;
+    }
+
+    $attachment_url = wp_get_attachment_url( $id );
+    // Do whatever you have to here
+
+
+
+
+
+
+
+
+
+
+
+
+//Get the file name and prepare to save the file temporarily
+	$dir = ABSPATH . 'wp-content/plugins/Flight_by_Canto/assets/download/';
+//seperate the name from the extension to normalize extensions
+        $ext = end((explode(".",$response->name)));
+	$name = str_replace('.'.$ext,"",$response->name);
+	$ext = strtolower($ext);
+
+$array = array( //array to mimic $_FILES
+            'name' => "test.".$ext,//basename($image), //isolates and outputs the file name from its absolute path
+            'type' => $response->default->{'Content Type'},//wp_check_filetype($location), // get mime type of image file
+            'tmp_name' => $location, //this field passes the actual path to the image
+            'error' => 0, //normally, this is used to store an error, should the upload fail. but since this isnt actually an instance of $_FILES we can default it to zero here
+            'size' => $response->default->Size//filesize($location) //returns image filesize in bytes
+        );
+
+//$desc = "";
+//$image = media_handle_sideload($array, $nsm_send_id, $desc);
+//var_dump($image);
+//exit();
+
+
+//Save the file to a temporary location
+                copy($location,$dir.$name.'.'.$ext);
+//prepare a url for sideload
+$fileUrl = plugins_url( 'assets/download/'.$name.'.'.$ext, dirname(dirname(__FILE__) ));
+//sideload the image
+
+//$image = media_sideload_image($fileUrl, $nsm_send_id, $desc);
+
+$array = array(
+	'name'		=> basename($fileUrl),
+	'type'		=> wp_check_filetype($fileUrl),
+	'tmp_name'	=> $fileUrl,
+	'error'		=> 0,
+	'size'		=> $response->default->Size//filesize($fileUrl)
+);
+$image = wp_handle_upload($array, array('test_form' => FALSE));
+
+var_dump($image);
+exit();
 //Get the Metadata to pass to the editor
 
 //Save the new item into the library

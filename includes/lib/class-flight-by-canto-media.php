@@ -136,10 +136,10 @@ $flight['req'] 		= $flight['api_url'].'image?sortBy=name&sortDirection=descendin
 
 
 $response = Flight_by_Canto()->curl_action($flight['req'],$flight['header'],$flight['agent'],0);
-//echo $response;
+var_dump($response);
+echo $response;
 $response = json_decode($response);
 $results = $response->results;
-
 
 //$dir = plugin_dir_path( __FILE__ ).'assets/';
 
@@ -163,9 +163,9 @@ foreach($results as $res) {
 				'id'		=> $res->id,
 				'name'		=> $res->name,
 				'preview'	=> $res->url->preview,
-				'ext'		=> strtolower(end(explode(".",$res->name))));
+				'ext'		=> strtolower(end((explode(".",$res->name)))));
 
-	$ext = strtolower(end(explode(".",$res->name)));
+	$ext = strtolower(end((explode(".",$res->name))));
 
 	if( in_array($ext,$allowed_exts) && !file_exists($dir . $res->id .'.'. $ext) )
 		array_push($images,$img);	
@@ -176,7 +176,7 @@ foreach($results as $res) {
 $r = Flight_by_Canto()->multiRequest($images);
 
 foreach($r as $i) {
-	
+
 	//if( !file_exists($dir.'cache/'.$i['name']) ) :
 
 		list($httpheader) = explode("\r\n\r\n", $i['img'], 2);
@@ -184,7 +184,7 @@ foreach($r as $i) {
 		preg_match('/(Location:|URI:)(.*?)\n/', $httpheader, $matches);
 		$location = trim(str_replace("Location: ","",$matches[0]));
 		
-	$ext = strtolower(end(explode(".",$i['name'])));
+	$ext = strtolower(end((explode(".",$i['name']))));
 		copy($location,$dir.$i['id'].'.'.$ext);
 		
 //	endif;
@@ -194,7 +194,7 @@ foreach($r as $i) {
 /* Print the results to the screen */
 foreach($results as $res) {
 //print_r($res);
-	$ext = strtolower(end(explode(".",$res->name)));
+	$ext = strtolower(end((explode(".",$res->name))));
 	if( in_array($ext,$allowed_exts) ) :
 
 	?>
@@ -420,7 +420,7 @@ alert(htmlString);
 				url: form.attr('action'),
 				type: form.attr('method'),
 				data: form.serialize() + '&' + encodeURIComponent($this.attr('id') ) + '=true&chromeless=1',
-				success: function(data){alert("hello");}//nsm_media_send_to_editor
+				success: function(data){alert(data);}//nsm_media_send_to_editor
 			});
 		});
 	});
@@ -471,7 +471,7 @@ function my_action_javascript() {
 
                 jQuery.post(ajaxurl, data, function(response) {
 //build out the form
-                        //alert('Got this from the server: ' + response);
+                        alert('Got this from the server: ' + response);
                 });
 
                 var name = jQuery(this).data('name');
