@@ -37,6 +37,7 @@ if (  isset( $nsm_send_id ) ) {
 
 //Go get the media item from Flight
 $flight['token']        = '18a91e5134f54e78a1138ad26800df4a';
+$flight['token'] 	= get_option('fbc_app_token');
 $flight['header']       = array('Authorization: Bearer '.$flight['token']);
 $flight['agent']        = 'Canto Dev Team';
 

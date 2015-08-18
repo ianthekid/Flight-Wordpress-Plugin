@@ -486,22 +486,6 @@ function my_action_javascript() {
         });    
         jQuery("#library-form").appendTo("#fbc_media-sidebar");
 
-function build_library_form($data){
-
-}
-
-      /*  jQuery(document).ready(function($) {
-alert(this.data('id'));
-                var data = {
-                        'action': 'fbc_getMetadata',
-                        'fbc_id': this.data('id'),
-			'nonce': '<?php echo $nonce; ?>'
-                };
-                // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
-                jQuery.post(ajaxurl, data, function(response) {
-                        alert('Got this from the server: ' + response);
-                });
-        }); */
         </script> <?php
 }
 

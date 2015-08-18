@@ -146,6 +146,7 @@ class Flight_by_Canto {
 	    $fbc_id = stripslashes(htmlspecialchars($fbc_id));
 	  }
 	  $flight['token']        = '18a91e5134f54e78a1138ad26800df4a';
+	  $flight['token'] = get_option('fbc_app_token');
 	  $flight['header']       = array('Authorization: Bearer '.$flight['token']);
 	  $flight['agent']        = 'Canto Dev Team';
 	
@@ -207,7 +208,8 @@ class Flight_by_Canto {
 		//$imgUrl = 'https://obj.run.cantoflight.com/api_binary/v1/image/'.$url.'/preview';
 		
 		curl_setopt($curly[$id]['img'], CURLOPT_URL,$url);
-		curl_setopt($curly[$id]['img'], CURLOPT_HTTPHEADER, array('Authorization: Bearer 18a91e5134f54e78a1138ad26800df4a') );
+		//curl_setopt($curly[$id]['img'], CURLOPT_HTTPHEADER, array('Authorization: Bearer 18a91e5134f54e78a1138ad26800df4a') );
+		curl_setopt($curly[$id]['img'], CURLOPT_HTTPHEADER, array('Authorization: Bearer '. get_option('fbc_app_token')) );
 		curl_setopt($curly[$id]['img'], CURLOPT_USERAGENT, 'Dev Team' );
 		curl_setopt($curly[$id]['img'], CURLOPT_HEADER,1);
 		curl_setopt($curly[$id]['img'], CURLOPT_SSLVERSION,3);
