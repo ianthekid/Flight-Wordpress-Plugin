@@ -124,8 +124,9 @@ $flight['url']		= get_option('fbc_flight_domain');
 $flight['appId']	= get_option('fbc_app_id');
 $flight['secret']	= get_option('fbc_app_secret');
 
-//$flight['token']	= get_option('fbc_flight_token');
-$flight['token']	= '18a91e5134f54e78a1138ad26800df4a';
+//New token:: 111ecb6e79024216aad2f1a4d9bcb9b1
+$flight['token']	= get_option('fbc_app_token');
+//$flight['token']	= '18a91e5134f54e78a1138ad26800df4a';
 $flight['header']	= array('Authorization: Bearer '.$flight['token']);
 $flight['agent']	= 'Canto Dev Team';
 
@@ -136,8 +137,8 @@ $flight['req'] 		= $flight['api_url'].'image?sortBy=name&sortDirection=descendin
 
 
 $response = Flight_by_Canto()->curl_action($flight['req'],$flight['header'],$flight['agent'],0);
-var_dump($response);
-echo $response;
+//var_dump($response);
+//echo $response;
 $response = json_decode($response);
 $results = $response->results;
 
