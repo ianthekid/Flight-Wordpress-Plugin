@@ -156,7 +156,7 @@ class Flight_by_Canto {
 
 	
 //Get the metadata from the server to send off the the library form.
-	  $result = $this->curl_action($flight['api_url'].'image/'.$fbc_id, $flight['header'], $flight['agent'],0,0);
+	  $result = $this->curl_action($flight['api_url'].'image/'.$fbc_id, $flight['header'], $flight['agent'],0);
 
 	  $result = json_decode($result);
 	//Build out the array
@@ -275,7 +275,7 @@ var_dump($response);
 					    . '&grant_type=refresh_token&refresh_token=' . get_option('fbc_app_refresh_token');
 			$agent = "Canto Dev Team";
 //var_dump($req.'?'.$header); wp_die();
-			$response = $this->curl_action($req.'?'.$header,array('Authorization: Bearer '. get_option('fbc_app_refresh_token')),$agent,1,TRUE);
+			$response = $this->curl_action($req.'?'.$header,array('Authorization: Bearer '. get_option('fbc_app_refresh_token')),$agent,1);
 		var_dump($response);
 		wp_die();
 		$response = json_decode($response);
