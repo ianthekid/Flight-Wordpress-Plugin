@@ -60,6 +60,8 @@ class Flight_by_Canto_Settings {
 	 */
 	public function init_settings () {
 		$this->settings = $this->settings_fields();
+		add_action('wp_ajax_fbc_getToken', array($this, 'fbc_getToken'));
+		add_action('wp_ajax_fbc_refreshToken', array($this, 'fbc_refreshToken'));
 	}
 
 	/**
@@ -132,11 +134,51 @@ class Flight_by_Canto_Settings {
 				),
 				array(
 					'id' 			=> 'app_token',
-					'label'			=> '',
-					'description'	=> __( '', 'flight-by-canto' ),
+					'label'			=> __('App Token', 'flight-by-canto'),
+					'description'	=> __( 'The secret token', 'flight-by-canto' ),
 					'type'			=> 'text',
 					'default'		=> '',
 					'placeholder'	=> __( 'Token', 'flight-by-canto' )
+				),
+				array(
+					'id' 			=> 'flight_username',
+					'label'			=> __( 'Flight Username' , 'flight-by-canto' ),
+					'description'	=> __( 'Username for granting access', 'flight-by-canto' ),
+					'type'			=> 'text',
+					'default'		=> '',
+					'placeholder'	=> __( 'Flight Username', 'flight-by-canto' )
+				),
+				array(
+					'id' 			=> 'flight_password',
+					'label'			=> __( 'Flight Password' , 'flight-by-canto' ),
+					'description'	=> __( 'Flight Password for granting access', 'flight-by-canto' ),
+					'type'			=> 'password',
+					'default'		=> '',
+					'placeholder'	=> __( 'Flight Password', 'flight-by-canto' )
+				),
+				array(
+					'id' 			=> 'app_refresh_token',
+					'label'			=> __( 'Refresh Token' , 'flight-by-canto' ),
+					'description'	=> __( 'Used to request new Token', 'flight-by-canto' ),
+					'type'			=> 'hidden',
+					'default'		=> '',
+					'placeholder'	=> __( 'Refresh Token', 'flight-by-canto' )
+				),
+				array(
+					'id' 			=> 'app_refresh_token_expire',
+					'label'			=> __( 'Refresh Token Expiration' , 'flight-by-canto' ),
+					'description'	=> __( 'When the refresh token expires', 'flight-by-canto' ),
+					'type'			=> 'hidden',
+					'default'		=> '',
+					'placeholder'	=> __( 'Refresh Token Expiration', 'flight-by-canto' )
+				),
+				array(
+					'id' 			=> 'app_token_expire',
+					'label'			=> __( 'Token Expiration' , 'flight-by-canto' ),
+					'description'	=> __( 'When the token expires', 'flight-by-canto' ),
+					'type'			=> 'hidden',
+					'default'		=> '',
+					'placeholder'	=> __( 'Token Expiration', 'flight-by-canto' )
 				)
 			)
 		);
@@ -272,10 +314,57 @@ class Flight_by_Canto_Settings {
 		echo $html;
 
 		//Generate OAuth Token
-		if( get_option( 'fbc_app_token' ) == '' && (get_option( 'fbc_flight_domain' ) != '' &&  get_option( 'fbc_app_id' ) != '' &&  get_option( 'fbc_app_secret' ) != '') ) {
-			echo $this->oauth_token();
+		if(/* get_option( 'fbc_app_token' ) == '' && */(get_option( 'fbc_flight_domain' ) != '' &&  get_option( 'fbc_app_id' ) != '' &&  get_option( 'fbc_app_secret' ) != '') ) {
+		//	echo $this->oauth_token();
 		}
 
+		/*
+		 * Buttons and checkboxes to ensure that the token is valid. If not, request new token.
+		 */
+		?>
+<!--		<input class="button-primary" value="Refresh Token" id="refreshToken" name="RefreshToken"> -->
+		<input class="button-primary" value="Grant access, get Token" id="getToken" name="getToken">
+		
+
+	
+	<script type="text/javascript">
+			jQuery('#getToken').click( function(e){
+				e.preventDefault();
+			         var data = {
+                        		'action': 'fbc_getToken',
+		                };
+
+		                jQuery.post(ajaxurl, data, function(response) {
+        	        	        alert('Got this from the server: ' + response);
+	               		});
+
+			});
+			jQuery('#refreshToken').click( function(e){
+				e.preventDefault();
+			         var data = {
+                        		'action': 'fbc_refreshToken',
+		                };
+
+		                jQuery.post(ajaxurl, data, function(response) {
+        	        	        alert('Got this from the server: ' + response);
+	               		});
+
+			});
+		</script>	
+		 <?php
+
+	}
+
+	
+	public function fbc_getToken(){
+		$instance = Flight_by_Canto::instance();
+		//var_dump($instance); wp_die();	
+		return $instance->getToken();
+	}
+	public function fbc_refreshToken(){
+		$instance = Flight_by_Canto::instance();
+		//var_dump($instance); wp_die();	
+		return $instance->refreshToken();
 	}
 
 	/**

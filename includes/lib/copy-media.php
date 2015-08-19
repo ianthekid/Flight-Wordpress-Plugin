@@ -72,11 +72,11 @@ $detail = $instance->curl_action($detail, $flight['header'],$flight['agent'],1);
 
     $tmp = download_url( $location );
     $file_array = array(
-        'name' => basename( $location ),
+        'name' => $response->name,
         'tmp_name' => $tmp
     );
-var_dump($file_array);
-exit();
+//var_dump($file_array);
+//exit();
     // Check for download errors
     if ( is_wp_error( $tmp ) ) {
         @unlink( $file_array[ 'tmp_name' ] );
@@ -84,8 +84,6 @@ exit();
     }
 
     $id = media_handle_sideload( $file_array, 0 );
-var_dump($id);
-exit();
     // Check for handle sideload errors.
     if ( is_wp_error( $id ) ) {
         @unlink( $file_array['tmp_name'] );
@@ -95,64 +93,12 @@ exit();
     $attachment_url = wp_get_attachment_url( $id );
     // Do whatever you have to here
 
+	$caption = $title = $align = $rel = $size = $alt = '';
+	$rel = false;
+	$html = get_image_send_to_editor( $id, $caption, $title, $align, $attachment_url, (bool) $rel, $size, $alt );
 
 
-
-
-
-
-
-
-
-
-
-//Get the file name and prepare to save the file temporarily
-	$dir = ABSPATH . 'wp-content/plugins/Flight_by_Canto/assets/download/';
-//seperate the name from the extension to normalize extensions
-        $ext = end((explode(".",$response->name)));
-	$name = str_replace('.'.$ext,"",$response->name);
-	$ext = strtolower($ext);
-
-$array = array( //array to mimic $_FILES
-            'name' => "test.".$ext,//basename($image), //isolates and outputs the file name from its absolute path
-            'type' => $response->default->{'Content Type'},//wp_check_filetype($location), // get mime type of image file
-            'tmp_name' => $location, //this field passes the actual path to the image
-            'error' => 0, //normally, this is used to store an error, should the upload fail. but since this isnt actually an instance of $_FILES we can default it to zero here
-            'size' => $response->default->Size//filesize($location) //returns image filesize in bytes
-        );
-
-//$desc = "";
-//$image = media_handle_sideload($array, $nsm_send_id, $desc);
-//var_dump($image);
-//exit();
-
-
-//Save the file to a temporary location
-                copy($location,$dir.$name.'.'.$ext);
-//prepare a url for sideload
-$fileUrl = plugins_url( 'assets/download/'.$name.'.'.$ext, dirname(dirname(__FILE__) ));
-//sideload the image
-
-//$image = media_sideload_image($fileUrl, $nsm_send_id, $desc);
-
-$array = array(
-	'name'		=> basename($fileUrl),
-	'type'		=> wp_check_filetype($fileUrl),
-	'tmp_name'	=> $fileUrl,
-	'error'		=> 0,
-	'size'		=> $response->default->Size//filesize($fileUrl)
-);
-$image = wp_handle_upload($array, array('test_form' => FALSE));
-
-var_dump($image);
-exit();
-//Get the Metadata to pass to the editor
-
-//Save the new item into the library
-
-//Regenerate thumbnails for the image
-
-
+/*
 	$rel = $url = '';
 	$html = $title = isset( $attachment['post_title'] ) ? $attachment['post_title'] : '';
 	if ( ! empty( $attachment['url'] ) ) {
@@ -174,7 +120,10 @@ exit();
 		$meta = get_post_meta( $id, '_wp_attachment_metadata', true );
 		$html = $wp_embed->shortcode( $meta, $url );
 	}
-
+*/
+	$attachment['url'] = $attachment_url;
+	$attachment['post_title'] = '';
+	$attachment['post_excerpt'] = '';
 	/** This filter is documented in wp-admin/includes/media.php */
 	$html = apply_filters( 'media_send_to_editor', $html, $id, $attachment );
 
@@ -185,8 +134,8 @@ exit();
 			'#(wp-image-|wp-att-)(\d+)#'
 		),
 		array(
-			sprintf('${1}nsm_%s_${2}', esc_attr($nsm_blog_id)),
-			sprintf('${1}nsm-%s-${2}', esc_attr($nsm_blog_id)),
+			sprintf('${1}nsm_%s_${2}', esc_attr($nsm_send_id)),
+			sprintf('${1}nsm-%s-${2}', esc_attr($nsm_send_id)),
 		),
 		$html
 	);

@@ -15,3 +15,16 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 }
 
 // Do something here if plugin is being uninstalled.
+
+/*
+Need to remove the options from the database;
+*/
+
+if(1===2){ //add option to save data on delete
+delete_option('fbc_flight_domain');
+delete_option('fbc_app_id');
+delete_option('fbc_app_secret');
+delete_option('fbc_app_token');
+delete_option('fbc_app_refresh_token');
+delete_option('fbc_token_expire');
+}

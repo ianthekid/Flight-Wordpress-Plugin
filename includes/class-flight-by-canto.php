@@ -95,6 +95,8 @@ class Flight_by_Canto {
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
 
 		// Add Ajax functions
+		add_action( 'wp_ajax_fbc_get_token', array($this, 'getToken') );
+		add_action( 'wp_ajax_fbc_refresh_token', array($this, 'refreshToken') );
 		add_action( 'wp_ajax_fbc_getMetadata', array($this, 'getMetadata') );
 
 	} // End __construct ()
@@ -154,7 +156,7 @@ class Flight_by_Canto {
 
 	
 //Get the metadata from the server to send off the the library form.
-	  $result = $this->curl_action($flight['api_url'].'image/'.$fbc_id, $flight['header'], $flight['agent'],0);
+	  $result = $this->curl_action($flight['api_url'].'image/'.$fbc_id, $flight['header'], $flight['agent'],0,0);
 
 	  $result = json_decode($result);
 	//Build out the array
@@ -175,6 +177,117 @@ class Flight_by_Canto {
 	  wp_die();
 	}
 
+	/*
+	 * Used to authenticate the Grant access to the app and get the token
+	 */
+
+	public function getToken(){
+		//authenticate to OATUH -- Need to save the Session Cookie from Set Cookie
+		//curl -v -d "tenant=demo.staging.catoflight.com&user=glin@objectivasoftware.com&password=dmc4canto" https://oauth.staging.cantoflight.com:8443/oauth/rest/oauth2/authenticate
+
+
+		$req  = "https://oauth.staging.cantoflight.com:8443/oauth/rest/oauth2/authenticate";
+		$postfields = "tenant=" . get_option('fbc_flight_domain') . '.staging.cantoflight.com&user=' . get_option('fbc_flight_username'); 
+		$postfields .= '&password='.get_option('fbc_flight_password')	;
+//		$response = $this->curl_action($req,array(),"canto Dev Team",1,true,$postfields);
+
+
+
+ 		if (!function_exists('curl_init')){
+                        die('Sorry cURL is not installed!');
+                }
+
+                $ch = curl_init();
+
+                $options = array(
+                        CURLOPT_URL                             => $req,                                // get request
+                        CURLOPT_REFERER                 => get_bloginfo('url'), // who r u
+                        CURLOPT_USERAGENT               => "Canto Dev Team",                             // who am i
+                        CURLOPT_HTTPHEADER              => array(),                             // provides authorization and token
+                        CURLOPT_SSLVERSION              => 3,                                   // required for api handshake
+                        CURLOPT_HEADER                  => 1,                               // include header in output?
+                        CURLOPT_RETURNTRANSFER          => 1,                                   // output as string instead of file
+                        CURLOPT_TIMEOUT                 => 10,                                  // how long til i give up?
+                        CURLOPT_POST                    => TRUE,                   // Set to true to POST instead of GET
+                        CURLOPT_POSTFIELDS              => $postfields,                 // Set to true to POST instead of GET
+                );
+
+                curl_setopt_array($ch,$options);
+                $response = curl_exec($ch);
+
+	
+                list($httpheader) = explode("\r\n\r\n", $response, 2);
+                $matches = array();
+//                var_dump ("yo" . $httpheader); wp_die();
+		preg_match('/(Set-Cookie:)(.*?);.*\n/', $httpheader, $matches);
+		$cookie = preg_replace('/Set-Cookie: (.*?);.*/', '\\1',$matches[0],1);
+
+		//Now we have the authorization cookie and we can proceed to get the authorization code
+		//curl -v --get https://oauth.staging.cantoflight.com:8443/oauth/rest/oauth2/grant\?action\=grant\&response_type\=code\&app_id\=f38812b27dc24b1eabd2837e15b8f119\&app_secret\=7113cf4ce1a54e74a5fd0a3f324d05a98b7eb0d269004db5ad09ccc577ba5773\&vm.user\=glin@objectivasoftware.com\&vm.password\=dmc4canto -b JSESSIONID=6F16ED09C060AD13E0CE4F8CE930FED4
+		$options[CURLOPT_URL] = "https://oauth.staging.cantoflight.com:8443/oauth/rest/oauth2/grant";
+		$options[CURLOPT_URL] .= "?action=grant&response_type=code&app_id=" . get_option('fbc_app_id') . "&app_secret=".get_option('fbc_app_secret') ;
+		$options[CURLOPT_COOKIE] = $cookie;
+		$options[CURLOPT_POST] = false;
+		unset($options[CURLOPT_POSTFIELDS]);
+                curl_setopt_array($ch,$options);
+                $response = curl_exec($ch);
+
+
+		//Now we have the header again which contains the location (aka the code);
+
+		list($httpheader) = explode("\r\n\r\n", $response ,2);
+		preg_match('/Location:(.*?)\n/', $httpheader,$matches);
+		$code = preg_replace('/^.*code\=(.*?)&.*/', '\\1', $matches[0],1);
+		//we have a DAM code! make the final request to get the token
+		//curl -v -d "app_id=f38812b27dc24b1eabd2837e15b8f119&app_secret=7113cf4ce1a54e74a5fd0a3f324d05a98b7eb0d269004db5ad09ccc577ba5773&grant_type=authorization_code&code=002cd729f0144bee829377a5d6e314e1" https://oauth.staging.cantoflight.com:8443/oauth/api/oauth2/token
+
+		$options[CURLOPT_URL]  = "https://oauth.staging.cantoflight.com:8443/oauth/api/oauth2/token";
+		$options[CURLOPT_URL] .= "?app_id=".get_option('fbc_app_id') ."&app_secret=".get_option('fbc_app_secret')."&grant_type=authorization_code&code=" . $code;
+		$options[CURLOPT_POST] = true;
+		$options[CURLOPT_HEADER] = 0;
+                curl_setopt_array($ch,$options);
+                $response = curl_exec($ch);
+
+		//no more curl! the json is stored in the response var
+                curl_close($ch);
+
+		//now set the DAM Authentication tokens
+
+		$response = json_decode($response);
+		update_option('fbc_app_token', $response->accessToken);
+		update_option('fbc_app_refresh_token', $response->refreshToken);
+		update_option('fbc_app_token_expire', time() + $response->expiresIn);
+		update_option('fbc_app_refresh_token_expire', time() + strtotime("1 year"));
+
+var_dump($response);
+	}
+
+	/**
+	 * Refreshes the current token saved in options via the Refresh Token
+	 */
+	public function refreshToken(){
+//		check_ajax_referer('flight-by-canto-refresh-token', 'nonce');
+		//Need to check if we have the tools needed to refresh the token
+//		if ( ! get_option('fbc_app_secret') || ! get_option('fbc_flight_domain') || !get_option('fbc_app_id')){
+			
+			$req = 'https://' . get_option('fbc_flight_domain') . '.staging.cantoflight.com:8443/oauth/api/oauth2/token';
+			$header = 'app_id=' . get_option('fbc_app_id') . '&app_secret=' . get_option('fbc_app_secret') 
+					    . '&grant_type=refresh_token&refresh_token=' . get_option('fbc_app_refresh_token');
+			$agent = "Canto Dev Team";
+//var_dump($req.'?'.$header); wp_die();
+			$response = $this->curl_action($req.'?'.$header,array('Authorization: Bearer '. get_option('fbc_app_refresh_token')),$agent,1,TRUE);
+		var_dump($response);
+		wp_die();
+		$response = json_decode($response);
+		update_option('fbc_app_token', $response['accessToken']);
+		update_option('fbc_app_refresh_token', $response['refreshToken']);
+		update_option('fbc_app_expire_token', time() + $response['expiresIn']);
+//		}
+
+//		echo "Fail";
+	}
+
+	
 	/**
 	 * Multi-Threaded CURL function to loop through Flight API response, and request multiple items
 	 * @param  string $data		   	Full Flight API query string

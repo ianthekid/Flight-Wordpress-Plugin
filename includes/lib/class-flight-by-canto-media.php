@@ -132,7 +132,6 @@ $flight['agent']	= 'Canto Dev Team';
 
 //INIT PULL
 $flight['api_url']	= 'https://'.$flight['url'].'.staging.cantoflight.com/api/v1/';
-$flight['api_url2']	= 'https://'.$flight['url'].'.staging.cantoflight.com/api_binary/v1/';
 $flight['req'] 		= $flight['api_url'].'image?sortBy=name&sortDirection=descending&limit=40&start=0';
 
 
@@ -406,7 +405,6 @@ endif;
 	<script type="text/javascript">
 	/* <![CDATA[ */
 	function nsm_media_send_to_editor(htmlString) {
-alert(htmlString);
 		<?php /* copied from /wp-admin/includes/media.php media_send_to_editor() */ ?>
 		var win = window.dialogArguments || opener || parent || top;
 		win.send_to_editor(htmlString);
@@ -421,7 +419,8 @@ alert(htmlString);
 				url: form.attr('action'),
 				type: form.attr('method'),
 				data: form.serialize() + '&' + encodeURIComponent($this.attr('id') ) + '=true&chromeless=1',
-				success: function(data){alert(data);}//nsm_media_send_to_editor
+				//success: function(data){alert(data);}//nsm_media_send_to_editor
+				success: nsm_media_send_to_editor
 			});
 		});
 	});
@@ -443,9 +442,11 @@ alert(htmlString);
 	
 	<div id="media-items">
 	<?php add_filter('attachment_fields_to_edit', 'media_post_single_attachment_fields_to_edit', 10, 2); ?>
-<?php add_filter('attachment_fields_to_edit', 'media_single_attachment_fields_to_edit', 10, 2); ?>
+<?php //add_filter('attachment_fields_to_edit', 'media_single_attachment_fields_to_edit', 10, 2); ?>
 	<input id="fbc_id" name="fbc_id" type="hidden" value="" />
-	<?php echo $this->get_media_items(0, $errors); ?>
+	<?php   echo $this->get_media_items(8, $errors); ?>
+<?php //echo  get_media_item(8, $errors); ?>
+<?php //echo media_upload_library_form($errors); ?> 
 	</div>
 	<p class="ml-submit"></p>
 	</form>
@@ -472,7 +473,7 @@ function my_action_javascript() {
 
                 jQuery.post(ajaxurl, data, function(response) {
 //build out the form
-                        alert('Got this from the server: ' + response);
+                        //alert('Got this from the server: ' + response);
                 });
 
                 var name = jQuery(this).data('name');
