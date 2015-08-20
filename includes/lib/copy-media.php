@@ -42,8 +42,8 @@ $flight['header']       = array('Authorization: Bearer '.$flight['token']);
 $flight['agent']        = 'Canto Dev Team';
 
 //INIT PULL
-$flight['api_url']      = 'https://'.get_option('fbc_flight_domain').'.staging.cantoflight.com/api/v1/';
-$flight['api_url2']     = 'https://'.get_option('fbc_flight_domain').'.staging.cantoflight.com/api_binary/v1/';
+$flight['api_url']      = 'https://'.get_option('fbc_flight_domain').'.run.cantoflight.com/api/v1/';
+$flight['api_url2']     = 'https://'.get_option('fbc_flight_domain').'.run.cantoflight.com/api_binary/v1/';
 $flight['req']          = $flight['api_url'].'image/' . $_POST['fbc_id'];// .'/download';
 
 

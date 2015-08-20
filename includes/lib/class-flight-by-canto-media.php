@@ -131,7 +131,7 @@ $flight['header']	= array('Authorization: Bearer '.$flight['token']);
 $flight['agent']	= 'Canto Dev Team';
 
 //INIT PULL
-$flight['api_url']	= 'https://'.$flight['url'].'.staging.cantoflight.com/api/v1/';
+$flight['api_url']	= 'https://'.$flight['url'].'.run.cantoflight.com/api/v1/';
 $flight['req'] 		= $flight['api_url'].'image?sortBy=name&sortDirection=descending&limit=40&start=0';
 
 

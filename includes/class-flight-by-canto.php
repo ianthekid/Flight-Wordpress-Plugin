@@ -152,7 +152,7 @@ class Flight_by_Canto {
 	  $flight['header']       = array('Authorization: Bearer '.$flight['token']);
 	  $flight['agent']        = 'Canto Dev Team';
 	
-	  $flight['api_url'] = 'https://'. get_option('fbc_flight_domain') .'.staging.cantoflight.com/api/v1/';
+	  $flight['api_url'] = 'https://'. get_option('fbc_flight_domain') .'.run.cantoflight.com/api/v1/';
 
 	
 //Get the metadata from the server to send off the the library form.
@@ -183,11 +183,11 @@ class Flight_by_Canto {
 
 	public function getToken(){
 		//authenticate to OATUH -- Need to save the Session Cookie from Set Cookie
-		//curl -v -d "tenant=demo.staging.catoflight.com&user=glin@objectivasoftware.com&password=dmc4canto" https://oauth.staging.cantoflight.com:8443/oauth/rest/oauth2/authenticate
+		//curl -v -d "tenant=demo.staging.catoflight.com&user=glin@objectivasoftware.com&password=dmc4canto" https://oauth.run.cantoflight.com:8443/oauth/rest/oauth2/authenticate
 
 
-		$req  = "https://oauth.staging.cantoflight.com:8443/oauth/rest/oauth2/authenticate";
-		$postfields = "tenant=" . get_option('fbc_flight_domain') . '.staging.cantoflight.com&user=' . get_option('fbc_flight_username'); 
+		$req  = "https://oauth.run.cantoflight.com:8443/oauth/rest/oauth2/authenticate";
+		$postfields = "tenant=" . get_option('fbc_flight_domain') . '.run.cantoflight.com&user=' . get_option('fbc_flight_username'); 
 		$postfields .= '&password='.get_option('fbc_flight_password')	;
 //		$response = $this->curl_action($req,array(),"canto Dev Team",1,true,$postfields);
 
@@ -223,8 +223,8 @@ class Flight_by_Canto {
 		$cookie = preg_replace('/Set-Cookie: (.*?);.*/', '\\1',$matches[0],1);
 
 		//Now we have the authorization cookie and we can proceed to get the authorization code
-		//curl -v --get https://oauth.staging.cantoflight.com:8443/oauth/rest/oauth2/grant\?action\=grant\&response_type\=code\&app_id\=f38812b27dc24b1eabd2837e15b8f119\&app_secret\=7113cf4ce1a54e74a5fd0a3f324d05a98b7eb0d269004db5ad09ccc577ba5773\&vm.user\=glin@objectivasoftware.com\&vm.password\=dmc4canto -b JSESSIONID=6F16ED09C060AD13E0CE4F8CE930FED4
-		$options[CURLOPT_URL] = "https://oauth.staging.cantoflight.com:8443/oauth/rest/oauth2/grant";
+		//curl -v --get https://oauth.run.cantoflight.com:8443/oauth/rest/oauth2/grant\?action\=grant\&response_type\=code\&app_id\=f38812b27dc24b1eabd2837e15b8f119\&app_secret\=7113cf4ce1a54e74a5fd0a3f324d05a98b7eb0d269004db5ad09ccc577ba5773\&vm.user\=glin@objectivasoftware.com\&vm.password\=dmc4canto -b JSESSIONID=6F16ED09C060AD13E0CE4F8CE930FED4
+		$options[CURLOPT_URL] = "https://oauth.run.cantoflight.com:8443/oauth/rest/oauth2/grant";
 		$options[CURLOPT_URL] .= "?action=grant&response_type=code&app_id=" . get_option('fbc_app_id') . "&app_secret=".get_option('fbc_app_secret') ;
 		$options[CURLOPT_COOKIE] = $cookie;
 		$options[CURLOPT_POST] = false;
@@ -239,9 +239,9 @@ class Flight_by_Canto {
 		preg_match('/Location:(.*?)\n/', $httpheader,$matches);
 		$code = preg_replace('/^.*code\=(.*?)&.*/', '\\1', $matches[0],1);
 		//we have a DAM code! make the final request to get the token
-		//curl -v -d "app_id=f38812b27dc24b1eabd2837e15b8f119&app_secret=7113cf4ce1a54e74a5fd0a3f324d05a98b7eb0d269004db5ad09ccc577ba5773&grant_type=authorization_code&code=002cd729f0144bee829377a5d6e314e1" https://oauth.staging.cantoflight.com:8443/oauth/api/oauth2/token
+		//curl -v -d "app_id=f38812b27dc24b1eabd2837e15b8f119&app_secret=7113cf4ce1a54e74a5fd0a3f324d05a98b7eb0d269004db5ad09ccc577ba5773&grant_type=authorization_code&code=002cd729f0144bee829377a5d6e314e1" https://oauth.run.cantoflight.com:8443/oauth/api/oauth2/token
 
-		$options[CURLOPT_URL]  = "https://oauth.staging.cantoflight.com:8443/oauth/api/oauth2/token";
+		$options[CURLOPT_URL]  = "https://oauth.run.cantoflight.com:8443/oauth/api/oauth2/token";
 		$options[CURLOPT_URL] .= "?app_id=".get_option('fbc_app_id') ."&app_secret=".get_option('fbc_app_secret')."&grant_type=authorization_code&code=" . $code;
 		$options[CURLOPT_POST] = true;
 		$options[CURLOPT_HEADER] = 0;
@@ -270,7 +270,7 @@ class Flight_by_Canto {
 		//Need to check if we have the tools needed to refresh the token
 //		if ( ! get_option('fbc_app_secret') || ! get_option('fbc_flight_domain') || !get_option('fbc_app_id')){
 			
-			$req = 'https://' . get_option('fbc_flight_domain') . '.staging.cantoflight.com:8443/oauth/api/oauth2/token';
+			$req = 'https://' . get_option('fbc_flight_domain') . '.run.cantoflight.com:8443/oauth/api/oauth2/token';
 			$header = 'app_id=' . get_option('fbc_app_id') . '&app_secret=' . get_option('fbc_app_secret') 
 					    . '&grant_type=refresh_token&refresh_token=' . get_option('fbc_app_refresh_token');
 			$agent = "Canto Dev Team";
