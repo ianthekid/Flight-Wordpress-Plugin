@@ -259,7 +259,7 @@ class Flight_by_Canto {
 		update_option('fbc_app_token_expire', time() + $response->expiresIn);
 		update_option('fbc_app_refresh_token_expire', time() + strtotime("1 year"));
 
-var_dump($response);
+//var_dump($response);
 	}
 
 	/**

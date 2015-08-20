@@ -160,7 +160,7 @@ class Flight_by_Canto_Settings {
 					'id' 			=> 'app_refresh_token',
 					'label'			=> __( 'Refresh Token' , 'flight-by-canto' ),
 					'description'	=> __( 'Used to request new Token', 'flight-by-canto' ),
-					'type'			=> 'hidden',
+					'type'			=> 'text',
 					'default'		=> '',
 					'placeholder'	=> __( 'Refresh Token', 'flight-by-canto' )
 				),
@@ -168,7 +168,7 @@ class Flight_by_Canto_Settings {
 					'id' 			=> 'app_refresh_token_expire',
 					'label'			=> __( 'Refresh Token Expiration' , 'flight-by-canto' ),
 					'description'	=> __( 'When the refresh token expires', 'flight-by-canto' ),
-					'type'			=> 'hidden',
+					'type'			=> 'text',
 					'default'		=> '',
 					'placeholder'	=> __( 'Refresh Token Expiration', 'flight-by-canto' )
 				),
@@ -176,7 +176,7 @@ class Flight_by_Canto_Settings {
 					'id' 			=> 'app_token_expire',
 					'label'			=> __( 'Token Expiration' , 'flight-by-canto' ),
 					'description'	=> __( 'When the token expires', 'flight-by-canto' ),
-					'type'			=> 'hidden',
+					'type'			=> 'text',
 					'default'		=> '',
 					'placeholder'	=> __( 'Token Expiration', 'flight-by-canto' )
 				)
