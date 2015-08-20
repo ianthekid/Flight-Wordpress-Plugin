@@ -276,8 +276,6 @@ var_dump($response);
 			$agent = "Canto Dev Team";
 //var_dump($req.'?'.$header); wp_die();
 			$response = $this->curl_action($req.'?'.$header,array('Authorization: Bearer '. get_option('fbc_app_refresh_token')),$agent,1);
-		var_dump($response);
-		wp_die();
 		$response = json_decode($response);
 		update_option('fbc_app_token', $response['accessToken']);
 		update_option('fbc_app_refresh_token', $response['refreshToken']);
