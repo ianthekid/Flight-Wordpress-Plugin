@@ -138,9 +138,7 @@ class Flight_by_Canto {
 
 	public function getMetaData($fbc_id  ){
   	  check_ajax_referer( 'flight-by-canto','nonce');
-//	var_dump(empty($fbc_id));
-//var_dump($fbc_id);
-//	wp_die();
+	  
 	  if ( empty ( $fbc_id ) ) {
 	  	$fbc_id = stripslashes(htmlspecialchars($_POST['fbc_id']));
 	  } else {
@@ -158,23 +156,26 @@ class Flight_by_Canto {
 //Get the metadata from the server to send off the the library form.
 	  $result = $this->curl_action($flight['api_url'].'image/'.$fbc_id, $flight['header'], $flight['agent'],0);
 
+		//var_dump($result); wp_die();
 	  $result = json_decode($result);
+
+
+
 	//Build out the array
-//print_r( $result);	
-//	echo( $result->metadata->{'Image Width'});i
-/*
 	$data =  array(
-		'height' 	=> $result->metadata->{'Horizontal Pixels'},
-		'width' 	=> $result->metadata->{'Vertical Pixels'},
-//		'mime' 		=> $result->metadata->{'MIME Type'},
-		'height' 	=> $result->metadata->{'Horizontal Pixels'}
+		'id' 		=> $fbc_id,
+		'name' 		=> $result->name,
+		'dimensions' 	=> $result->default->{'Dimensions'},
+		'mime' 		=> $result->default->{'Content Type'},
+		'size'	 	=> size_format($result->size),
+		'uploaded'  => $result->lastUploaded
 	);
-*/
+
 		//print_r(json_encode($data));
 	  //echo $_POST['fbc_id'];
  	//echo json_encode($result->metadata);
- 	echo json_encode($result);
-	  wp_die();
+ 	echo json_encode($data);
+wp_die();
 	}
 
 	/*

@@ -25,15 +25,15 @@ if (  isset( $nsm_send_id ) ) {
 
 	global $post;
 
-	$attachment = wp_unslash( $_POST['attachments'][$nsm_send_id] );
+	$attachment = $_POST['fbc_id'] ; //wp_unslash( $_POST['attachments'][$nsm_send_id] );
 	$id = $nsm_send_id;
-
+/* Checks to see if you're using a real attachment (We're not)
 	if ( ! $post = get_post( $id ) )
 		wp_send_json_error();
 
 	if ( 'attachment' != $post->post_type )
 		wp_send_json_error();
-
+*/
 
 //Go get the media item from Flight
 $flight['token']        = '18a91e5134f54e78a1138ad26800df4a';
@@ -121,6 +121,7 @@ $detail = $instance->curl_action($detail, $flight['header'],$flight['agent'],1);
 		$html = $wp_embed->shortcode( $meta, $url );
 	}
 */
+$attachment  =array();
 	$attachment['url'] = $attachment_url;
 	$attachment['post_title'] = '';
 	$attachment['post_excerpt'] = '';
@@ -139,6 +140,7 @@ $detail = $instance->curl_action($detail, $flight['header'],$flight['agent'],1);
 		),
 		$html
 	);
+
 
 	if( isset($_POST['chromeless']) && $_POST['chromeless'] ) {
 		// WP3.5+ media browser is identified by the 'chromeless' parameter

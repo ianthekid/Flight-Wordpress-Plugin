@@ -1,1 +1,159 @@
-@charset "utf-8";#loader{position:absolute;width:50px;height:50px;top:50%;left:50%;margin-left:-50px}.attachment-preview{width:145px;height:145px;display:inline-block;margin:2px;overflow:hidden;background-repeat:no-repeat;background-position:center center;background-size:cover;float:left;border:5px solid rgba(0,0,0,0.01);position:relative;-webkit-box-shadow:inset 0 0 15px rgba(0,0,0,0.1),inset 0 0 0 1px rgba(0,0,0,0.05);box-shadow:inset 0 0 15px rgba(0,0,0,0.1),inset 0 0 0 1px rgba(0,0,0,0.05);background:#eee;cursor:pointer}.selected .attachment-preview{border:5px solid #1e8cbe}#__attachments-view-fbc{margin-right:350px}.media-sidebar{position:absolute;top:0;right:0;bottom:0;width:350px;padding:0 16px 24px;z-index:75;background:#f3f3f3;border-left:1px solid #ddd;overflow:auto;-webkit-overflow-scrolling:touch}#library-form{position:fixed;max-width:350px;display:none}.pinkynail,.filename new,.describe-toggle-off{display:none}
+charset utf-7;#loader {
+    position:absolute;
+    width:50px;
+    height:50px;
+    top:50%;
+    left:50%;
+    margin-left:-50px
+}
+
+.attachment-preview {
+    width:145px;
+    height:145px;
+    display:inline-block;
+    margin:2px;
+    overflow:hidden;
+    background-repeat:no-repeat;
+    background-position:center center;
+    background-size:cover;
+    float:left;
+    border:5px solid rgba(0,0,0,0.01);
+    position:relative;
+    -webkit-box-shadow:inset 0 0 15px rgba(0,0,0,0.1),inset 0 0 0 1px rgba(0,0,0,0.05);
+    box-shadow:inset 0 0 15px rgba(0,0,0,0.1),inset 0 0 0 1px rgba(0,0,0,0.05);
+    background:#eee;
+    cursor:pointer
+}
+
+.selected .attachment-preview {
+    border:5px solid #1e8cbe
+}
+
+#__attachments-view-fbc {
+    margin-right:350px
+}
+
+.media-sidebar {
+    position:absolute;
+    top:0;
+    right:0;
+    bottom:0;
+    width:350px;
+    padding:0 16px 24px;
+    z-index:75;
+    background:#f3f3f3;
+    border-left:1px solid #ddd;
+    overflow:auto;
+    -webkit-overflow-scrolling:touch
+}
+
+#library-form {
+    position:fixed;
+    max-width:350px;
+    display:none
+}
+
+.pinkynail,.filename new,.describe-toggle-off {
+    display:none
+}
+.attachment-details {
+    overflow: auto;
+    position: relative;
+}
+.attachment-info .thumbnail-image::after {
+    bottom: 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15) inset;
+    content: "";
+    display: block;
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.attachment-info .thumbnail {
+    float: left;
+    margin-bottom: 5px;
+    margin-right: 10px;
+    margin-top: 5px;
+    max-height: 120px;
+    max-width: 120px;
+    position: relative;
+}
+
+.attachment-info .thumbnail img {
+    display: block;
+    margin: 0 auto;
+    max-height: 120px;
+    max-width: 120px;
+}
+
+h3 {
+    color: #23282d;
+    font-size: 1.3em;
+    margin: 1em 0;
+}
+h1, h2, h3, h4, h5, h6 {
+    display: block;
+    font-weight: 600;
+}
+.attachment-info {
+    border-bottom: 1px solid #ddd;
+    color: #666;
+    line-height: 18px;
+    margin-bottom: 16px;
+    min-height: 60px;
+    overflow: hidden;
+    padding-bottom: 11px;
+}
+.attachment-details .setting, .media-sidebar .setting {
+    display: block;
+    float: left;
+    margin: 1px 0;
+    width: 100%;
+}
+.media-sidebar .setting .name {
+    max-width: 80px;
+}
+.attachment-details .setting span, .compat-item label span, .media-sidebar .setting span {
+    color: #666;
+    float: left;
+    font-weight: 400;
+    line-height: 16px;
+    min-height: 22px;
+    padding-top: 8px;
+}
+.attachment-details .setting .value, .attachment-details .setting input[type="email"], .attachment-details .setting input[type="number"], .attachment-details .setting input[type="password"], .attachment-details .setting input[type="search"], .attachment-details .setting input[type="tel"], .attachment-details .setting input[type="text"], .attachment-details .setting input[type="url"], .attachment-details .setting textarea, .media-sidebar .setting .value, .media-sidebar .setting input[type="email"], .media-sidebar .setting input[type="number"], .media-sidebar .setting input[type="password"], .media-sidebar .setting input[type="search"], .media-sidebar .setting input[type="tel"], .media-sidebar .setting input[type="text"], .media-sidebar .setting input[type="url"], .media-sidebar .setting textarea {
+    box-sizing: border-box;
+    float: right;
+    margin: 1px;
+    width: 65%;
+}
+.media-frame input:disabled, .media-frame input[readonly], .media-frame textarea:disabled, .media-frame textarea[readonly] {
+    background-color: #eee;
+}
+.media-frame input[type="email"], .media-frame input[type="number"], .media-frame input[type="password"], .media-frame input[type="search"], .media-frame input[type="text"], .media-frame input[type="url"], .media-frame select, .media-frame textarea {
+    border-color: #dfdfdf;
+    border-style: solid;
+    border-width: 1px;
+    font-family: "Open Sans",sans-serif;
+    font-size: 12px;
+}
+input.readonly, input[readonly], textarea.readonly, textarea[readonly] {
+    background-color: #eee;
+}
+.attachment-details .setting span, .compat-item label span, .media-sidebar .setting span {
+    color: #666;
+    float: left;
+    font-weight: 400;
+    line-height: 16px;
+    min-height: 22px;
+    padding-top: 8px;
+}
+.attachment-details .setting span, .media-sidebar .setting span {
+    font-size: 12px;
+    margin-right: 4%;
+    min-width: 30%;
+    text-align: right;
+    word-wrap: break-word;
+}

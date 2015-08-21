@@ -1,5 +1,5 @@
 jQuery( document ).ready( function ( e ) {
-	
+/*	
 	jQuery('.fbc_attachment').click(function(e){
 		var name = jQuery(this).data('name');
 		e.preventDefault();
@@ -13,7 +13,7 @@ jQuery( document ).ready( function ( e ) {
 		jQuery(this).addClass('selected');
 	});	
 	jQuery("#library-form").appendTo("#fbc_media-sidebar");
-
+*/
 	
 	jQuery('#fbc_loadMore').click(function(e){
 		jQuery.ajax({

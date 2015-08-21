@@ -5,22 +5,22 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Add filter that inserts our new tab
 function flight_by_canto_media_menu($tabs) {
-	$newtab = array('shared_media' => __('Flight by Canto', 'networksharedmedia'));
+	$newtab = array('flight_by_canto' => __('Flight by Canto', 'flight-by-canto'));
 	return array_merge($tabs, $newtab);
 }
 
 // Load media_nsm_process() into the existing iframe
-function flight_by_canto_media_upload_shared_media() {
+function flight_by_canto_media_upload_flight_by_canto() {
 	$nsm = new flight_by_canto_media();
-	return wp_iframe(array( $nsm, 'media_upload_shared_media' ), array());
+	return wp_iframe(array( $nsm, 'media_upload_flight_by_canto' ), array());
 }
 
 function flight_by_canto_media_init() {
 	if ( current_user_can('upload_files') ) {
-		load_plugin_textdomain( 'networksharedmedia', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+		load_plugin_textdomain( 'flight-by-canto', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 		add_filter('media_upload_tabs', 'flight_by_canto_media_menu');
-		add_action('media_upload_shared_media', 'flight_by_canto_media_upload_shared_media');
-		add_action ('media_upload_shared_media', 'my_action_javascript');
+		add_action('media_upload_flight_by_canto', 'flight_by_canto_media_upload_flight_by_canto');
+		add_action ('media_upload_flight_by_canto', 'get_meta_data');
 
 	}
 }
@@ -51,12 +51,12 @@ class flight_by_canto_media {
 	/**
 	 * @param unknown_type $errors
 	 */
-	function media_upload_shared_media($errors) {
+	function media_upload_flight_by_canto($errors) {
 		global $wpdb, $wp_query, $wp_locale, $type, $tab, $post_mime_types, $blog_id;
-	
+
 		media_upload_header();
-	
-wp_enqueue_script('fbc_media_js', plugins_url().'/Flight_by_Canto/assets/js/admin.js' ); 	
+
+wp_enqueue_script('fbc_media_js', plugins_url().'/Flight_by_Canto/assets/js/admin.js' );
 //		echo "<script type='text/javascript' src='" . ABSPATH . plugins_dir() . "/Flight_By_Canto/assets/js/admin.js'></script>";
 
 
@@ -67,10 +67,10 @@ wp_enqueue_script('fbc_media_js', plugins_url().'/Flight_by_Canto/assets/js/admi
 
 
 if( get_option( 'fbc_flight_domain' ) == '' ||  get_option( 'fbc_app_id' ) == '' ||  get_option( 'fbc_app_secret' ) == '') :
-	echo '<form><h3 class="media-title">' . __("<span style='font-size:14px;font-family:Helvetica,Arial'><strong>Oops!</strong> You haven't connected your Flight account yet. <a href=\"javascript:;\" onclick=\"window.top.location.href='".get_bloginfo('url')."/wp-admin/options-general.php?page=flight_by_canto_settings'\">Plugin Settings</a></span>", 'networksharedmedia' ) . '</h3></form>';
-	
+	echo '<form><h3 class="media-title">' . __("<span style='font-size:14px;font-family:Helvetica,Arial'><strong>Oops!</strong> You haven't connected your Flight account yet. <a href=\"javascript:;\" onclick=\"window.top.location.href='".get_bloginfo('url')."/wp-admin/options-general.php?page=flight_by_canto_settings'\">Plugin Settings</a></span>", 'flight-by-canto' ) . '</h3></form>';
+
 	return false;
-	
+
 else :
 
 
@@ -99,7 +99,7 @@ else :
         <span class="upload-filename"></span>
 	</div>
     <div class="upload-errors"></div>
-    
+
     <div style="clear:both"></div>
 
 
@@ -113,13 +113,13 @@ else :
 <img src="/ajax-loader.gif" id="loader">
 
 <ul tabindex="-1" class="attachments" id="__attachments-view-fbc">
-<?php 
+<?php
 
 /*
 $flight['url']		= 'demo';
 $flight['appId']	= 'f38812b27dc24b1eabd2837e15b8f119';
 $flight['secret']	= '7113cf4ce1a54e74a5fd0a3f324d05a98b7eb0d269004db5ad09ccc577ba5773';
-*/ 
+*/
 $flight['url']		= get_option('fbc_flight_domain');
 $flight['appId']	= get_option('fbc_app_id');
 $flight['secret']	= get_option('fbc_app_secret');
@@ -168,7 +168,7 @@ foreach($results as $res) {
 	$ext = strtolower(end((explode(".",$res->name))));
 
 	if( in_array($ext,$allowed_exts) && !file_exists($dir . $res->id .'.'. $ext) )
-		array_push($images,$img);	
+		array_push($images,$img);
 
 }
 
@@ -183,10 +183,10 @@ foreach($r as $i) {
 		$matches = array();
 		preg_match('/(Location:|URI:)(.*?)\n/', $httpheader, $matches);
 		$location = trim(str_replace("Location: ","",$matches[0]));
-		
+
 	$ext = strtolower(end((explode(".",$i['name']))));
 		copy($location,$dir.$i['id'].'.'.$ext);
-		
+
 //	endif;
 
 }
@@ -209,12 +209,12 @@ foreach($results as $res) {
         <a class="check" href="#" title="Deselect" tabindex="0"><div class="media-modal-icon"></div></a>
 	</li>
     <?php
-	
+
 	endif;
 //	echo '<a class="fbc_link fbc_selected" href="javascript:;" data-id="'.$i['id'].'"><div style="background-image:url('.$display.$res->name.')"></div></a>';
 
 }
- 
+
 ?>
 </ul>
 
@@ -251,7 +251,7 @@ endif;
 
 
 
-		
+
 		// set the first part of the form action url now, to the current active site, to prevent X-Frame-Options problems
 		$form_action_url = plugins_url( 'copy-media.php', __FILE__ );
 
@@ -268,8 +268,8 @@ endif;
 		$form_action_url = apply_filters('media_upload_form_url', $form_action_url, $type);
 
 		$form_class = 'media-upload-form validate';
-		
-	
+
+
 		$_GET['paged'] = isset( $_GET['paged'] ) ? intval($_GET['paged']) : 0;
 		if ( $_GET['paged'] < 1 )
 			$_GET['paged'] = 1;
@@ -277,10 +277,10 @@ endif;
 		if ( $start < 1 )
 			$start = 0;
 		add_filter( 'post_limits', create_function( '$a', "return 'LIMIT $start, 10';" ) );
-	
+
 		list($post_mime_types, $avail_post_mime_types) = wp_edit_attachments_query();
 ?>
-	
+
 	<form id="filter" action="" method="get">
 	<input type="hidden" name="type" value="<?php echo esc_attr( $type ); ?>" />
 	<input type="hidden" name="tab" value="<?php echo esc_attr( $tab ); ?>" />
@@ -301,7 +301,7 @@ endif;
 		<input type="text" id="media-search-input" name="s" value="<?php the_search_query(); ?>" />
 		<?php submit_button( __( 'Search Media' ), 'button', '', false ); ?>
 	</p-->
-	
+
 	<ul class="subsubsub" style="display:none">
 	<?php
 	$type_links = array();
@@ -325,22 +325,22 @@ endif;
 	$type_links[] = "<li><a href='" . esc_url(add_query_arg(array('post_mime_type'=>'all', 'paged'=>false, 'm'=>false))) . "'$class>".__('All Types')."</a>";
 	foreach ( $post_mime_types as $mime_type => $label ) {
 		$class = '';
-	
+
 		if ( !wp_match_mime_types($mime_type, $avail_post_mime_types) )
 			continue;
-	
+
 		if ( isset($_GET['post_mime_type']) && wp_match_mime_types($mime_type, $_GET['post_mime_type']) )
 			$class = ' class="current"';
-	
+
 		$type_links[] = "<li><a href='" . esc_url(add_query_arg(array('post_mime_type'=>$mime_type, 'paged'=>false))) . "'$class>" . sprintf( translate_nooped_plural( $label[2], $num_posts[$mime_type] ), "<span id='$mime_type-counter'>" . number_format_i18n( $num_posts[$mime_type] ) . '</span>') . '</a>';
 	}
 	echo implode(' | </li>', apply_filters( 'media_upload_mime_type_links', $type_links ) ) . '</li>';
 	unset($type_links);
 	?>
 	</ul>
-	
+
 	<div class="tablenav" style="display:none">
-	
+
 	<?php
 	$page_links = paginate_links( array(
 		'base' => add_query_arg( 'paged', '%#%' ),
@@ -350,20 +350,20 @@ endif;
 		'total' => ceil($wp_query->found_posts / 10),
 		'current' => $_GET['paged']
 	));
-	
+
 	if ( $page_links )
 		echo "<div class='tablenav-pages'>$page_links</div>";
 	?>
-	
+
 	<div class="alignleft actions">
 	<?php
-	
+
 	$arc_query = "SELECT DISTINCT YEAR(post_date) AS yyear, MONTH(post_date) AS mmonth FROM $wpdb->posts WHERE post_type = 'attachment' ORDER BY post_date DESC";
-	
+
 	$arc_result = $wpdb->get_results( $arc_query );
-	
+
 	$month_count = count($arc_result);
-	
+
 	if ( $month_count && !( 1 == $month_count && 0 == $arc_result[0]->mmonth ) ) { ?>
 	<select name='m'>
 	<option<?php selected( @$_GET['m'], 0 ); ?> value='0'><?php _e('Show all dates'); ?></option>
@@ -372,12 +372,12 @@ endif;
 		if ( $arc_row->yyear == 0 )
 			continue;
 		$arc_row->mmonth = zeroise( $arc_row->mmonth, 2 );
-	
+
 		if ( isset($_GET['m']) && ( $arc_row->yyear . $arc_row->mmonth == $_GET['m'] ) )
 			$default = ' selected="selected"';
 		else
 			$default = '';
-	
+
 		echo "<option$default value='" . esc_attr( $arc_row->yyear . $arc_row->mmonth ) . "'>";
 		echo esc_html( $wp_locale->get_month($arc_row->mmonth) . " $arc_row->yyear" );
 		echo "</option>\n";
@@ -385,17 +385,17 @@ endif;
 	?>
 	</select>
 	<?php } ?>
-	
+
 	<?php submit_button( __( 'Filter &#187;' ), 'secondary', 'post-query-submit', false ); ?>
-	
+
 	</div>
-	
+
 	<br class="clear" />
 	</div>
 	</form>
-	
+
 	<form enctype="multipart/form-data" method="post" action="<?php echo esc_attr($form_action_url); ?>" class="<?php echo $form_class; ?>" id="library-form">
-	
+
 	<?php wp_nonce_field('media-form'); ?>
 
 	<?php
@@ -439,14 +439,145 @@ endif;
 	});
 	-->
 	</script>
-	
+
+
+
+
+
+
+
+
+
+
 	<div id="media-items">
-	<?php add_filter('attachment_fields_to_edit', 'media_post_single_attachment_fields_to_edit', 10, 2); ?>
+	<?php //add_filter('attachment_fields_to_edit', 'media_post_single_attachment_fields_to_edit', 10, 2); ?>
 <?php //add_filter('attachment_fields_to_edit', 'media_single_attachment_fields_to_edit', 10, 2); ?>
 	<input id="fbc_id" name="fbc_id" type="hidden" value="" />
-	<?php   echo $this->get_media_items(8, $errors); ?>
-<?php //echo  get_media_item(8, $errors); ?>
-<?php //echo media_upload_library_form($errors); ?> 
+
+
+<div tabindex="0" data-id="0" class="fbc attachment-details save-ready">
+        <h3>
+            Attachment Details
+            <span class="settings-save-status">
+                <span class="spinner"></span>
+                <span class="saved">Saved.</span>
+            </span>
+        </h3>
+        <div class="attachment-info">
+            <div class="thumbnail thumbnail-image">
+
+                    <img draggable="false" src="http://wp.flightbycanto.com/wp-content/uploads/2015/06/flight-by-canto-300x142.jpg">
+
+            </div>
+            <div class="details">
+                <div class="filename">name</div>
+                <div class="uploaded">name</div>
+                <div class="filesize">name</div>
+                <div class="dimensions">name</div>
+            </div>
+        </div>
+
+        <label data-setting="title" class="setting">
+            <span class="name">Title</span>
+            <input type="text" id="title" name="title" value="">
+        </label>
+
+        <label data-setting="caption" class="setting">
+            <span class="name">Caption</span>
+            <textarea id="caption" name="caption"></textarea>
+        </label>
+
+        <label data-setting="alt" class="setting">
+            <span class="name">Alt Text</span>
+            <input type="text" id="alt-text" name="alt" value="">
+        </label>
+
+        <label data-setting="description" class="setting">
+            <span class="name">Description</span>
+            <textarea id="description" name="description"></textarea>
+        </label>
+    </div>
+    <div class="attachment-display-settings">
+        <h3>Attachment Display Settings</h3>
+
+            <label class="setting">
+                <span>Alignment</span>
+                <select data-user-setting="align" name="align" data-setting="align" class="alignment">
+
+                    <option value="left">Left</option>
+                    <option value="center">Center</option>
+                    <option value="right">Right</option>
+                    <option selected="" value="none">None</option>
+                </select>
+            </label>
+
+        <div class="setting">
+            <label>
+                    <span>Link To</span>
+
+
+                <select data-user-setting="urlbutton" data-setting="link" class="link-to" name="link">
+                    <option selected="" value="file">Media File</option>
+                    <option value="post">Attachment Page</option>
+                    <!--<option value="custom">Custom URL</option> -->
+                    <option value="none">None</option>
+                </select>
+            </label>
+        </div>
+
+
+            <label class="setting">
+                <span>Size</span>
+                <select data-user-setting="imgsize" data-setting="size" name="size" class="size">
+<?php
+                                        /** This filter is documented in wp-admin/includes/media.php */
+                                        $sizes = apply_filters( 'image_size_names_choose', array(
+                                                'thumbnail' => __('Thumbnail'),
+                                                'medium'    => __('Medium'),
+                                                'large'     => __('Large'),
+                                                'full'      => __('Full Size'),
+                                        ) );
+
+
+                                        foreach ( $sizes as $value => $name ) : ?>
+                                                <#
+                                                var size = data.sizes['<?php echo esc_js( $value ); ?>'];
+                                                if ( size ) { #>
+                                                        <option value="<?php echo esc_attr( $value ); ?>" <?php selected( $value, 'full' ); ?>>
+                                                                <?php echo esc_html( $name ); ?> &ndash; {{ size.width }} &times; {{ size.height }}
+                                                        </option>
+                                                <# } #>
+                                        <?php endforeach; ?>
+
+
+
+
+
+                    //Get available thumbnail sizes
+                </select>
+            </label>
+<?php echo get_submit_button( __( 'Insert into Post' ), 'button', "send[$post_id]", false );
+?>
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	</div>
 	<p class="ml-submit"></p>
 	</form>
@@ -456,7 +587,68 @@ endif;
 ?>
 <?php
 
-function my_action_javascript() { 
+function get_image_sizes( $size = '' ) {
+
+        global $_wp_additional_image_sizes;
+
+        $sizes = array();
+        $get_intermediate_image_sizes = get_intermediate_image_sizes();
+
+        // Create the full array with sizes and crop info
+        foreach( $get_intermediate_image_sizes as $_size ) {
+
+                if ( in_array( $_size, array( 'thumbnail', 'medium', 'large' ) ) ) {
+
+                        $sizes[ $_size ]['width'] = get_option( $_size . '_size_w' );
+                        $sizes[ $_size ]['height'] = get_option( $_size . '_size_h' );
+                        $sizes[ $_size ]['crop'] = (bool) get_option( $_size . '_crop' );
+
+                } elseif ( isset( $_wp_additional_image_sizes[ $_size ] ) ) {
+
+                        $sizes[ $_size ] = array(
+                                'width' => $_wp_additional_image_sizes[ $_size ]['width'],
+                                'height' => $_wp_additional_image_sizes[ $_size ]['height'],
+                                'crop' =>  $_wp_additional_image_sizes[ $_size ]['crop']
+                        );
+
+                }
+
+        }
+
+        // Get only 1 size if found
+        if ( $size ) {
+
+                if( isset( $sizes[ $size ] ) ) {
+                        return $sizes[ $size ];
+                } else {
+                        return false;
+                }
+
+        }
+
+        return $sizes;
+}
+
+
+function fbc_insert_custom_image_sizes( $sizes ) {
+  global $_wp_additional_image_sizes;
+  if ( empty($_wp_additional_image_sizes) )
+    return $sizes;
+
+  foreach ( $_wp_additional_image_sizes as $id => $data ) {
+    if ( !isset($sizes[$id]) )
+      $sizes[$id] = ucfirst( str_replace( '-', ' ', $id ) );
+  }
+
+  return $sizes;
+}
+
+//Add custom image sized to thumbnail selection if the user hasnt already.
+if ( ! has_filter ('image_size_names_choose')){
+	add_filter( 'image_size_names_choose', 'fbc_insert_custom_image_sizes' );
+}
+
+function get_meta_data() {
 
  	$nonce = wp_create_nonce('flight-by-canto');
 ?>
@@ -471,23 +663,35 @@ function my_action_javascript() {
 			'nonce': '<?php echo $nonce; ?>'
                 };
 
+		//jQuery('#thumbnail-head-8').find('img').attr('src',jQuery(this).find('img').attr('src'));
+		var src = jQuery(this).find('img').attr('src'); //;alert(src);
                 jQuery.post(ajaxurl, data, function(response) {
 //build out the form
-                        //alert('Got this from the server: ' + response);
+//"name":"\u963f\u62c9.jpg","dimensions":"460*367 Pixels","mime":"image\/jpeg","size":"59983"
+                        // alert('Got this from the server: ' + response);
+	                response = jQuery.parseJSON(response);
+	                jQuery('#library-form').find('img').attr('src', src);
+	                jQuery('#library-form #fbc_id').val(response.id);
+	                jQuery('#library-form .filename').html(response.name);
+	                jQuery('#library-form .filesize').html(response.size);
+	                jQuery('#library-form .dimensions').html(response.dimensions);
+	                jQuery('#library-form .uploaded').html(response.uploaded);
+	                jQuery('#library-form .mime').html(response.mime);
+
+	                    jQuery("#library-form").appendTo("#fbc_media-sidebar");
+	                    jQuery("#library-form").show();
+
                 });
 
-                var name = jQuery(this).data('name');
-                jQuery('#thumbnail-head-8').find('img').attr('src',jQuery(this).find('img').attr('src'));
-    
+                /*var name = jQuery(this).data('name');
+
                 jQuery('#library-form .post_title').find('input').val( name );
-                jQuery("#library-form").show();
-   		jQuery('#fbc_id').val(jQuery(this).data('id')); 
                 jQuery('.selected').removeClass('selected');
-                jQuery(this).addClass('selected');
-        });    
-        jQuery("#library-form").appendTo("#fbc_media-sidebar");
+                jQuery(this).addClass('selected'); */
+        });
 
         </script> <?php
+return;
 }
 
 
