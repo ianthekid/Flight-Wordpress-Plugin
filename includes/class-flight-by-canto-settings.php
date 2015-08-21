@@ -335,7 +335,8 @@ class Flight_by_Canto_Settings {
 		                };
 
 		                jQuery.post(ajaxurl, data, function(response) {
-        	        	        alert('Got this from the server: ' + response);
+  //      	        	        alert('Got this from the server: ' + response);
+location.reload();
 	               		});
 
 			});
@@ -346,7 +347,7 @@ class Flight_by_Canto_Settings {
 		                };
 
 		                jQuery.post(ajaxurl, data, function(response) {
-        	        	        alert('Got this from the server: ' + response);
+//        	        	        alert('Got this from the server: ' + response);
 	               		});
 
 			});

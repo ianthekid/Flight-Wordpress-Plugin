@@ -141,9 +141,9 @@ $response = Flight_by_Canto()->curl_action($flight['req'],$flight['header'],$fli
 $response = json_decode($response);
 $results = $response->results;
 
-//$dir = plugin_dir_path( __FILE__ ).'assets/';
+$dir = plugin_dir_path( __FILE__ ).'assets/cache/';
 
-$dir = ABSPATH . 'wp-content/plugins/Flight_by_Canto/assets/cache/';
+//$dir = ABSPATH . 'wp-content/plugins/Flight_by_Canto/assets/cache/';
 $display = get_bloginfo('url') . '/wp-content/plugins/Flight_by_Canto/assets/cache/';
 
 $allowed_exts = array('jpg','jpeg','gif','png');
