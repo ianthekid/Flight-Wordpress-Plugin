@@ -11,36 +11,20 @@ require_once( dirname( dirname( dirname( dirname( dirname( dirname( __FILE__ ) )
 if (!current_user_can('upload_files'))
 	wp_die(__('You do not have permission to upload files.'));
 
-// $blog_id is global var in WP
-
 if( isset( $_POST['send'] ) ) {
-//	$nsm_blog_id = (int) $_GET['blog_id'];
 	reset( $_POST['send'] );
-	$nsm_send_id = (int) key( $_POST['send'] );
+	$send_id = (int) key( $_POST['send'] );
 }
 
 /* copied from wp-admin/inculdes/ajax-actions.php wp_ajax_send_attachment_to_editor() */
-if (  isset( $nsm_send_id ) ) {
-	//switch_to_blog( $nsm_blog_id );
+if (  isset( $send_id ) ) {
 
 	global $post;
 
-	$attachment = $_POST['fbc_id'] ; //wp_unslash( $_POST['attachments'][$nsm_send_id] );
-	$id = $nsm_send_id;
-/* Checks to see if you're using a real attachment (We're not)
-	if ( ! $post = get_post( $id ) )
-		wp_send_json_error();
-
-	if ( 'attachment' != $post->post_type )
-		wp_send_json_error();
-*/
+	$attachment = $_POST['fbc_id'] ; //wp_unslash( $_POST['attachments'][$send_id] );
+	$id = $send_id;
 
 //Go get the media item from Flight
-$flight['token']        = '18a91e5134f54e78a1138ad26800df4a';
-$flight['token'] 	= get_option('fbc_app_token');
-$flight['header']       = array('Authorization: Bearer '.$flight['token']);
-$flight['agent']        = 'Canto Dev Team';
-
 //INIT PULL
 $flight['api_url']      = 'https://'.get_option('fbc_flight_domain').'.run.cantoflight.com/api/v1/';
 $flight['api_url2']     = 'https://'.get_option('fbc_flight_domain').'.run.cantoflight.com/api_binary/v1/';
@@ -48,12 +32,12 @@ $flight['req']          = $flight['api_url'].'image/' . $_POST['fbc_id'];// .'/d
 
 
 $instance = Flight_by_Canto::instance();
-$response = $instance->curl_action($flight['req'],$flight['header'],$flight['agent'],0);
+$response = $instance->curl_action($flight['req'], 0);
 $response  = (json_decode($response));
 
 //Get the download url
 $detail = $response->url->download;
-$detail = $instance->curl_action($detail, $flight['header'],$flight['agent'],1);
+$detail = $instance->curl_action($detail, 1);
 
 //echo(json_encode($response));
 //echo($detail);
@@ -64,19 +48,16 @@ $detail = $instance->curl_action($detail, $flight['header'],$flight['agent'],1);
                 preg_match('/(Location:|URI:)(.*?)\n/', $httpheader, $matches);
                 $location = trim(str_replace("Location: ","",$matches[0]));
 
-
-
-
-
-
-
     $tmp = download_url( $location );
     $file_array = array(
         'name' => $response->name,
         'tmp_name' => $tmp
     );
+
 //var_dump($file_array);
 //exit();
+
+
     // Check for download errors
     if ( is_wp_error( $tmp ) ) {
         @unlink( $file_array[ 'tmp_name' ] );
@@ -121,7 +102,7 @@ $detail = $instance->curl_action($detail, $flight['header'],$flight['agent'],1);
 		$html = $wp_embed->shortcode( $meta, $url );
 	}
 */
-$attachment  =array();
+	$attachment  =array();
 	$attachment['url'] = $attachment_url;
 	$attachment['post_title'] = '';
 	$attachment['post_excerpt'] = '';
@@ -135,8 +116,8 @@ $attachment  =array();
 			'#(wp-image-|wp-att-)(\d+)#'
 		),
 		array(
-			sprintf('${1}nsm_%s_${2}', esc_attr($nsm_send_id)),
-			sprintf('${1}nsm-%s-${2}', esc_attr($nsm_send_id)),
+			sprintf('${1}nsm_%s_${2}', esc_attr($send_id)),
+			sprintf('${1}nsm-%s-${2}', esc_attr($send_id)),
 		),
 		$html
 	);

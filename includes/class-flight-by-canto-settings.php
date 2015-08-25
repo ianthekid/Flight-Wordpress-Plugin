@@ -114,7 +114,7 @@ class Flight_by_Canto_Settings {
 					'description'	=> __( '.run.cantoflight.com', 'flight-by-canto' ),
 					'type'			=> 'text',
 					'default'		=> '',
-					'placeholder'	=> __( 'flightdomain', 'flight-by-canto' )
+					'placeholder'	=> __( 'Flight Domain', 'flight-by-canto' )
 				),
 				array(
 					'id' 			=> 'app_id',
@@ -133,14 +133,6 @@ class Flight_by_Canto_Settings {
 					'placeholder'	=> __( 'Secret Key', 'flight-by-canto' )
 				),
 				array(
-					'id' 			=> 'app_token',
-					'label'			=> __('App Token', 'flight-by-canto'),
-					'description'	=> __( 'The secret token', 'flight-by-canto' ),
-					'type'			=> 'text',
-					'default'		=> '',
-					'placeholder'	=> __( 'Token', 'flight-by-canto' )
-				),
-				array(
 					'id' 			=> 'flight_username',
 					'label'			=> __( 'Flight Username' , 'flight-by-canto' ),
 					'description'	=> __( 'Username for granting access', 'flight-by-canto' ),
@@ -155,30 +147,6 @@ class Flight_by_Canto_Settings {
 					'type'			=> 'password',
 					'default'		=> '',
 					'placeholder'	=> __( 'Flight Password', 'flight-by-canto' )
-				),
-				array(
-					'id' 			=> 'app_refresh_token',
-					'label'			=> __( 'Refresh Token' , 'flight-by-canto' ),
-					'description'	=> __( 'Used to request new Token', 'flight-by-canto' ),
-					'type'			=> 'text',
-					'default'		=> '',
-					'placeholder'	=> __( 'Refresh Token', 'flight-by-canto' )
-				),
-				array(
-					'id' 			=> 'app_refresh_token_expire',
-					'label'			=> __( 'Refresh Token Expiration' , 'flight-by-canto' ),
-					'description'	=> __( 'When the refresh token expires', 'flight-by-canto' ),
-					'type'			=> 'text',
-					'default'		=> '',
-					'placeholder'	=> __( 'Refresh Token Expiration', 'flight-by-canto' )
-				),
-				array(
-					'id' 			=> 'app_token_expire',
-					'label'			=> __( 'Token Expiration' , 'flight-by-canto' ),
-					'description'	=> __( 'When the token expires', 'flight-by-canto' ),
-					'type'			=> 'text',
-					'default'		=> '',
-					'placeholder'	=> __( 'Token Expiration', 'flight-by-canto' )
 				)
 			)
 		);
@@ -241,7 +209,7 @@ class Flight_by_Canto_Settings {
 	public function oauth_token () {		
 		$html = '<h2>' . __( 'Login to Flight Complete Authorization' , 'flight-by-canto' ) . '</h2>' . "\n";
 		$html .= '<iframe onload="alert(this.contentWindow.location.href);"';
-		$html .= ' src="https://oauth.run.cantoflight.com:8443/oauth/api/oauth2/authorize?response_type=code&app_id=f38812b27dc24b1eabd2837e15b8f119&state=groovy" ';
+		$html .= ' src="https://oauth.run.cantoflight.com:8443/oauth/api/oauth2/authorize?response_type=code&app_id='.get_option('fbc_app_secret').'&state=groovy" ';
 		$html .= 'width="500" height="700"></iframe>';
 		return $html;
 	}
@@ -307,6 +275,10 @@ class Flight_by_Canto_Settings {
 				$html .= '<p class="submit">' . "\n";
 					$html .= '<input type="hidden" name="tab" value="' . esc_attr( $tab ) . '" />' . "\n";
 					$html .= '<input name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Save Settings' , 'flight-by-canto' ) ) . '" />' . "\n";
+				if((get_option( 'fbc_flight_domain' ) != '' &&  get_option( 'fbc_app_id' ) != '' &&  get_option( 'fbc_app_secret' ) != '' && get_option('fbc_flight_username') != '' && get_option('fbc_flight_password') != '' ) ) {
+					$html .= '<input class="button-primary" value="Grant access, get Token" id="getToken" name="getToken">' . "\n";
+
+				}
 				$html .= '</p>' . "\n";
 			$html .= '</form>' . "\n";
 		$html .= '</div>' . "\n";
@@ -314,7 +286,7 @@ class Flight_by_Canto_Settings {
 		echo $html;
 
 		//Generate OAuth Token
-		if(/* get_option( 'fbc_app_token' ) == '' && */(get_option( 'fbc_flight_domain' ) != '' &&  get_option( 'fbc_app_id' ) != '' &&  get_option( 'fbc_app_secret' ) != '') ) {
+		if((get_option( 'fbc_flight_domain' ) != '' &&  get_option( 'fbc_app_id' ) != '' &&  get_option( 'fbc_app_secret' ) != '') ) {
 		//	echo $this->oauth_token();
 		}
 
@@ -322,8 +294,8 @@ class Flight_by_Canto_Settings {
 		 * Buttons and checkboxes to ensure that the token is valid. If not, request new token.
 		 */
 		?>
-<!--		<input class="button-primary" value="Refresh Token" id="refreshToken" name="RefreshToken"> -->
-		<input class="button-primary" value="Grant access, get Token" id="getToken" name="getToken">
+<?php /*		<input class="button-primary" value="Refresh Token" id="refreshToken" name="RefreshToken"> 
+		<input class="button-primary" value="Grant access, get Token" id="getToken" name="getToken"> */ ?>
 		
 
 	

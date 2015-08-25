@@ -115,27 +115,16 @@ else :
 <ul tabindex="-1" class="attachments" id="__attachments-view-fbc">
 <?php
 
-/*
-$flight['url']		= 'demo';
-$flight['appId']	= 'f38812b27dc24b1eabd2837e15b8f119';
-$flight['secret']	= '7113cf4ce1a54e74a5fd0a3f324d05a98b7eb0d269004db5ad09ccc577ba5773';
-*/
 $flight['url']		= get_option('fbc_flight_domain');
 $flight['appId']	= get_option('fbc_app_id');
 $flight['secret']	= get_option('fbc_app_secret');
-
-//New token:: 111ecb6e79024216aad2f1a4d9bcb9b1
-$flight['token']	= get_option('fbc_app_token');
-//$flight['token']	= '18a91e5134f54e78a1138ad26800df4a';
-$flight['header']	= array('Authorization: Bearer '.$flight['token']);
-$flight['agent']	= 'Canto Dev Team';
 
 //INIT PULL
 $flight['api_url']	= 'https://'.$flight['url'].'.run.cantoflight.com/api/v1/';
 $flight['req'] 		= $flight['api_url'].'image?sortBy=name&sortDirection=descending&limit=40&start=0';
 
 
-$response = Flight_by_Canto()->curl_action($flight['req'],$flight['header'],$flight['agent'],0);
+$response = Flight_by_Canto()->curl_action( $flight['req'], 0 );
 //var_dump($response);
 //echo $response;
 $response = json_decode($response);
