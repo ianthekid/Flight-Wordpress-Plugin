@@ -1,12 +1,14 @@
 <?php
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 class Flight_by_Canto {
 
 	/**
 	 * The single instance of Flight_by_Canto.
-	 * @var 	object
+	 * @var    object
 	 */
 	private static $_instance = null;
 
@@ -51,13 +53,13 @@ class Flight_by_Canto {
 	 * @var     string
 	 */
 	private $fbc_flight_domain;
-	
+
 	/**
 	 * The authorization refresh token
 	 * @var     string
 	 */
 	private $fbc_refresh_token;
-	
+
 	/**
 	 * The Flight Password
 	 * @var    string
@@ -65,7 +67,7 @@ class Flight_by_Canto {
 	private $fbc_flight_password;
 
 	/**
-	 * The Flight Username 
+	 * The Flight Username
 	 * @var    string
 	 */
 	private $fbc_flight_username;
@@ -105,25 +107,25 @@ class Flight_by_Canto {
 	 * @access  public
 	 * @return  void
 	 */
-	public function __construct ( $file = '', $version = '1.0.0' ) {
+	public function __construct( $file = '', $version = '1.0.0' ) {
 		$this->_version = $version;
-		$this->_token = 'flight_by_canto';
+		$this->_token   = 'flight_by_canto';
 
 		// Load plugin environment variables
-		$this->file = $file;
-		$this->dir = dirname( $this->file );
+		$this->file       = $file;
+		$this->dir        = dirname( $this->file );
 		$this->assets_dir = trailingslashit( $this->dir ) . 'assets';
 		$this->assets_url = esc_url( trailingslashit( plugins_url( '/assets/', $this->file ) ) );
 
 		$this->script_suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-		$this->fbc_app_token = get_option('fbc_app_token');
-		$this->fbc_app_id = get_option('fbc_app_id');
-		$this->fbc_app_secret = get_option('fbc_app_secret');
-		$this->fbc_flight_domain = get_option('fbc_flight_domain');
-		$this->fbc_refresh_token = get_option('fbc_refresh_token');
-		$this->fbc_flight_password = get_option('fbc_flight_password');
-		$this->fbc_flight_username = get_option('fbc_flight_username');
+		$this->fbc_app_token       = get_option( 'fbc_app_token' );
+		$this->fbc_app_id          = get_option( 'fbc_app_id' );
+		$this->fbc_app_secret      = get_option( 'fbc_app_secret' );
+		$this->fbc_flight_domain   = get_option( 'fbc_flight_domain' );
+		$this->fbc_refresh_token   = get_option( 'fbc_refresh_token' );
+		$this->fbc_flight_password = get_option( 'fbc_flight_password' );
+		$this->fbc_flight_username = get_option( 'fbc_flight_username' );
 
 		register_activation_hook( $this->file, array( $this, 'install' ) );
 
@@ -145,166 +147,166 @@ class Flight_by_Canto {
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
 
 		// Add Ajax functions
-		add_action( 'wp_ajax_fbc_get_token', array($this, 'getToken') );
-		add_action( 'wp_ajax_fbc_refresh_token', array($this, 'refreshToken') );
-		add_action( 'wp_ajax_fbc_getMetadata', array($this, 'getMetadata') );
+		add_action( 'wp_ajax_fbc_get_token', array( $this, 'getToken' ) );
+		add_action( 'wp_ajax_fbc_refresh_token', array( $this, 'refreshToken' ) );
+		add_action( 'wp_ajax_fbc_getMetadata', array( $this, 'getMetadata' ) );
 
 	} // End __construct ()
-	
+
 
 	/**
 	 * CURL function to query Flight API
-	 * @param  string $url		   	Full Flight API query string
-	 * @param  string $header		Flight API token authorization
-	 * @param  string $agent      	Standard browser agent for CURL requests
-	 * @param  int $echo 			True/False (1/0) for including CURL header in output
-	 * @return object              	CURL response output
+	 *
+	 * @param  string $url Full Flight API query string
+	 * @param  string $header Flight API token authorization
+	 * @param  string $agent Standard browser agent for CURL requests
+	 * @param  int $echo True/False (1/0) for including CURL header in output
+	 *
+	 * @return object                CURL response output
 	 */
 	//public function curl_action($url,$header,$agent,$echo) {
-	public function curl_action($url,$echo) {
-	 
-		if (!function_exists('curl_init')){
-			die('Sorry cURL is not installed!');
+	public function curl_action( $url, $echo ) {
+
+		if ( ! function_exists( 'curl_init' ) ) {
+			die( 'Sorry cURL is not installed!' );
 		}
 
-		$agent = get_bloginfo('name') . " WordPress Plugin";
-		$header = array('Authorization: Bearer ' . $this->fbc_app_token);		
+		$agent  = get_bloginfo( 'name' ) . " WordPress Plugin";
+		$header = array( 'Authorization: Bearer ' . $this->fbc_app_token );
 
 		$ch = curl_init();
-	
-		$options = array( 
-			CURLOPT_URL				=> $url,				// get request
-			CURLOPT_REFERER			=> get_bloginfo('url'), // who r u
-			CURLOPT_USERAGENT		=> $agent,				// who am i
-			CURLOPT_HTTPHEADER		=> $header,				// provides authorization and token
-			CURLOPT_SSLVERSION		=> 3,					// required for api handshake
-			CURLOPT_HEADER			=> $echo,				// include header in output?
-			CURLOPT_RETURNTRANSFER		=> 1,					// output as string instead of file
-			CURLOPT_TIMEOUT			=> 10,					// how long til i give up?
+
+		$options = array(
+			CURLOPT_URL            => $url,                // get request
+			CURLOPT_REFERER        => get_bloginfo( 'url' ), // who r u
+			CURLOPT_USERAGENT      => $agent,                // who am i
+			CURLOPT_HTTPHEADER     => $header,                // provides authorization and token
+			CURLOPT_SSLVERSION     => 3,                    // required for api handshake
+			CURLOPT_HEADER         => $echo,                // include header in output?
+			CURLOPT_RETURNTRANSFER => 1,                    // output as string instead of file
+			CURLOPT_TIMEOUT        => 10,                    // how long til i give up?
 		);
-		
-		curl_setopt_array($ch,$options);
-		$output = curl_exec($ch);
-		curl_close($ch);	
-	
+
+		curl_setopt_array( $ch, $options );
+		$output = curl_exec( $ch );
+		curl_close( $ch );
+
 		return $output;
 	}
 
-	public function getMetaData($fbc_id  ){
-  	  check_ajax_referer( 'flight-by-canto','nonce');
-	  
-	  if ( empty ( $fbc_id ) ) {
-	  	$fbc_id = stripslashes(htmlspecialchars($_POST['fbc_id']));
-	  } else {
-	    echo "Passsed by value: ";	
-	    $fbc_id = stripslashes(htmlspecialchars($fbc_id));
-	  }
-	
-	  $flight['api_url'] = 'https://' . $this->fbc_flight_domain . '.run.cantoflight.com/api/v1/';
+	public function getMetaData( $fbc_id ) {
+		check_ajax_referer( 'flight-by-canto', 'nonce' );
 
-	
+		if ( empty ( $fbc_id ) ) {
+			$fbc_id = stripslashes( htmlspecialchars( $_POST['fbc_id'] ) );
+		} else {
+			echo "Passsed by value: ";
+			$fbc_id = stripslashes( htmlspecialchars( $fbc_id ) );
+		}
+
+		$flight['api_url'] = 'https://' . $this->fbc_flight_domain . '.run.cantoflight.com/api/v1/';
+
+
 //Get the metadata from the server to send off the the library form.
-	  $result = $this->curl_action($flight['api_url'].'image/'.$fbc_id, 0);
+		$result = $this->curl_action( $flight['api_url'] . 'image/' . $fbc_id, 0 );
 
 		//var_dump($result); wp_die();
-	  $result = json_decode($result);
+		$result = json_decode( $result );
 
 
+		//Build out the array
+		$data = array(
+			'id'         => $fbc_id,
+			'name'       => $result->name,
+			'dimensions' => $result->default->{'Dimensions'},
+			'mime'       => $result->default->{'Content Type'},
+			'size'       => size_format( $result->size ),
+			'uploaded'   => $result->lastUploaded
+		);
 
-	//Build out the array
-	$data =  array(
-		'id' 		=> $fbc_id,
-		'name' 		=> $result->name,
-		'dimensions' 	=> $result->default->{'Dimensions'},
-		'mime' 		=> $result->default->{'Content Type'},
-		'size'	 	=> size_format($result->size),
-		'uploaded'  => $result->lastUploaded
-	);
-
- 	echo json_encode($data);
-	wp_die();
+		echo json_encode( $data );
+		wp_die();
 	}
 
 	/*
 	 * Used to authenticate the Grant access to the app and get the token
 	 */
 
-	public function getToken(){
+	public function getToken() {
 		//authenticate to OATUH -- Need to save the Session Cookie from Set Cookie
-		
-		$req  = "https://oauth.run.cantoflight.com:8443/oauth/rest/oauth2/authenticate";
+
+		$req = "https://oauth.run.cantoflight.com:8443/oauth/rest/oauth2/authenticate";
 		//$postfields = "tenant=" . get_option('fbc_flight_domain') . '.run.cantoflight.com&user=' . get_option('fbc_flight_username'); 
 		//$postfields .= '&password='.get_option('fbc_flight_password')	;
-		$postfields = "tenant=" . $this->fbc_flight_domain . '.run.cantoflight.com&user=' . $this->fbc_flight_username ;
+		$postfields = "tenant=" . $this->fbc_flight_domain . '.run.cantoflight.com&user=' . $this->fbc_flight_username;
 		$postfields .= '&password=' . $this->fbc_flight_password;
 
 
+		if ( ! function_exists( 'curl_init' ) ) {
+			die( 'Sorry cURL is not installed!' );
+		}
 
- 		if (!function_exists('curl_init')){
-                        die('Sorry cURL is not installed!');
-                }
+		$ch = curl_init();
 
-                $ch = curl_init();
+		$options = array(
+			CURLOPT_URL            => $req,                                // get request
+			CURLOPT_REFERER        => get_bloginfo( 'url' ), // who r u
+			CURLOPT_USERAGENT      => "Canto Dev Team",                             // who am i
+			CURLOPT_HTTPHEADER     => array(),                             // provides authorization and token
+			CURLOPT_SSLVERSION     => 3,                                   // required for api handshake
+			CURLOPT_HEADER         => 1,                               // include header in output?
+			CURLOPT_RETURNTRANSFER => 1,                                   // output as string instead of file
+			CURLOPT_TIMEOUT        => 10,                                  // how long til i give up?
+			CURLOPT_POST           => true,                   // Set to true to POST instead of GET
+			CURLOPT_POSTFIELDS     => $postfields,                 // Set to true to POST instead of GET
+		);
 
-                $options = array(
-                        CURLOPT_URL                             => $req,                                // get request
-                        CURLOPT_REFERER                 => get_bloginfo('url'), // who r u
-                        CURLOPT_USERAGENT               => "Canto Dev Team",                             // who am i
-                        CURLOPT_HTTPHEADER              => array(),                             // provides authorization and token
-                        CURLOPT_SSLVERSION              => 3,                                   // required for api handshake
-                        CURLOPT_HEADER                  => 1,                               // include header in output?
-                        CURLOPT_RETURNTRANSFER          => 1,                                   // output as string instead of file
-                        CURLOPT_TIMEOUT                 => 10,                                  // how long til i give up?
-                        CURLOPT_POST                    => TRUE,                   // Set to true to POST instead of GET
-                        CURLOPT_POSTFIELDS              => $postfields,                 // Set to true to POST instead of GET
-                );
+		curl_setopt_array( $ch, $options );
+		$response = curl_exec( $ch );
 
-                curl_setopt_array($ch,$options);
-                $response = curl_exec($ch);
 
-	
-                list($httpheader) = explode("\r\n\r\n", $response, 2);
-                $matches = array();
+		list( $httpheader ) = explode( "\r\n\r\n", $response, 2 );
+		$matches = array();
 //                var_dump ("yo" . $httpheader); wp_die();
-		preg_match('/(Set-Cookie:)(.*?);.*\n/', $httpheader, $matches);
-		$cookie = preg_replace('/Set-Cookie: (.*?);.*/', '\\1',$matches[0],1);
+		preg_match( '/(Set-Cookie:)(.*?);.*\n/', $httpheader, $matches );
+		$cookie = preg_replace( '/Set-Cookie: (.*?);.*/', '\\1', $matches[0], 1 );
 
 		//Now we have the authorization cookie and we can proceed to get the authorization code
 		//curl -v --get https://oauth.run.cantoflight.com:8443/oauth/rest/oauth2/grant\?action\=grant\&response_type\=code\&app_id\=f38812b27dc24b1eabd2837e15b8f119\&app_secret\=7113cf4ce1a54e74a5fd0a3f324d05a98b7eb0d269004db5ad09ccc577ba5773\&vm.user\=glin@objectivasoftware.com\&vm.password\=dmc4canto -b JSESSIONID=6F16ED09C060AD13E0CE4F8CE930FED4
-		$options[CURLOPT_URL] = "https://oauth.run.cantoflight.com:8443/oauth/rest/oauth2/grant";
-		$options[CURLOPT_URL] .= "?action=grant&response_type=code&app_id=" . $this->fbc_app_id . "&app_secret=". $this->fbc_app_secret ;
-		$options[CURLOPT_COOKIE] = $cookie;
-		$options[CURLOPT_POST] = false;
-		unset($options[CURLOPT_POSTFIELDS]);
-                curl_setopt_array($ch,$options);
-                $response = curl_exec($ch);
+		$options[ CURLOPT_URL ] = "https://oauth.run.cantoflight.com:8443/oauth/rest/oauth2/grant";
+		$options[ CURLOPT_URL ] .= "?action=grant&response_type=code&app_id=" . $this->fbc_app_id . "&app_secret=" . $this->fbc_app_secret;
+		$options[ CURLOPT_COOKIE ] = $cookie;
+		$options[ CURLOPT_POST ]   = false;
+		unset( $options[ CURLOPT_POSTFIELDS ] );
+		curl_setopt_array( $ch, $options );
+		$response = curl_exec( $ch );
 
 
 		//Now we have the header again which contains the location (aka the code);
 
-		list($httpheader) = explode("\r\n\r\n", $response ,2);
-		preg_match('/Location:(.*?)\n/', $httpheader,$matches);
-		$code = preg_replace('/^.*code\=(.*?)&.*/', '\\1', $matches[0],1);
+		list( $httpheader ) = explode( "\r\n\r\n", $response, 2 );
+		preg_match( '/Location:(.*?)\n/', $httpheader, $matches );
+		$code = preg_replace( '/^.*code\=(.*?)&.*/', '\\1', $matches[0], 1 );
 		//we have a DAM code! make the final request to get the token
 		//curl -v -d "app_id=f38812b27dc24b1eabd2837e15b8f119&app_secret=7113cf4ce1a54e74a5fd0a3f324d05a98b7eb0d269004db5ad09ccc577ba5773&grant_type=authorization_code&code=002cd729f0144bee829377a5d6e314e1" https://oauth.run.cantoflight.com:8443/oauth/api/oauth2/token
 
-		$options[CURLOPT_URL]  = "https://oauth.run.cantoflight.com:8443/oauth/api/oauth2/token";
-		$options[CURLOPT_URL] .= "?app_id=". $this->fbc_app_id ."&app_secret=". $this->fbc_app_secret ."&grant_type=authorization_code&code=" . $code;
-		$options[CURLOPT_POST] = true;
-		$options[CURLOPT_HEADER] = 0;
-                curl_setopt_array($ch,$options);
-                $response = curl_exec($ch);
+		$options[ CURLOPT_URL ] = "https://oauth.run.cantoflight.com:8443/oauth/api/oauth2/token";
+		$options[ CURLOPT_URL ] .= "?app_id=" . $this->fbc_app_id . "&app_secret=" . $this->fbc_app_secret . "&grant_type=authorization_code&code=" . $code;
+		$options[ CURLOPT_POST ]   = true;
+		$options[ CURLOPT_HEADER ] = 0;
+		curl_setopt_array( $ch, $options );
+		$response = curl_exec( $ch );
 
 		//no more curl! the json is stored in the response var
-                curl_close($ch);
+		curl_close( $ch );
 
 		//now set the DAM Authentication tokens
 
-		$response = json_decode($response);
-		update_option('fbc_app_token', $response->accessToken);
-		update_option('fbc_app_refresh_token', $response->refreshToken);
-		update_option('fbc_app_token_expire', time() + $response->expiresIn);
-		update_option('fbc_app_refresh_token_expire', time() + (86400 * 365));
+		$response = json_decode( $response );
+		update_option( 'fbc_app_token', $response->accessToken );
+		update_option( 'fbc_app_refresh_token', $response->refreshToken );
+		update_option( 'fbc_app_token_expire', time() + $response->expiresIn );
+		update_option( 'fbc_app_refresh_token_expire', time() + ( 86400 * 365 ) );
 
 //var_dump($response);
 	}
@@ -312,99 +314,107 @@ class Flight_by_Canto {
 	/**
 	 * Refreshes the current token saved in options via the Refresh Token
 	 */
-	public function refreshToken(){
+	public function refreshToken() {
 //		check_ajax_referer('flight-by-canto-refresh-token', 'nonce');
 		//Need to check if we have the tools needed to refresh the token
 //		if ( ! get_option('fbc_app_secret') || ! get_option('fbc_flight_domain') || !get_option('fbc_app_id')){
-			
-			$req = 'https://' . $this->fbc_flight_domain . '.run.cantoflight.com:8443/oauth/api/oauth2/token';
-			$header = 'app_id=' . $this->fbc_app_id . '&app_secret=' . $this->fbc_app_secret
-					    . '&grant_type=refresh_token&refresh_token=' . $this->fbc_app_refresh_token;
-			$agent = "Canto Dev Team";
+
+		$req    = 'https://' . $this->fbc_flight_domain . '.run.cantoflight.com:8443/oauth/api/oauth2/token';
+		$header = 'app_id=' . $this->fbc_app_id . '&app_secret=' . $this->fbc_app_secret
+		          . '&grant_type=refresh_token&refresh_token=' . $this->fbc_app_refresh_token;
+		$agent  = "Canto Dev Team";
 //var_dump($req.'?'.$header); wp_die();
-			$response = $this->curl_action($req.'?'.$header,array('Authorization: Bearer '. $this->fbc_app_refresh_token),$agent,1);
-		$response = json_decode($response);
-		update_option('fbc_app_token', $response['accessToken']);
-		update_option('fbc_app_refresh_token', $response['refreshToken']);
-		update_option('fbc_app_expire_token', time() + $response['expiresIn']);
+		$response = $this->curl_action( $req . '?' . $header,
+			array( 'Authorization: Bearer ' . $this->fbc_app_refresh_token ), $agent, 1 );
+		$response = json_decode( $response );
+		update_option( 'fbc_app_token', $response['accessToken'] );
+		update_option( 'fbc_app_refresh_token', $response['refreshToken'] );
+		update_option( 'fbc_app_expire_token', time() + $response['expiresIn'] );
 //		}
 
 //		echo "Fail";
 	}
 
-	
+
 	/**
 	 * Multi-Threaded CURL function to loop through Flight API response, and request multiple items
-	 * @param  string $data		   	Full Flight API query string
-	 * @param  string $header		Flight API token authorization
-	 * @param  string $agent      	Standard browser agent for CURL requests
-	 * @param  int $echo 			True/False (1/0) for including CURL header in output
-	 * @return object              	CURL response output + associative File ID and Name
+	 *
+	 * @param  string $data Full Flight API query string
+	 * @param  string $header Flight API token authorization
+	 * @param  string $agent Standard browser agent for CURL requests
+	 * @param  int $echo True/False (1/0) for including CURL header in output
+	 *
+	 * @return object                CURL response output + associative File ID and Name
 	 */
-	public function multiRequest($data, $options = array()) {
-	 
-	  // array of curl handles
-	  $curly = array();
-	  // data to be returned
-	  $result = array();
-	 
-	  // multi handle
-	  $mh = curl_multi_init();
-	 
-	  // loop through $data and create curl handles
-	  // then add them to the multi-handle
-	  foreach ($data as $id => $d) {
-		  
-	
-		$curly[$id]['img'] 	= curl_init();
-		$curly[$id]['id']	= $d['id'];
-		$curly[$id]['name'] = $d['name'];
-	
-	
-		$url = (is_array($d) && !empty($d['preview'])) ? $d['preview'] : $d;
-		
-		//$imgUrl = 'https://obj.run.cantoflight.com/api_binary/v1/image/'.$url.'/preview';
-		
-		curl_setopt($curly[$id]['img'], CURLOPT_URL,$url);
-		curl_setopt($curly[$id]['img'], CURLOPT_HTTPHEADER, array('Authorization: Bearer '. $this->fbc_app_token) );
-		curl_setopt($curly[$id]['img'], CURLOPT_USERAGENT, 'Dev Team' );
-		curl_setopt($curly[$id]['img'], CURLOPT_HEADER,1);
-		curl_setopt($curly[$id]['img'], CURLOPT_SSLVERSION,3);
-		curl_setopt($curly[$id]['img'], CURLOPT_RETURNTRANSFER, 1);
-	 
-		// post?
-		if (is_array($d)) {
-		  if (!empty($d['post'])) {
-			curl_setopt($curly[$id]['img'], CURLOPT_POST,       1);
-			curl_setopt($curly[$id]['img'], CURLOPT_POSTFIELDS, $d['post']);
-		  }
+	public function multiRequest( $data, $options = array() ) {
+
+		// array of curl handles
+		$curly = array();
+		// data to be returned
+		$result = array();
+
+		// multi handle
+		$mh = curl_multi_init();
+
+		// loop through $data and create curl handles
+		// then add them to the multi-handle
+		foreach ( $data as $id => $d ) {
+
+
+			$curly[ $id ]['img']  = curl_init();
+			$curly[ $id ]['id']   = $d['id'];
+			$curly[ $id ]['name'] = $d['name'];
+
+
+			$url = ( is_array( $d ) && ! empty( $d['preview'] ) ) ? $d['preview'] : $d;
+
+			//$imgUrl = 'https://obj.run.cantoflight.com/api_binary/v1/image/'.$url.'/preview';
+
+			curl_setopt( $curly[ $id ]['img'], CURLOPT_URL, $url );
+			curl_setopt( $curly[ $id ]['img'], CURLOPT_HTTPHEADER,
+				array( 'Authorization: Bearer ' . $this->fbc_app_token ) );
+			curl_setopt( $curly[ $id ]['img'], CURLOPT_USERAGENT, 'Dev Team' );
+			curl_setopt( $curly[ $id ]['img'], CURLOPT_HEADER, 1 );
+			curl_setopt( $curly[ $id ]['img'], CURLOPT_SSLVERSION, 3 );
+			curl_setopt( $curly[ $id ]['img'], CURLOPT_RETURNTRANSFER, 1 );
+
+			// post?
+			if ( is_array( $d ) ) {
+				if ( ! empty( $d['post'] ) ) {
+					curl_setopt( $curly[ $id ]['img'], CURLOPT_POST, 1 );
+					curl_setopt( $curly[ $id ]['img'], CURLOPT_POSTFIELDS, $d['post'] );
+				}
+			}
+
+			// extra options?
+			if ( ! empty( $options ) ) {
+				curl_setopt_array( $curly[ $id ]['img'], $options );
+			}
+
+			curl_multi_add_handle( $mh, $curly[ $id ]['img'] );
 		}
-	 
-		// extra options?
-		if (!empty($options)) {
-		  curl_setopt_array($curly[$id]['img'], $options);
+
+		// execute the handles
+		$running = null;
+		do {
+			curl_multi_exec( $mh, $running );
+		} while ( $running > 0 );
+
+
+		// get content and remove handles
+		foreach ( $curly as $idRes ) {
+			array_push( $result, array(
+				'img'  => curl_multi_getcontent( $idRes['img'] ),
+				'id'   => $idRes['id'],
+				'name' => $idRes['name']
+			) );
+			curl_multi_remove_handle( $mh, $idRes['img'] );
 		}
-	 
-		curl_multi_add_handle($mh, $curly[$id]['img']);
-	  }
-	 
-	  // execute the handles
-	  $running = null;
-	  do {
-		curl_multi_exec($mh, $running);
-	  } while($running > 0);
-	 
-	
-	  // get content and remove handles
-	  foreach($curly as $idRes) {
-		array_push($result,array('img' => curl_multi_getcontent($idRes['img']), 'id' => $idRes['id'], 'name' => $idRes['name']));
-		curl_multi_remove_handle($mh, $idRes['img']);
-	  }
-	 
-	  // all done
-	  curl_multi_close($mh);
-	 
-	  return $result;
+
+		// all done
+		curl_multi_close( $mh );
+
+		return $result;
 	}
 
 	/**
@@ -413,8 +423,9 @@ class Flight_by_Canto {
 	 * @since   1.0.0
 	 * @return void
 	 */
-	public function enqueue_styles () {
-		wp_register_style( $this->_token . '-frontend', esc_url( $this->assets_url ) . 'css/frontend.css', array(), $this->_version );
+	public function enqueue_styles() {
+		wp_register_style( $this->_token . '-frontend', esc_url( $this->assets_url ) . 'css/frontend.css', array(),
+			$this->_version );
 		wp_enqueue_style( $this->_token . '-frontend' );
 	} // End enqueue_styles ()
 
@@ -424,8 +435,10 @@ class Flight_by_Canto {
 	 * @since   1.0.0
 	 * @return  void
 	 */
-	public function enqueue_scripts () {
-		wp_register_script( $this->_token . '-frontend', esc_url( $this->assets_url ) . 'js/frontend' . $this->script_suffix . '.js', array( 'jquery' ), $this->_version );
+	public function enqueue_scripts() {
+		wp_register_script( $this->_token . '-frontend',
+			esc_url( $this->assets_url ) . 'js/frontend' . $this->script_suffix . '.js', array( 'jquery' ),
+			$this->_version );
 		wp_enqueue_script( $this->_token . '-frontend' );
 	} // End enqueue_scripts ()
 
@@ -435,8 +448,9 @@ class Flight_by_Canto {
 	 * @since   1.0.0
 	 * @return  void
 	 */
-	public function admin_enqueue_styles ( $hook = '' ) {
-		wp_register_style( $this->_token . '-admin', esc_url( $this->assets_url ) . 'css/admin.css', array(), $this->_version );
+	public function admin_enqueue_styles( $hook = '' ) {
+		wp_register_style( $this->_token . '-admin', esc_url( $this->assets_url ) . 'css/admin.css', array(),
+			$this->_version );
 		wp_enqueue_style( $this->_token . '-admin' );
 	} // End admin_enqueue_styles ()
 
@@ -446,8 +460,10 @@ class Flight_by_Canto {
 	 * @since   1.0.0
 	 * @return  void
 	 */
-	public function admin_enqueue_scripts ( $hook = '' ) {
-		wp_register_script( $this->_token . '-admin', esc_url( $this->assets_url ) . 'js/admin' . $this->script_suffix . '.js', array( 'jquery' ), $this->_version );
+	public function admin_enqueue_scripts( $hook = '' ) {
+		wp_register_script( $this->_token . '-admin',
+			esc_url( $this->assets_url ) . 'js/admin' . $this->script_suffix . '.js', array( 'jquery' ),
+			$this->_version );
 		wp_enqueue_script( $this->_token . '-admin' );
 	} // End admin_enqueue_scripts ()
 
@@ -457,7 +473,7 @@ class Flight_by_Canto {
 	 * @since   1.0.0
 	 * @return  void
 	 */
-	public function load_localisation () {
+	public function load_localisation() {
 		load_plugin_textdomain( 'flight-by-canto', false, dirname( plugin_basename( $this->file ) ) . '/lang/' );
 	} // End load_localisation ()
 
@@ -467,13 +483,13 @@ class Flight_by_Canto {
 	 * @since   1.0.0
 	 * @return  void
 	 */
-	public function load_plugin_textdomain () {
-	    $domain = 'flight-by-canto';
+	public function load_plugin_textdomain() {
+		$domain = 'flight-by-canto';
 
-	    $locale = apply_filters( 'plugin_locale', get_locale(), $domain );
+		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
 
-	    load_textdomain( $domain, WP_LANG_DIR . '/' . $domain . '/' . $domain . '-' . $locale . '.mo' );
-	    load_plugin_textdomain( $domain, false, dirname( plugin_basename( $this->file ) ) . '/lang/' );
+		load_textdomain( $domain, WP_LANG_DIR . '/' . $domain . '/' . $domain . '-' . $locale . '.mo' );
+		load_plugin_textdomain( $domain, false, dirname( plugin_basename( $this->file ) ) . '/lang/' );
 	} // End load_plugin_textdomain ()
 
 	/**
@@ -486,10 +502,11 @@ class Flight_by_Canto {
 	 * @see Flight_by_Canto()
 	 * @return Main Flight_by_Canto instance
 	 */
-	public static function instance ( $file = '', $version = '1.0.0' ) {
+	public static function instance( $file = '', $version = '1.0.0' ) {
 		if ( is_null( self::$_instance ) ) {
 			self::$_instance = new self( $file, $version );
 		}
+
 		return self::$_instance;
 	} // End instance ()
 
@@ -498,7 +515,7 @@ class Flight_by_Canto {
 	 *
 	 * @since 1.0.0
 	 */
-	public function __clone () {
+	public function __clone() {
 		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?' ), $this->_version );
 	} // End __clone ()
 
@@ -507,7 +524,7 @@ class Flight_by_Canto {
 	 *
 	 * @since 1.0.0
 	 */
-	public function __wakeup () {
+	public function __wakeup() {
 		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?' ), $this->_version );
 	} // End __wakeup ()
 
@@ -517,7 +534,7 @@ class Flight_by_Canto {
 	 * @since   1.0.0
 	 * @return  void
 	 */
-	public function install () {
+	public function install() {
 		$this->_log_version_number();
 	} // End install ()
 
@@ -527,7 +544,7 @@ class Flight_by_Canto {
 	 * @since   1.0.0
 	 * @return  void
 	 */
-	private function _log_version_number () {
+	private function _log_version_number() {
 		update_option( $this->_token . '_version', $this->_version );
 	} // End _log_version_number ()
 
