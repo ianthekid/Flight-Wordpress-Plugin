@@ -4,6 +4,9 @@
 define( 'WP_ADMIN', false );
 define( 'WP_LOAD_IMPORTERS', false );
 require_once( dirname( dirname( dirname( dirname( dirname( dirname( __FILE__ ) ) ) ) ) ) . '/wp-admin/admin.php' );
+
+check_ajax_referer('fbc-load-more-nonce', 'nonce');
+
 //Get an instance of the DAM Flight by Canto Class
 
 $instance = Flight_by_Canto::instance();
@@ -77,6 +80,7 @@ foreach($results as $res) {
 			</a>
 		</li>
     <?php
+	//Adding in blank LI to ensure the offsets for loadMore are working
 	else : echo "<li style='display:none'></li>";
 	endif;
 //	echo '<a class="fbc_link fbc_selected" href="javascript:;" data-id="'.$i['id'].'"><div style="background-image:url('.$display.$res->name.')"></div></a>';

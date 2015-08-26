@@ -1,7 +1,7 @@
 <?php
 /**
- * @package Netword_Shared_Media
- * @version 0.10.1
+ * @package Flight_By_Canto
+ * @version 1.0.0
  */
 define( 'WP_ADMIN', false );
 define( 'WP_LOAD_IMPORTERS', false );
@@ -22,27 +22,23 @@ if ( isset( $send_id ) ) {
 
 	global $post;
 
-	$attachment = $_POST['fbc_id']; //wp_unslash( $_POST['attachments'][$send_id] );
+	$attachment = $_POST['fbc_id'];
 	$id         = $send_id;
 
-//Go get the media item from Flight
-//INIT PULL
+	//Go get the media item from Flight
+	//INIT PULL
 	$flight['api_url']  = 'https://' . get_option( 'fbc_flight_domain' ) . '.run.cantoflight.com/api/v1/';
-	$flight['api_url2'] = 'https://' . get_option( 'fbc_flight_domain' ) . '.run.cantoflight.com/api_binary/v1/';
-	$flight['req']      = $flight['api_url'] . 'image/' . $_POST['fbc_id'];// .'/download';
+	$flight['req']      = $flight['api_url'] . 'image/' . $_POST['fbc_id'];
 
 
 	$instance = Flight_by_Canto::instance();
 	$response = $instance->curl_action( $flight['req'], 0 );
 	$response = ( json_decode( $response ) );
 
-//Get the download url
+	//Get the download url
 	$detail = $response->url->download;
 	$detail = $instance->curl_action( $detail, 1 );
 
-//echo(json_encode($response));
-//echo($detail);
-//exit();
 
 	list( $httpheader ) = explode( "\r\n\r\n", $detail, 2 );
 	$matches = array();
@@ -55,10 +51,6 @@ if ( isset( $send_id ) ) {
 		'tmp_name' => $tmp
 	);
 
-//var_dump($file_array);
-//exit();
-
-
 	// Check for download errors
 	if ( is_wp_error( $tmp ) ) {
 		@unlink( $file_array['tmp_name'] );
@@ -66,49 +58,64 @@ if ( isset( $send_id ) ) {
 		return $tmp;
 	}
 
-	$id = media_handle_sideload( $file_array, 0 );
+	$post_data = array(
+			'post_content' => $_POST['description'],
+			'post_excerpt' => $_POST['caption'],
+	);
+
+
+	if (! empty($_POST['title'])) {
+		$post_data['post_title'] = $_POST['title'];
+	} else {
+		$post_data['post_title'] = basename($file_array['name']);
+	}
+
+	$id = media_handle_sideload( $file_array, $send_id, '', $post_data);
 	// Check for handle sideload errors.
 	if ( is_wp_error( $id ) ) {
 		@unlink( $file_array['tmp_name'] );
 
 		return $id;
 	}
+	//Save away the default alt text
+//	add_post_meta ($id, '_wp_attachment_image_alt' , $_POST['alt']);
+
 
 	$attachment_url = wp_get_attachment_url( $id );
 	// Do whatever you have to here
 
-	$caption = $title = $align = $rel = $size = $alt = '';
-	$rel     = false;
-	$html    = get_image_send_to_editor( $id, $caption, $title, $align, $attachment_url, (bool) $rel, $size, $alt );
+	//$caption = $title = $align = $rel = $size = $alt = '';
+	//$rel     = false;
+	//$html    = get_image_send_to_editor( $id, $caption, $title, $align, $attachment_url, (bool) $rel, $size, $alt );
 
 
-	/*
+
 		$rel = $url = '';
-		$html = $title = isset( $attachment['post_title'] ) ? $attachment['post_title'] : '';
-		if ( ! empty( $attachment['url'] ) ) {
-			$url = $attachment['url'];
+		$html = $title = isset( $_POST['title'] ) ? $_POST['title'] : '';
+
+		//Create the link to section here.
+		/*if ( ! empty( $_POST['link'] ) ) {
+			$url = $attachment_url;
 			if ( strpos( $url, 'attachment_id') || get_attachment_link( $id ) == $url )
 				$rel = ' rel="attachment wp-att-' . $id . '"';
 			$html = '<a href="' . esc_url( $url ) . '"' . $rel . '>' . $html . '</a>';
-		}
+		}*/
 
-		if ( 'image' === substr( $post->post_mime_type, 0, 5 ) ) {
-			$align = isset( $attachment['align'] ) ? $attachment['align'] : 'none';
-			$size = isset( $attachment['image-size'] ) ? $attachment['image-size'] : 'medium';
-			$alt = isset( $attachment['image_alt'] ) ? $attachment['image_alt'] : '';
-			$caption = isset( $attachment['post_excerpt'] ) ? $attachment['post_excerpt'] : '';
+			$align = isset( $_POST['align'] ) ? $_POST['align'] : 'none';
+			$size = isset( $_POST['size'] ) ? $_POST['size'] : 'medium';
+			$alt = isset( $_POST['alt'] ) ? $_POST['alt'] : '';
+			$caption = isset( $_POST['caption'] ) ? $_POST['caption'] : '';
 			$title = ''; // We no longer insert title tags into <img> tags, as they are redundant.
 			$html = get_image_send_to_editor( $id, $caption, $title, $align, $url, (bool) $rel, $size, $alt );
-		} elseif ( 'video' === substr( $post->post_mime_type, 0, 5 ) || 'audio' === substr( $post->post_mime_type, 0, 5 ) ) {
-			global $wp_embed;
-			$meta = get_post_meta( $id, '_wp_attachment_metadata', true );
-			$html = $wp_embed->shortcode( $meta, $url );
-		}
-	*/
+
+
 	$attachment                 = array();
 	$attachment['url']          = $attachment_url;
-	$attachment['post_title']   = '';
-	$attachment['post_excerpt'] = '';
+	$attachment['post_title']   = $_POST['title'];
+	$attachment['post_excerpt'] = $_POST['caption'];
+	$attachment['image-size'] = $_POST['size'];
+	$attachment['image_alt'] = $_POST['alt'];
+	$attachment['align'] = $_POST['align'];
 	/** This filter is documented in wp-admin/includes/media.php */
 	$html = apply_filters( 'media_send_to_editor', $html, $id, $attachment );
 

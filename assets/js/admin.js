@@ -14,12 +14,12 @@ jQuery( document ).ready( function ( e ) {
 	});	
 	jQuery("#library-form").appendTo("#fbc_media-sidebar");
 */
-	
+	/*
 	jQuery('#fbc_loadMore').click(function(e){
 		jQuery.ajax({
 			url: '/wp-content/plugins/Flight_by_Canto/includes/lib/loadMore.php',
 			type: 'GET',
-			data: {"limit": 12, "start": jQuery('#__attachments-view-fbc li').length + 1},
+			data: {"limit": 12, "start": jQuery('#__attachments-view-fbc li').length},
             success: function(response){
                 jQuery('#__attachments-view-fbc').append(response);
             },
@@ -29,5 +29,5 @@ jQuery( document ).ready( function ( e ) {
 			}
 		});
 	});
-
+*/
 });

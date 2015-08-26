@@ -25,6 +25,7 @@ function flight_by_canto_media_init() {
 		add_filter( 'media_upload_tabs', 'flight_by_canto_media_menu' );
 		add_action( 'media_upload_flight_by_canto', 'flight_by_canto_media_upload_flight_by_canto' );
 		add_action( 'media_upload_flight_by_canto', 'get_meta_data' );
+		add_action( 'media_upload_flight_by_canto', 'load_more' );
 
 	}
 }
@@ -167,6 +168,7 @@ class flight_by_canto_media {
 							</a>
 						</li>
 					<?php
+					//Adding blank LI as fix for LoadMore offset
 					else: echo "<li style='display:none'></li>";
 					endif;
 
@@ -484,25 +486,29 @@ class flight_by_canto_media {
 
 					<label class="setting">
 						<span>Size</span>
+						<?php
+
+						/** This filter is documented in wp-admin/includes/media.php */
+						$sizes = apply_filters( 'image_size_names_choose', array(
+							'thumbnail' => __( 'Thumbnail' ),
+							'medium'    => __( 'Medium' ),
+							'large'     => __( 'Large' ),
+							'full'      => __( 'Full Size' ),
+						) );
+						$thesizes = get_image_sizes();
+
+						 foreach($thesizes as $key => $value){
+							$thesizes[$key]['name'] = $sizes[$key];
+						} ?> <?php //print_r($thesizes); ?>
+
 						<select data-user-setting="imgsize" data-setting="size" name="size" class="size">
 							<?php
-							/** This filter is documented in wp-admin/includes/media.php */
-							$sizes = apply_filters( 'image_size_names_choose', array(
-								'thumbnail' => __( 'Thumbnail' ),
-								'medium'    => __( 'Medium' ),
-								'large'     => __( 'Large' ),
-								'full'      => __( 'Full Size' ),
-							) );
 
+							foreach ($thesizes as $value => $name) : ?>
 
-							foreach ($sizes as $value => $name) : ?>
-							<#
-								var size = data.sizes['<?php echo esc_js( $value ); ?>'];
-								if ( size ) { #>
 								<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $value, 'full' ); ?>>
-									<?php echo esc_html( $name ); ?> &ndash; {{ size.width }} &times; {{ size.height }}
+									<?php echo esc_html( $name['name'] ); ?> &ndash; <?php echo $name['height'];?> &times; <?php echo $name['width']; ?>
 								</option>
-								<# } #>
 									<?php endforeach; ?>
 
 									//Get available thumbnail sizes
@@ -584,6 +590,27 @@ function fbc_insert_custom_image_sizes( $sizes ) {
 //Add custom image sized to thumbnail selection if the user hasnt already.
 if ( ! has_filter( 'image_size_names_choose' ) ) {
 	add_filter( 'image_size_names_choose', 'fbc_insert_custom_image_sizes' );
+}
+
+function load_more(){
+?>
+<script type="text/javascript">
+	jQuery('#fbc_loadMore').click(function(e){
+		<?php $morenonce = wp_create_nonce('fbc-load-more-nonce'); ?>
+		jQuery.ajax({
+			url: '/wp-content/plugins/Flight_by_Canto/includes/lib/loadMore.php',
+			type: 'GET',
+			data: {"limit": 12, "start": jQuery('#__attachments-view-fbc li').length,"nonce": "<?php echo $morenonce ?>"},
+            success: function(response){
+				jQuery('#__attachments-view-fbc').append(response);
+			},
+			error: function(xhr, desc, err) {
+				console.log(xhr);
+				console.log("Details: " + desc + "\nError:" + err);
+			}
+		});
+	});
+	</script><?php
 }
 
 function get_meta_data() {

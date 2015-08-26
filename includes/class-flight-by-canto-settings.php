@@ -325,7 +325,7 @@ class Flight_by_Canto_Settings {
 
 					response = jQuery.parseJSON(response);
 					if (typeof response.error === "undefined") {
-						alert("All good in the hood");
+						alert("Authorization successful. You're all set.");
 						location.reload();
 					} else {
 						(response.error == "Invalid Login Credentials") ? alert("<?php echo __('Invalid login credentials: Please edit then Save the credentials before trying again','flight-by-canto'); ?>") : '';
