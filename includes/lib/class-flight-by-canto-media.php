@@ -34,26 +34,6 @@ add_action( 'init', 'flight_by_canto_media_init' );
 class flight_by_canto_media {
 	var $media_items = '';
 
-	function get_media_items( $post_id, $errors ) {
-		global $blog_id;
-		$output = get_media_items( $post_id, $errors );
-
-		// remove edit button pre WP3.5
-		$output = preg_replace( "%<p><input type='button' id='imgedit-open-btn.+?class='imgedit-wait-spin'[^>]+></p>%s",
-			'', $output );
-
-		//  remove edit button WP3.5+
-		$output = preg_replace( "%<p><input type='button' id='imgedit-open-btn.+?<span class='spinner'></span></p>%s",
-			'', $output );
-
-		// remove delete link
-		$output = preg_replace( "%<a href='#' class='del-link' onclick=.+?</a>%s", '', $output );
-		$output = preg_replace( "%<div id='del_attachment_.+?</div>%s", '', $output );
-
-		return $output;
-	}
-
-
 	/**
 	 * @param unknown_type $errors
 	 */
@@ -67,8 +47,8 @@ class flight_by_canto_media {
 
 
 		if ( get_option( 'fbc_flight_domain' ) == '' || get_option( 'fbc_app_id' ) == '' || get_option( 'fbc_app_secret' ) == '' ) :
-			echo '<form><h3 class="media-title">' . __( "<span style='font-size:14px;font-family:Helvetica,Arial'><strong>Oops!</strong> You haven't connected your Flight account yet. <a href=\"javascript:;\" onclick=\"window.top.location.href='" . get_bloginfo( 'url' ) . "/wp-admin/options-general.php?page=flight_by_canto_settings'\">Plugin Settings</a></span>",
-					'flight-by-canto' ) . '</h3></form>';
+			echo '<form><h3 class="media-title"><span style="font-size:14px;font-family:Helvetica,Arial">' . __( "<strong>Oops!</strong> You haven't connected your Flight account yet. <a href=\"javascript:;\" onclick=\"window.top.location.href='" . get_bloginfo( 'url' ) . "/wp-admin/options-general.php?page=flight_by_canto_settings'\">Plugin Settings</a>",
+					'flight-by-canto' ) . '</span></h3></form>';
 
 			return false;
 
@@ -105,14 +85,6 @@ class flight_by_canto_media {
 
 			<div style="clear:both"></div>
 
-
-
-			<?php
-
-
-			?>
-
-
 			<img src="/ajax-loader.gif" id="loader">
 
 			<ul tabindex="-1" class="attachments" id="__attachments-view-fbc">
@@ -128,8 +100,7 @@ class flight_by_canto_media {
 
 
 				$response = Flight_by_Canto()->curl_action( $flight['req'], 0 );
-				//var_dump($response);
-				//echo $response;
+
 				$response = json_decode( $response );
 				$results  = $response->results;
 
@@ -140,25 +111,17 @@ class flight_by_canto_media {
 
 				$allowed_exts = array( 'jpg', 'jpeg', 'gif', 'png' );
 				$images       = array();
-				$cnt          = 0;
-				/*foreach ($results as $res){
-				//				$res->details 	=
-				echo "<pre>";
-				//print_r($res->url);
-				 print_r( json_decode(Flight_by_Canto()->curl_action($flight['api_url'].'image/'.$res->id, $flight['header'], $flight['agent'],0)));
-				echo "</pre>";
-				}*/
 
 				foreach ( $results as $res ) {
-
+					$namearray = explode( ".", $res->name );
 					$img = array(
 						'id'      => $res->id,
 						'name'    => $res->name,
 						'preview' => $res->url->preview,
-						'ext'     => strtolower( end( ( explode( ".", $res->name ) ) ) )
+						'ext'     => strtolower( end( $namearray ) )
 					);
 
-					$ext = strtolower( end( ( explode( ".", $res->name ) ) ) );
+					$ext = strtolower( end( $namearray ) );
 
 					if ( in_array( $ext, $allowed_exts ) && ! file_exists( $dir . $res->id . '.' . $ext ) ) {
 						array_push( $images, $img );
@@ -171,24 +134,20 @@ class flight_by_canto_media {
 
 				foreach ( $r as $i ) {
 
-					//if( !file_exists($dir.'cache/'.$i['name']) ) :
-
 					list( $httpheader ) = explode( "\r\n\r\n", $i['img'], 2 );
 					$matches = array();
 					preg_match( '/(Location:|URI:)(.*?)\n/', $httpheader, $matches );
 					$location = trim( str_replace( "Location: ", "", $matches[0] ) );
-
-					$ext = strtolower( end( ( explode( ".", $i['name'] ) ) ) );
+					$namearray = explode( ".", $i['name'] );
+					$ext = strtolower( end( $namearray ) );
 					copy( $location, $dir . $i['id'] . '.' . $ext );
-
-//	endif;
 
 				}
 
 				/* Print the results to the screen */
 				foreach ( $results as $res ) {
-//print_r($res);
-					$ext = strtolower( end( ( explode( ".", $res->name ) ) ) );
+					$namearray = explode( ".", $res->name );
+					$ext = strtolower( end( $namearray ) );
 					if ( in_array( $ext, $allowed_exts ) ) :
 
 						?>
@@ -208,22 +167,18 @@ class flight_by_canto_media {
 							</a>
 						</li>
 					<?php
-
+					else: echo "<li style='display:none'></li>";
 					endif;
-//	echo '<a class="fbc_link fbc_selected" href="javascript:;" data-id="'.$i['id'].'"><div style="background-image:url('.$display.$res->name.')"></div></a>';
 
 				}
 
 				?>
 			</ul>
 
-			<?php
-			/*
+
 			<div style="clear:both; margin: 20px auto; text-align:center;">
 				<button class="btn" id="fbc_loadMore">Load More</button>
 			</div>
-			*/
-			?>
 
 			<script>
 				document.getElementById("loader").style.display = 'none';
@@ -234,27 +189,14 @@ class flight_by_canto_media {
 		<?php
 
 
-
-
-
-
-
 		endif;
 
 //Stop checking to see if user has valid flight credentials 
 
-
 		// set the first part of the form action url now, to the current active site, to prevent X-Frame-Options problems
 		$form_action_url = plugins_url( 'copy-media.php', __FILE__ );
 
-
-		?>
-
-		<?php
 		$post_id = intval( $_REQUEST['post_id'] );
-
-		// fix to make get_media_item add "Insert" button
-		unset( $_GET['post_id'] );
 
 		$form_action_url .= "?type=$type&tab=library&post_id=$post_id";
 		$form_action_url = apply_filters( 'media_upload_form_url', $form_action_url, $type );
@@ -425,7 +367,7 @@ class flight_by_canto_media {
 				?>
 				<script type="text/javascript">
 					/* <![CDATA[ */
-					function nsm_media_send_to_editor(htmlString) {
+					function fbc_media_send_to_editor(htmlString) {
 						<?php /* copied from /wp-admin/includes/media.php media_send_to_editor() */ ?>
 						var win = window.dialogArguments || opener || parent || top;
 						win.send_to_editor(htmlString);
@@ -440,8 +382,7 @@ class flight_by_canto_media {
 								url: form.attr('action'),
 								type: form.attr('method'),
 								data: form.serialize() + '&' + encodeURIComponent($this.attr('id')) + '=true&chromeless=1',
-								//success: function(data){alert(data);}//nsm_media_send_to_editor
-								success: nsm_media_send_to_editor
+								success: fbc_media_send_to_editor
 							});
 						});
 					});
@@ -465,8 +406,6 @@ class flight_by_canto_media {
 
 
 			<div id="media-items">
-				<?php //add_filter('attachment_fields_to_edit', 'media_post_single_attachment_fields_to_edit', 10, 2); ?>
-				<?php //add_filter('attachment_fields_to_edit', 'media_single_attachment_fields_to_edit', 10, 2); ?>
 				<input id="fbc_id" name="fbc_id" type="hidden" value=""/>
 
 
@@ -483,7 +422,7 @@ class flight_by_canto_media {
 						<div class="thumbnail thumbnail-image">
 
 							<img draggable="false"
-							     src="http://wp.flightbycanto.com/wp-content/uploads/2015/06/flight-by-canto-300x142.jpg">
+							     src="">
 
 						</div>
 						<div class="details">
@@ -565,10 +504,6 @@ class flight_by_canto_media {
 								</option>
 								<# } #>
 									<?php endforeach; ?>
-
-
-
-
 
 									//Get available thumbnail sizes
 						</select>
@@ -659,7 +594,8 @@ function get_meta_data() {
 
 		jQuery('.fbc_attachment').click(function (e) {
 			e.preventDefault();
-
+			jQuery('.selected').removeClass('selected');
+			jQuery(this).addClass('selected');
 			var data = {
 				'action': 'fbc_getMetadata',
 				'fbc_id': jQuery(this).data('id'),
@@ -669,9 +605,8 @@ function get_meta_data() {
 			//jQuery('#thumbnail-head-8').find('img').attr('src',jQuery(this).find('img').attr('src'));
 			var src = jQuery(this).find('img').attr('src'); //;alert(src);
 			jQuery.post(ajaxurl, data, function (response) {
-//build out the form
-//"name":"\u963f\u62c9.jpg","dimensions":"460*367 Pixels","mime":"image\/jpeg","size":"59983"
-				// alert('Got this from the server: ' + response);
+
+				//build out the form
 				response = jQuery.parseJSON(response);
 				jQuery('#library-form').find('img').attr('src', src);
 				jQuery('#library-form #fbc_id').val(response.id);
@@ -686,11 +621,7 @@ function get_meta_data() {
 
 			});
 
-			/*var name = jQuery(this).data('name');
 
-			 jQuery('#library-form .post_title').find('input').val( name );
-			 jQuery('.selected').removeClass('selected');
-			 jQuery(this).addClass('selected'); */
 		});
 
 	</script> <?php

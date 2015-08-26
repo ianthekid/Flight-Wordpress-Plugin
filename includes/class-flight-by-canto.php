@@ -52,7 +52,7 @@ class Flight_by_Canto {
 	 * The flight domain
 	 * @var     string
 	 */
-	private $fbc_flight_domain;
+	public $fbc_flight_domain;
 
 	/**
 	 * The authorization refresh token
@@ -236,8 +236,6 @@ class Flight_by_Canto {
 		//authenticate to OATUH -- Need to save the Session Cookie from Set Cookie
 
 		$req = "https://oauth.run.cantoflight.com:8443/oauth/rest/oauth2/authenticate";
-		//$postfields = "tenant=" . get_option('fbc_flight_domain') . '.run.cantoflight.com&user=' . get_option('fbc_flight_username'); 
-		//$postfields .= '&password='.get_option('fbc_flight_password')	;
 		$postfields = "tenant=" . $this->fbc_flight_domain . '.run.cantoflight.com&user=' . $this->fbc_flight_username;
 		$postfields .= '&password=' . $this->fbc_flight_password;
 
@@ -265,22 +263,33 @@ class Flight_by_Canto {
 		$response = curl_exec( $ch );
 
 
-		list( $httpheader ) = explode( "\r\n\r\n", $response, 2 );
-		$matches = array();
-//                var_dump ("yo" . $httpheader); wp_die();
+		list( $httpheader ) = explode( "\r\n\r\n", $response);
+
+		//Check to see if the user supplied proper credentials, return error
+		$invalid_credentials = $matches = array();
+		preg_match('/(.*?)401/',$httpheader, $invalid_credentials);
+			if (count($invalid_credentials) > 0) { echo json_encode( array( 'error' => "Invalid Login Credentials")); wp_die(); }
+
+		//The DAM Credentials are working
 		preg_match( '/(Set-Cookie:)(.*?);.*\n/', $httpheader, $matches );
 		$cookie = preg_replace( '/Set-Cookie: (.*?);.*/', '\\1', $matches[0], 1 );
 
 		//Now we have the authorization cookie and we can proceed to get the authorization code
-		//curl -v --get https://oauth.run.cantoflight.com:8443/oauth/rest/oauth2/grant\?action\=grant\&response_type\=code\&app_id\=f38812b27dc24b1eabd2837e15b8f119\&app_secret\=7113cf4ce1a54e74a5fd0a3f324d05a98b7eb0d269004db5ad09ccc577ba5773\&vm.user\=glin@objectivasoftware.com\&vm.password\=dmc4canto -b JSESSIONID=6F16ED09C060AD13E0CE4F8CE930FED4
+
+
 		$options[ CURLOPT_URL ] = "https://oauth.run.cantoflight.com:8443/oauth/rest/oauth2/grant";
-		$options[ CURLOPT_URL ] .= "?action=grant&response_type=code&app_id=" . $this->fbc_app_id . "&app_secret=" . $this->fbc_app_secret;
+		$options[ CURLOPT_URL ] .= "?action=grant&response_type=code&app_id=" . $this->fbc_app_id ;//. "&app_secret=" . $this->fbc_app_secret;
 		$options[ CURLOPT_COOKIE ] = $cookie;
 		$options[ CURLOPT_POST ]   = false;
 		unset( $options[ CURLOPT_POSTFIELDS ] );
 		curl_setopt_array( $ch, $options );
 		$response = curl_exec( $ch );
 
+		//Check to see if the proper code/cookie are in place.
+
+		$invalid_credentials = $matches = array();
+		preg_match('/(.*?)400/',$httpheader, $invalid_credentials);
+			if (count($invalid_credentials) > 0) { echo json_encode( array( 'error' => "Invalid AppID")); wp_die(); }
 
 		//Now we have the header again which contains the location (aka the code);
 
@@ -288,7 +297,7 @@ class Flight_by_Canto {
 		preg_match( '/Location:(.*?)\n/', $httpheader, $matches );
 		$code = preg_replace( '/^.*code\=(.*?)&.*/', '\\1', $matches[0], 1 );
 		//we have a DAM code! make the final request to get the token
-		//curl -v -d "app_id=f38812b27dc24b1eabd2837e15b8f119&app_secret=7113cf4ce1a54e74a5fd0a3f324d05a98b7eb0d269004db5ad09ccc577ba5773&grant_type=authorization_code&code=002cd729f0144bee829377a5d6e314e1" https://oauth.run.cantoflight.com:8443/oauth/api/oauth2/token
+
 
 		$options[ CURLOPT_URL ] = "https://oauth.run.cantoflight.com:8443/oauth/api/oauth2/token";
 		$options[ CURLOPT_URL ] .= "?app_id=" . $this->fbc_app_id . "&app_secret=" . $this->fbc_app_secret . "&grant_type=authorization_code&code=" . $code;

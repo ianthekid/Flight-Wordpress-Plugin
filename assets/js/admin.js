@@ -19,7 +19,10 @@ jQuery( document ).ready( function ( e ) {
 		jQuery.ajax({
 			url: '/wp-content/plugins/Flight_by_Canto/includes/lib/loadMore.php',
 			type: 'GET',
-			data: {"limit": 40, "start": 40},
+			data: {"limit": 12, "start": jQuery('#__attachments-view-fbc li').length + 1},
+            success: function(response){
+                jQuery('#__attachments-view-fbc').append(response);
+            },
 			error: function(xhr, desc, err) {
 				console.log(xhr);
 				console.log("Details: " + desc + "\nError:" + err);

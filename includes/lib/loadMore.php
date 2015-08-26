@@ -1,77 +1,83 @@
 <?php
-$flight['url']		= 'obj';
-$flight['appId']	= 'e76d47111648438eaeda463d2993656d';
-$flight['secret']	= 'bf164b54722a42bea721acb1274376c1f2dc43b22e5f4ac3a446bc43f2a5c24e';
 
-$flight['token']	= 'c8cd35ea50f24f6bbce5db1e89cfe95f';
-$flight['header']	= array('Authorization: Bearer '.$flight['token']);
-$flight['agent']	= 'Canto Dev Team';
+
+define( 'WP_ADMIN', false );
+define( 'WP_LOAD_IMPORTERS', false );
+require_once( dirname( dirname( dirname( dirname( dirname( dirname( __FILE__ ) ) ) ) ) ) . '/wp-admin/admin.php' );
+//Get an instance of the DAM Flight by Canto Class
+
+$instance = Flight_by_Canto::instance();
+
 
 //INIT PULL
-$flight['req'] 		= 'https://'.$flight['url'].'.run.cantoflight.com/api/v1/image?sortBy=name&sortDirection=descending&limit='.$_GET['limit'].'&start='.$_GET['start'];
+$flight['req'] 		= 'https://'.$instance->fbc_flight_domain.'.run.cantoflight.com/api/v1/image?sortBy=name&sortDirection=descending&limit='.$_GET['limit'].'&start='.$_GET['start'];
 
 
-$response = json_decode(curl_action($flight['req'],$flight['header'],$flight['agent'],0));
+$response = json_decode($instance->curl_action($flight['req'],0));
 $results = $response->results;
 
 
-//$dir = plugin_dir_path( __FILE__ ).'assets/';
+$dir = plugin_dir_path( __FILE__ ). '../../assets/cache/';
 
-$dir = ABSPATH . 'wp-content/plugins/Flight_by_Canto/assets/cache/';
+//$dir = ABSPATH . 'wp-content/plugins/Flight_by_Canto/assets/cache/';
 $display = get_bloginfo('url') . '/wp-content/plugins/Flight_by_Canto/assets/cache/';
 
 $allowed_exts = array('jpg','jpeg','gif','png');
 $images = array();
-$cnt=0;
-foreach($results as $res) {
 
+foreach($results as $res) {
+	$namearray = explode(".",$res->name);
 	$img = array('id'		=> $res->id,
 				'name'		=> $res->name,
-				'preview'	=> $res->url->preview);
+				'preview'	=> $res->url->preview,
+				'ext'     => strtolower( end( $namearray ) )
+	);
+	$ext = strtolower(end($namearray));
 
-	$ext = strtolower(end(explode(".",$res->name)));
-
-	if( in_array($ext,$allowed_exts) && !file_exists($dir.$res->name) )
+	if( in_array($ext,$allowed_exts) && !file_exists($dir.$res->id . '.' . $ext) )
 		array_push($images,$img);	
 
 }
 
-$r = multiRequest($images);
+$r = $instance->multiRequest($images);
 
 foreach($r as $i) {
-	
-	//if( !file_exists($dir.'cache/'.$i['name']) ) :
 
-		list($httpheader) = explode("\r\n\r\n", $i['img'], 2);
-		$matches = array();
-		preg_match('/(Location:|URI:)(.*?)\n/', $httpheader, $matches);
-		$location = trim(str_replace("Location: ","",$matches[0]));
-		
-		copy($location,$dir.$i['name']);
-		
-//	endif;
+	list($httpheader) = explode("\r\n\r\n", $i['img'], 2);
+	$matches = array();
+	preg_match('/(Location:|URI:)(.*?)\n/', $httpheader, $matches);
+	$location = trim(str_replace("Location: ","",$matches[0]));
+
+	$namearray = explode( ".", $i['name'] );
+	$ext = strtolower( end( $namearray ) );
+	copy( $location, $dir . $i['id'] . '.' . $ext );
 
 }
 
 
 foreach($results as $res) {
-	
-	$ext = strtolower(end(explode(".",$res->name)));
+	$namearray = explode(".",$res->name);
+	$ext = strtolower(end($namearray));
 	if( in_array($ext,$allowed_exts) ) :
 
 	?>
-	<li tabindex="0" role="checkbox" data-id="<?php echo $res->id; ?>" data-name="<?php echo str_replace('.'.$ext,"",$res->name); ?>" class="fbc_attachment attachment save-ready details">
-		<div class="attachment-preview js--select-attachment type-image subtype-jpeg landscape">
-			<div class="thumbnail">
-                <div class="centered">
-                    <img src="<?php echo $display.$res->name; ?>" draggable="false" alt="">
-                </div>
+		<li tabindex="0" role="checkbox" data-id="<?php echo $res->id; ?>"
+		    data-name="<?php echo str_replace( '.' . $ext, "", $res->name ); ?>"
+		    class="fbc_attachment attachment save-ready details">
+			<div class="attachment-preview js--select-attachment type-image subtype-jpeg landscape">
+				<div class="thumbnail">
+					<div class="centered">
+						<img src="<?php echo $display . $res->id . '.' . $ext; ?>" draggable="false"
+						     alt="">
+					</div>
+				</div>
 			</div>
-		</div>
-        <a class="check" href="#" title="Deselect" tabindex="0"><div class="media-modal-icon"></div></a>
-	</li>
+			<a class="check" href="#" title="Deselect" tabindex="0">
+				<div class="media-modal-icon"></div>
+			</a>
+		</li>
     <?php
-	
+	else : echo "<li style='display:none'></li>";
 	endif;
 //	echo '<a class="fbc_link fbc_selected" href="javascript:;" data-id="'.$i['id'].'"><div style="background-image:url('.$display.$res->name.')"></div></a>';
 

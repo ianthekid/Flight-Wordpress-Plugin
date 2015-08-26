@@ -208,7 +208,7 @@ class Flight_by_Canto_Settings {
 					register_setting( $this->parent->_token . '_settings', $option_name, $validation );
 
 					// Add field to page
-					add_settings_field( $field['id'], $field['label'], array( $this->parent->admin, 'display_field' ),
+					@add_settings_field( $field['id'], $field['label'], array( $this->parent->admin, 'display_field' ),
 						$this->parent->_token . '_settings', $section,
 						array( 'field' => $field, 'prefix' => $this->base ) );
 				}
@@ -306,18 +306,12 @@ class Flight_by_Canto_Settings {
 
 		echo $html;
 
-		//Generate OAuth Token
+		//Generate OAuth Token -- Unused until API {Redirect URI} is fixed
 		if ( ( get_option( 'fbc_flight_domain' ) != '' && get_option( 'fbc_app_id' ) != '' && get_option( 'fbc_app_secret' ) != '' ) ) {
 			//	echo $this->oauth_token();
 		}
 
-		/*
-		 * Buttons and checkboxes to ensure that the token is valid. If not, request new token.
-		 */
 		?>
-		<?php /*		<input class="button-primary" value="Refresh Token" id="refreshToken" name="RefreshToken">
-		<input class="button-primary" value="Grant access, get Token" id="getToken" name="getToken"> */ ?>
-
 
 
 		<script type="text/javascript">
@@ -328,12 +322,21 @@ class Flight_by_Canto_Settings {
 				};
 
 				jQuery.post(ajaxurl, data, function (response) {
-					//      	        	        alert('Got this from the server: ' + response);
-					location.reload();
+
+					response = jQuery.parseJSON(response);
+					if (typeof response.error === "undefined") {
+						alert("All good in the hood");
+						location.reload();
+					} else {
+						(response.error == "Invalid Login Credentials") ? alert("<?php echo __('Invalid login credentials: Please edit then Save the credentials before trying again','flight-by-canto'); ?>") : '';
+						(response.error == "Invalid AppID") ? alert("<?php echo __('Invalid AppID: Please edit then Save the credentials before trying again','flight-by-canto'); ?>") : '';
+						jQuery('#getToken').hide();
+					}
 				});
 
 			});
-			jQuery('#refreshToken').click(function (e) {
+			<?php /* Add in refresh method
+                jQuery('#refreshToken').click(function (e) {
 				e.preventDefault();
 				var data = {
 					'action': 'fbc_refreshToken',
@@ -343,7 +346,7 @@ class Flight_by_Canto_Settings {
 //        	        	        alert('Got this from the server: ' + response);
 				});
 
-			});
+			}); */ ?>
 		</script>
 	<?php
 
