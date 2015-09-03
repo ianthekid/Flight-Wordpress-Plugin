@@ -1,18 +1,17 @@
 === Flight by Canto ===
-Contributors: hlashbrooke
-Donate link: http://www.hughlashbrooke.com/donate
-Tags: wordpress, plugin, template
+Contributors: Canto Inc.
+Tags: wordpress, plugin, Flight by Canto
 Requires at least: 3.9
-Tested up to: 4.0
+Tested up to: 4.3
 Stable tag: 1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-This is where you craft a short, punchy description of your plugin
+Pull in photos, images and graphics from your Flight instance.
 
 == Description ==
 
-This is where you can give a much longer description of your plugin that you can use to explain just how it awesome it really is.
+Pull in photos, images and graphics from your Flight account. Currently, this plugin will connect to your Flight instance using a Pilot account. Once authorized, you can retrieve photo, image, and graphic file formats sorted by most recent first (reverse chronological order). Any file selected and inserted into post will be saved locally to your Wordpress Media library.
 
 == Installation ==
 
@@ -24,24 +23,24 @@ Installing "Flight by Canto" can be done either by searching for "Flight by Cant
 
 == Screenshots ==
 
-1. Description of first screenshot named screenshot-1
-2. Description of second screenshot named screenshot-2
-3. Description of third screenshot named screenshot-3
+1. Flight Add Media seemless integration
+2. Flight Insert into Post with customized image sizes
+3. Flight Plugin settings to integrate with your account
 
 == Frequently Asked Questions ==
 
-= What is the plugin template for? =
+= Can I use this plugin without a Flight account? =
 
-This plugin template is designed to help you get started with any new WordPress plugin.
+Unfortunately not. However, you are welcome to sign up today for free! https://www.canto.com/flight/
 
 == Changelog ==
 
 = 1.0 =
-* 2012-12-13
+* 2015-08-01
 * Initial release
 
 == Upgrade Notice ==
 
 = 1.0 =
-* 2012-12-13
+* 2015-08-01
 * Initial release

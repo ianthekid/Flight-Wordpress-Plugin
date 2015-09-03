@@ -44,7 +44,6 @@ class flight_by_canto_media {
 		media_upload_header();
 
 		wp_enqueue_script( 'fbc_media_js', plugins_url() . '/Flight_by_Canto/assets/js/admin.js' );
-//		echo "<script type='text/javascript' src='" . ABSPATH . plugins_dir() . "/Flight_By_Canto/assets/js/admin.js'></script>";
 
 
 		if ( get_option( 'fbc_flight_domain' ) == '' || get_option( 'fbc_app_id' ) == '' || get_option( 'fbc_app_secret' ) == '' ) :
@@ -104,6 +103,16 @@ class flight_by_canto_media {
 
 				$response = json_decode( $response );
 				$results  = $response->results;
+				
+				if ( $results == NULL ) :
+					echo '<form><h3 class="media-title"><span style="font-size:14px;font-family:Helvetica,Arial">' . __( "<strong>Oops!</strong> Seems there is a problem accessing your Flight account. Let's double check your account settings: <a href=\"javascript:;\" onclick=\"window.top.location.href='" . get_bloginfo( 'url' ) . "/wp-admin/options-general.php?page=flight_by_canto_settings'\">Plugin Settings</a>",
+					'flight-by-canto' ) . '</span></h3></form>';
+					
+					echo '<script>jQuery("#loader").hide();</script>';
+				
+				else :
+
+
 
 				$dir = plugin_dir_path( __FILE__ ) . '../../assets/cache/';
 
@@ -178,17 +187,18 @@ class flight_by_canto_media {
 			</ul>
 
 
-			<div style="clear:both; margin: 20px auto; text-align:center;">
+			<div id="fbc_loadMore_wrap">
 				<button class="btn" id="fbc_loadMore">Load More</button>
 			</div>
 
 			<script>
-				document.getElementById("loader").style.display = 'none';
+				jQuery('#loader').hide();
 			</script>
 
 
 
 		<?php
+			endif;
 
 
 		endif;
@@ -596,6 +606,7 @@ function load_more(){
 ?>
 <script type="text/javascript">
 	jQuery('#fbc_loadMore').click(function(e){
+		jQuery('#loader').show();
 		<?php $morenonce = wp_create_nonce('fbc-load-more-nonce'); ?>
 		jQuery.ajax({
 			url: '/wp-content/plugins/Flight_by_Canto/includes/lib/loadMore.php',
@@ -603,10 +614,11 @@ function load_more(){
 			data: {"limit": 12, "start": jQuery('#__attachments-view-fbc li').length,"nonce": "<?php echo $morenonce ?>"},
             success: function(response){
 				jQuery('#__attachments-view-fbc').append(response);
+				jQuery('#loader').hide();
 			},
 			error: function(xhr, desc, err) {
 				console.log(xhr);
-				console.log("Details: " + desc + "\nError:" + err);
+				//console.log("Details: " + desc + "\nError:" + err);
 			}
 		});
 	});
@@ -619,7 +631,8 @@ function get_meta_data() {
 	?>
 	<script type="text/javascript">
 
-		jQuery('.fbc_attachment').click(function (e) {
+		//jQuery('.fbc_attachment').on('click', function (e) {
+		jQuery('#__attachments-view-fbc').on('click', '.fbc_attachment', function (e) {
 			e.preventDefault();
 			jQuery('.selected').removeClass('selected');
 			jQuery(this).addClass('selected');
