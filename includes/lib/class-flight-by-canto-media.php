@@ -85,7 +85,7 @@ class flight_by_canto_media {
 
 			<div style="clear:both"></div>
 
-			<img src="/ajax-loader.gif" id="loader">
+			<img src="<?php bloginfo('url'); ?>/wp-admin/images/wpspin_light-2x.gif" id="loader">
 
 			<ul tabindex="-1" class="attachments" id="__attachments-view-fbc">
 				<?php

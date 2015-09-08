@@ -1,7 +1,7 @@
 === Flight by Canto ===
 Contributors: Canto Inc.
 Tags: wordpress, plugin, Flight by Canto
-Requires at least: 3.9
+Requires at least: 4.0
 Tested up to: 4.3
 Stable tag: 1.0
 License: GPLv2 or later
@@ -41,6 +41,6 @@ Unfortunately not. However, you are welcome to sign up today for free! https://w
 
 == Upgrade Notice ==
 
-= 1.0 =
-* 2015-08-01
-* Initial release
+= 1.0.1 =
+* 2015-09-08
+* Updated WP Ajax loading gif >> /wp-admin/images/wpspin_light-2x.gif
