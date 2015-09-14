@@ -3,7 +3,7 @@ Contributors: Canto Inc.
 Tags: wordpress, plugin, Flight by Canto
 Requires at least: 4.0
 Tested up to: 4.3
-Stable tag: 1.0
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,8 +18,8 @@ Pull in photos, images and graphics from your Flight account. Currently, this pl
 Installing "Flight by Canto" can be done either by searching for "Flight by Canto" via the "Plugins > Add New" screen in your WordPress dashboard, or by using the following steps:
 
 1. Download the plugin via WordPress.org
-1. Upload the ZIP file through the 'Plugins > Add New > Upload' screen in your WordPress dashboard
-1. Activate the plugin through the 'Plugins' menu in WordPress
+2. Upload the ZIP file through the 'Plugins > Add New > Upload' screen in your WordPress dashboard
+3. Activate the plugin through the 'Plugins' menu in WordPress
 
 == Screenshots ==
 
@@ -44,3 +44,7 @@ Unfortunately not. However, you are welcome to sign up today for free! https://w
 = 1.0.1 =
 * 2015-09-08
 * Updated WP Ajax loading gif >> /wp-admin/images/wpspin_light-2x.gif
+
+= 1.0.2 =
+* 2015-09-01
+* Updated directory structure use plugin directory name flight-by-canto

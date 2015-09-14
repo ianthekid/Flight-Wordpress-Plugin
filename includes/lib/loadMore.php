@@ -22,8 +22,8 @@ $results = $response->results;
 
 $dir = plugin_dir_path( __FILE__ ). '../../assets/cache/';
 
-//$dir = ABSPATH . 'wp-content/plugins/Flight_by_Canto/assets/cache/';
-$display = get_bloginfo('url') . '/wp-content/plugins/Flight_by_Canto/assets/cache/';
+//$dir = ABSPATH . 'wp-content/plugins/flight-by-canto/assets/cache/';
+$display = get_bloginfo('url') . '/wp-content/plugins/flight-by-canto/assets/cache/';
 
 $allowed_exts = array('jpg','jpeg','gif','png');
 $images = array();

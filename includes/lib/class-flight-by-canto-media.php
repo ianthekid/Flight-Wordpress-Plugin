@@ -43,7 +43,7 @@ class flight_by_canto_media {
 
 		media_upload_header();
 
-		wp_enqueue_script( 'fbc_media_js', plugins_url() . '/Flight_by_Canto/assets/js/admin.js' );
+		wp_enqueue_script( 'fbc_media_js', plugins_url() . '/flight-by-canto/assets/js/admin.js' );
 
 
 		if ( get_option( 'fbc_flight_domain' ) == '' || get_option( 'fbc_app_id' ) == '' || get_option( 'fbc_app_secret' ) == '' ) :
@@ -116,8 +116,8 @@ class flight_by_canto_media {
 
 				$dir = plugin_dir_path( __FILE__ ) . '../../assets/cache/';
 
-				//$dir = ABSPATH . 'wp-content/plugins/Flight_by_Canto/assets/cache/';
-				$display = get_bloginfo( 'url' ) . '/wp-content/plugins/Flight_by_Canto/assets/cache/';
+				//$dir = ABSPATH . 'wp-content/plugins/flight-by-canto/assets/cache/';
+				$display = get_bloginfo( 'url' ) . '/wp-content/plugins/flight-by-canto/assets/cache/';
 
 				$allowed_exts = array( 'jpg', 'jpeg', 'gif', 'png' );
 				$images       = array();
@@ -609,7 +609,7 @@ function load_more(){
 		jQuery('#loader').show();
 		<?php $morenonce = wp_create_nonce('fbc-load-more-nonce'); ?>
 		jQuery.ajax({
-			url: '/wp-content/plugins/Flight_by_Canto/includes/lib/loadMore.php',
+			url: '/wp-content/plugins/flight-by-canto/includes/lib/loadMore.php',
 			type: 'GET',
 			data: {"limit": 12, "start": jQuery('#__attachments-view-fbc li').length,"nonce": "<?php echo $morenonce ?>"},
             success: function(response){
