@@ -46,5 +46,9 @@ Unfortunately not. However, you are welcome to sign up today for free! https://w
 * Updated WP Ajax loading gif >> /wp-admin/images/wpspin_light-2x.gif
 
 = 1.0.2 =
-* 2015-09-01
+* 2015-09-14
 * Updated directory structure use plugin directory name flight-by-canto
+
+= 1.0.3 =
+* 2015-09-14
+* Add delete options for uninstalling plugin

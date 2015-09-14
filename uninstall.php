@@ -28,4 +28,4 @@ delete_option('fbc_app_refresh_token');
 delete_option('fbc_token_expire');
 delete_option('fbc_flight_username');
 delete_option('fbc_flight_password');
-delete_optoin('fbc_refresh_token_expire');
+delete_option('fbc_refresh_token_expire');
