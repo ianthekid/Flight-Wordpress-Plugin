@@ -300,7 +300,7 @@ class Flight_by_Canto {
 
 
 		$options[ CURLOPT_URL ] = "https://oauth.run.cantoflight.com:8443/oauth/api/oauth2/token";
-		$options[ CURLOPT_URL ] .= "?app_id=" . $this->fbc_app_id . "&app_secret=" . $this->fbc_app_secret . "&grant_type=authorization_code&code=" . $code;
+		$options[ CURLOPT_URL ] .= "?app_id=" . $this->fbc_app_id . "&app_secret=" . $this->fbc_app_secret . "&grant_type=authorization_code&code=" . trim($code);
 		$options[ CURLOPT_POST ]   = true;
 		$options[ CURLOPT_HEADER ] = 0;
 		curl_setopt_array( $ch, $options );

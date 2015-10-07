@@ -1,13 +1,13 @@
 <?php
 /*
  * Plugin Name: Flight by Canto
- * Version: 1.0.3
+ * Version: 1.0.4
  * Plugin URI: http://www.canto.com/flight/
  * Description: Pull in photos, images and graphics from your Flight account
  * Author: Canto Inc
  * Author URI: http://www.canto.com/
  * Requires at least: 4.0
- * Tested up to: 4.3
+ * Tested up to: 4.3.1
  *
  * Text Domain: flight-by-canto
  * Domain Path: /lang/

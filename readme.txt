@@ -2,8 +2,8 @@
 Contributors: Canto Inc.
 Tags: wordpress, plugin, Flight by Canto
 Requires at least: 4.0
-Tested up to: 4.3
-Stable tag: 1.0.3
+Tested up to: 4.3.1
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -47,8 +47,12 @@ Unfortunately not. However, you are welcome to sign up today for free! https://w
 * 2015-09-14
 * Updated directory structure use plugin directory name flight-by-canto
 
-== Upgrade Notice ==
-
 = 1.0.3 =
 * 2015-09-14
 * Add delete options for uninstalling plugin
+
+== Upgrade Notice ==
+
+= 1.0.4 =
+* 2015-10-07
+* Bug fix: added trim() to OAuth response code variable
