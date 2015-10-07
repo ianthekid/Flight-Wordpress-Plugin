@@ -39,8 +39,6 @@ Unfortunately not. However, you are welcome to sign up today for free! https://w
 * 2015-08-01
 * Initial release
 
-== Upgrade Notice ==
-
 = 1.0.1 =
 * 2015-09-08
 * Updated WP Ajax loading gif >> /wp-admin/images/wpspin_light-2x.gif
@@ -48,6 +46,8 @@ Unfortunately not. However, you are welcome to sign up today for free! https://w
 = 1.0.2 =
 * 2015-09-14
 * Updated directory structure use plugin directory name flight-by-canto
+
+== Upgrade Notice ==
 
 = 1.0.3 =
 * 2015-09-14
