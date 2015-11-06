@@ -85,7 +85,7 @@ class flight_by_canto_media {
 
 			<div style="clear:both"></div>
 
-			<img src="<?php bloginfo('url'); ?>/wp-admin/images/wpspin_light-2x.gif" id="loader">
+			<img src="<?php echo FBC_URL; ?>/assets/wpspin_light-2x.gif" id="loader">
 
 			<ul tabindex="-1" class="attachments" id="__attachments-view-fbc">
 				<?php
@@ -114,10 +114,9 @@ class flight_by_canto_media {
 
 
 
-				$dir = plugin_dir_path( __FILE__ ) . '../../assets/cache/';
+				$dir = FBC_PATH . 'assets/cache/';
+				$display = FBC_URL . 'assets/cache/';
 
-				//$dir = ABSPATH . 'wp-content/plugins/flight-by-canto/assets/cache/';
-				$display = get_bloginfo( 'url' ) . '/wp-content/plugins/flight-by-canto/assets/cache/';
 
 				$allowed_exts = array( 'jpg', 'jpeg', 'gif', 'png' );
 				$images       = array();

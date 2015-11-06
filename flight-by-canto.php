@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: Flight by Canto
- * Version: 1.0.4
+ * Version: 1.0.5
  * Plugin URI: http://www.canto.com/flight/
  * Description: Pull in photos, images and graphics from your Flight account
  * Author: Canto Inc
@@ -18,6 +18,9 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
+
+define( 'FBC_PATH', plugin_dir_path(__FILE__) );
+define( 'FBC_URL', plugin_dir_url(__FILE__) );
 
 // Load plugin class files
 require_once( 'includes/class-flight-by-canto.php' );

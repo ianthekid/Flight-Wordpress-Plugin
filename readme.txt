@@ -3,7 +3,7 @@ Contributors: Canto Inc.
 Tags: wordpress, plugin, Flight by Canto
 Requires at least: 4.0
 Tested up to: 4.3.1
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,8 +51,14 @@ Unfortunately not. However, you are welcome to sign up today for free! https://w
 * 2015-09-14
 * Add delete options for uninstalling plugin
 
-== Upgrade Notice ==
-
 = 1.0.4 =
 * 2015-10-07
 * Bug fix: added trim() to OAuth response code variable
+
+== Upgrade Notice ==
+
+= 1.0.5 =
+* 2015-11-05
+* Updated comaptibility with Flight JFK release security policy
+* Compatibility with Wordpress multisite and roots.io/sage different plugin paths
+* Added local copy of loading spinning wheel

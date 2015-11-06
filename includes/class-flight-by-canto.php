@@ -181,7 +181,9 @@ class Flight_by_Canto {
 			CURLOPT_REFERER        => get_bloginfo( 'url' ), // who r u
 			CURLOPT_USERAGENT      => $agent,                // who am i
 			CURLOPT_HTTPHEADER     => $header,                // provides authorization and token
-			CURLOPT_SSLVERSION     => 3,                    // required for api handshake
+			//CURLOPT_SSLVERSION     => 3,                    // required for api handshake
+			CURLOPT_SSL_VERIFYHOST => 0,
+			CURLOPT_SSL_VERIFYPEER => 0,
 			CURLOPT_HEADER         => $echo,                // include header in output?
 			CURLOPT_RETURNTRANSFER => 1,                    // output as string instead of file
 			CURLOPT_TIMEOUT        => 10,                    // how long til i give up?
@@ -191,6 +193,7 @@ class Flight_by_Canto {
 		$output = curl_exec( $ch );
 		curl_close( $ch );
 
+		//return curl_error($ch);
 		return $output;
 	}
 
@@ -251,7 +254,7 @@ class Flight_by_Canto {
 			CURLOPT_REFERER        => get_bloginfo( 'url' ), // who r u
 			CURLOPT_USERAGENT      => "Canto Dev Team",                             // who am i
 			CURLOPT_HTTPHEADER     => array(),                             // provides authorization and token
-			CURLOPT_SSLVERSION     => 3,                                   // required for api handshake
+			//CURLOPT_SSLVERSION     => 3,                                   // required for api handshake
 			CURLOPT_HEADER         => 1,                               // include header in output?
 			CURLOPT_RETURNTRANSFER => 1,                                   // output as string instead of file
 			CURLOPT_TIMEOUT        => 10,                                  // how long til i give up?
@@ -384,7 +387,10 @@ class Flight_by_Canto {
 				array( 'Authorization: Bearer ' . $this->fbc_app_token ) );
 			curl_setopt( $curly[ $id ]['img'], CURLOPT_USERAGENT, 'Dev Team' );
 			curl_setopt( $curly[ $id ]['img'], CURLOPT_HEADER, 1 );
-			curl_setopt( $curly[ $id ]['img'], CURLOPT_SSLVERSION, 3 );
+			//curl_setopt( $curly[ $id ]['img'], CURLOPT_SSLVERSION, 3 );
+			curl_setopt( $curly[ $id ]['img'], CURLOPT_SSL_VERIFYHOST, 0 );
+			curl_setopt( $curly[ $id ]['img'], CURLOPT_SSL_VERIFYPEER, 0 );
+			
 			curl_setopt( $curly[ $id ]['img'], CURLOPT_RETURNTRANSFER, 1 );
 
 			// post?
