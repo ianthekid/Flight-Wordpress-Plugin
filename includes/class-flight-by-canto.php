@@ -252,7 +252,7 @@ class Flight_by_Canto {
 		$options = array(
 			CURLOPT_URL            => $req,                                // get request
 			CURLOPT_REFERER        => get_bloginfo( 'url' ), // who r u
-			CURLOPT_USERAGENT      => "Canto Dev Team",                             // who am i
+			CURLOPT_USERAGENT      => "Flight Wordpress Plugin",                             // who am i
 			CURLOPT_HTTPHEADER     => array(),                             // provides authorization and token
 			//CURLOPT_SSLVERSION     => 3,                                   // required for api handshake
 			CURLOPT_HEADER         => 1,                               // include header in output?
@@ -334,7 +334,7 @@ class Flight_by_Canto {
 		$req    = 'https://' . $this->fbc_flight_domain . '.run.cantoflight.com:8443/oauth/api/oauth2/token';
 		$header = 'app_id=' . $this->fbc_app_id . '&app_secret=' . $this->fbc_app_secret
 		          . '&grant_type=refresh_token&refresh_token=' . $this->fbc_app_refresh_token;
-		$agent  = "Canto Dev Team";
+		$agent  = "Flight Wordpress Plugin";
 //var_dump($req.'?'.$header); wp_die();
 		$response = $this->curl_action( $req . '?' . $header,
 			array( 'Authorization: Bearer ' . $this->fbc_app_refresh_token ), $agent, 1 );
@@ -385,12 +385,12 @@ class Flight_by_Canto {
 			curl_setopt( $curly[ $id ]['img'], CURLOPT_URL, $url );
 			curl_setopt( $curly[ $id ]['img'], CURLOPT_HTTPHEADER,
 				array( 'Authorization: Bearer ' . $this->fbc_app_token ) );
-			curl_setopt( $curly[ $id ]['img'], CURLOPT_USERAGENT, 'Dev Team' );
+			curl_setopt( $curly[ $id ]['img'], CURLOPT_USERAGENT, 'Flight Wordpress Plugin' );
 			curl_setopt( $curly[ $id ]['img'], CURLOPT_HEADER, 1 );
 			//curl_setopt( $curly[ $id ]['img'], CURLOPT_SSLVERSION, 3 );
 			curl_setopt( $curly[ $id ]['img'], CURLOPT_SSL_VERIFYHOST, 0 );
 			curl_setopt( $curly[ $id ]['img'], CURLOPT_SSL_VERIFYPEER, 0 );
-			
+
 			curl_setopt( $curly[ $id ]['img'], CURLOPT_RETURNTRANSFER, 1 );
 
 			// post?
@@ -564,4 +564,3 @@ class Flight_by_Canto {
 	} // End _log_version_number ()
 
 }
-

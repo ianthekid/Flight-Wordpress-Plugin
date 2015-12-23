@@ -45,6 +45,22 @@ class flight_by_canto_media {
 
 		wp_enqueue_script( 'fbc_media_js', plugins_url() . '/flight-by-canto/assets/js/admin.js' );
 
+		wp_register_script( 'react-js', 'https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/react.min.js' );
+		wp_register_script( 'react-jsx', 'https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/JSXTransformer.js' );
+
+		wp_enqueue_script ( 'react-js' );
+		wp_enqueue_script ( 'react-jsx' );
+
+		//wp_register_script( 'react-loop', FBC_URL .'assets/js/images.js' );
+		//wp_enqueue_script ( 'react-loop' );
+
+		?>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script type="text/jsx;harmony=true" src="<?php echo FBC_URL; ?>assets/js/images.js"></script>
+			<div id="fbc-loop"></div>
+		<?php
+
+
 
 		if ( get_option( 'fbc_flight_domain' ) == '' || get_option( 'fbc_app_id' ) == '' || get_option( 'fbc_app_secret' ) == '' ) :
 			echo '<form><h3 class="media-title"><span style="font-size:14px;font-family:Helvetica,Arial">' . __( "<strong>Oops!</strong> You haven't connected your Flight account yet. <a href=\"javascript:;\" onclick=\"window.top.location.href='" . get_bloginfo( 'url' ) . "/wp-admin/options-general.php?page=flight_by_canto_settings'\">Plugin Settings</a>",
@@ -87,8 +103,9 @@ class flight_by_canto_media {
 
 			<img src="<?php echo FBC_URL; ?>/assets/wpspin_light-2x.gif" id="loader">
 
-			<ul tabindex="-1" class="attachments" id="__attachments-view-fbc">
+			<!--ul tabindex="-1" class="attachments" id="__attachments-view-fbc"-->
 				<?php
+				/*
 
 				$flight['url']    = get_option( 'fbc_flight_domain' );
 				$flight['appId']  = get_option( 'fbc_app_id' );
@@ -99,17 +116,17 @@ class flight_by_canto_media {
 				$flight['req']     = $flight['api_url'] . 'image?sortBy=name&sortDirection=descending&limit=40&start=0';
 
 
-				$response = Flight_by_Canto()->curl_action( $flight['req'], 0 );
+				//$response = Flight_by_Canto()->curl_action( $flight['req'], 0 );
 
 				$response = json_decode( $response );
 				$results  = $response->results;
-				
+
 				if ( $results == NULL ) :
 					echo '<form><h3 class="media-title"><span style="font-size:14px;font-family:Helvetica,Arial">' . __( "<strong>Oops!</strong> Seems there is a problem accessing your Flight account. Let's double check your account settings: <a href=\"javascript:;\" onclick=\"window.top.location.href='" . get_bloginfo( 'url' ) . "/wp-admin/options-general.php?page=flight_by_canto_settings'\">Plugin Settings</a>",
 					'flight-by-canto' ) . '</span></h3></form>';
-					
+
 					echo '<script>jQuery("#loader").hide();</script>';
-				
+
 				else :
 
 
@@ -153,7 +170,6 @@ class flight_by_canto_media {
 
 				}
 
-				/* Print the results to the screen */
 				foreach ( $results as $res ) {
 					$namearray = explode( ".", $res->name );
 					$ext = strtolower( end( $namearray ) );
@@ -182,8 +198,10 @@ class flight_by_canto_media {
 
 				}
 
+				*/
+
 				?>
-			</ul>
+			<!--/ul-->
 
 
 			<div id="fbc_loadMore_wrap">
@@ -197,12 +215,12 @@ class flight_by_canto_media {
 
 
 		<?php
-			endif;
+			//endif;
 
 
 		endif;
 
-//Stop checking to see if user has valid flight credentials 
+//Stop checking to see if user has valid flight credentials
 
 		// set the first part of the form action url now, to the current active site, to prevent X-Frame-Options problems
 		$form_action_url = plugins_url( 'copy-media.php', __FILE__ );
@@ -666,6 +684,3 @@ function get_meta_data() {
 	</script> <?php
 	return;
 }
-
-
-                                                         

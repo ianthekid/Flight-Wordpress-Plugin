@@ -117,7 +117,7 @@ class Flight_by_Canto_Settings {
 
 		$settings['standard'] = array(
 			'title'       => "Flight Settings!",
-			'description' => __( 'Connect to your Flight instance using the Flight API. All fields are required, and you must be a Pilot to enable API access.<br><br><a href="https://www.canto.com/flight/api/">API Documentation</a> or <a href="https://www.canto.com/flight/request-api/">Request for API Access</a>',
+			'description' => __( 'Connect to your Flight instance using the Flight API. All fields are required, and you must be a Pilot to enable API access.<br><br><a href="https://www.canto.com/flight/api/">API Documentation</a> or <a href="https://www.canto.com/flight/api/request/">Request for API Access</a>',
 				'flight-by-canto' ),
 			'fields'      => array(
 				array(
