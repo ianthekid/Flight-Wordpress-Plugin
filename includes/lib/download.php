@@ -1,7 +1,7 @@
 <?php
+$url = 'https://'. $_REQUEST['subdomain'] .'.run.cantoflight.com/api_binary/v1/image/'. $_REQUEST['id'] .'/preview';
 
-$url = 'https://t06.run.cantoflight.com/api_binary/v1/image/'. $_REQUEST['id'] .'/preview';
-$header = array( 'Authorization: Bearer fffaf6d0c66c4075b5d13a5e936c3f63');
+$header = array( 'Authorization: Bearer '. $_REQUEST['token']);
 
 $ch = curl_init();
 
@@ -15,7 +15,7 @@ $options = array(
     CURLOPT_HEADER         => 1,
     CURLOPT_RETURNTRANSFER => 1,
     CURLOPT_TIMEOUT        => 10,
-    CURLOPT_POST           => 1
+//    CURLOPT_POST           => 1
 );
 
 curl_setopt_array( $ch, $options );
@@ -23,7 +23,7 @@ $data = curl_exec( $ch );
 curl_close( $ch );
 
 echo $data;
-$out = json_decode($data);
+//$out = json_decode($data);
 
 //header('Content-Type: application/json;charset=utf-8');
 //echo json_encode($out->url->LowJPG);

@@ -41,6 +41,27 @@ class flight_by_canto_media {
 	function media_upload_flight_by_canto( $errors ) {
 		global $wpdb, $wp_query, $wp_locale, $type, $tab, $post_mime_types, $blog_id;
 
+
+
+/* 
+ * TODO: Move this into Plugin Init()
+ */
+function md_modify_jsx_tag( $tag, $handle, $src ) {
+  // Check that this is output of JSX file
+  if ( 'react-loop' == $handle ) {
+    $tag = str_replace( "<script type='text/javascript'", "<script type='text/jsx'", $tag );
+  }
+
+  return $tag;
+}
+add_filter( 'script_loader_tag', 'md_modify_jsx_tag', 10, 3 );
+
+
+
+/* 
+ * TODO: Load these scripts outside of media_upload function. Maybe in Plugin Init()
+ */
+
 		media_upload_header();
 
 		wp_enqueue_script( 'fbc_media_js', plugins_url() . '/flight-by-canto/assets/js/admin.js' );
@@ -50,13 +71,22 @@ class flight_by_canto_media {
 
 		wp_enqueue_script ( 'react-js' );
 		wp_enqueue_script ( 'react-jsx' );
-
-		//wp_register_script( 'react-loop', FBC_URL .'assets/js/images.js' );
-		//wp_enqueue_script ( 'react-loop' );
+		
+		
+		$translation_array = array(
+			'FBC_URL' 	=> FBC_URL,
+			'FBC_PATH' 	=> FBC_PATH,
+			'subdomain' => get_option( 'fbc_flight_domain' ),
+			'token'		=> get_option( 'fbc_app_token' ),
+		);
+		$path_to_script = FBC_URL .'assets/js/images.js';
+	 	wp_register_script( 'react-loop', $path_to_script );
+		wp_localize_script( 'react-loop', 'args', $translation_array );		
+		wp_enqueue_script ( 'react-loop' );
 
 		?>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-		<script type="text/jsx;harmony=true" src="<?php echo FBC_URL; ?>assets/js/images.js"></script>
+		<!--script type="text/jsx;harmony=true" src="<?php echo FBC_URL; ?>assets/js/images.js"></script-->
 			<div id="fbc-loop"></div>
 		<?php
 
@@ -642,13 +672,15 @@ function load_more(){
 	</script><?php
 }
 
+
 function get_meta_data() {
 
 	$nonce = wp_create_nonce( 'flight-by-canto' );
+	/*
 	?>
 	<script type="text/javascript">
 
-		//jQuery('.fbc_attachment').on('click', function (e) {
+		//jQuery('.attachment-preview').live('click', function (e) {
 		jQuery('#__attachments-view-fbc').on('click', '.fbc_attachment', function (e) {
 			e.preventDefault();
 			jQuery('.selected').removeClass('selected');
@@ -682,5 +714,6 @@ function get_meta_data() {
 		});
 
 	</script> <?php
+	*/
 	return;
 }

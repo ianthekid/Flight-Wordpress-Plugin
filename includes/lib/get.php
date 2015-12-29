@@ -1,7 +1,7 @@
 <?php
-$url = 'https://t06.run.cantoflight.com/api/v1/image?limit='. $_REQUEST['limit'] .'&start='. $_REQUEST['start'];
+$url = 'https://'. $_REQUEST['subdomain'] .'.run.cantoflight.com/api/v1/image?limit='. $_REQUEST['limit'] .'&start='. $_REQUEST['start'];
 
-$header = array( 'Authorization: Bearer fffaf6d0c66c4075b5d13a5e936c3f63');
+$header = array( 'Authorization: Bearer '. $_REQUEST['token']);
 
 $ch = curl_init();
 

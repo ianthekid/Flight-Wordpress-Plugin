@@ -21,6 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 define( 'FBC_PATH', plugin_dir_path(__FILE__) );
 define( 'FBC_URL', plugin_dir_url(__FILE__) );
+define( 'FBC_DIR', plugin_basename( __FILE__ ) );
 
 // Load plugin class files
 require_once( 'includes/class-flight-by-canto.php' );
