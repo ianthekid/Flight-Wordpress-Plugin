@@ -43,12 +43,12 @@ class flight_by_canto_media {
 
 
 
-/* 
+/*
  * TODO: Move this into Plugin Init()
  */
 function md_modify_jsx_tag( $tag, $handle, $src ) {
   // Check that this is output of JSX file
-  if ( 'react-loop' == $handle ) {
+  if ( 'react-loop' == $handle ||  'react-attachment' == $handle ) {
     $tag = str_replace( "<script type='text/javascript'", "<script type='text/jsx'", $tag );
   }
 
@@ -58,7 +58,7 @@ add_filter( 'script_loader_tag', 'md_modify_jsx_tag', 10, 3 );
 
 
 
-/* 
+/*
  * TODO: Load these scripts outside of media_upload function. Maybe in Plugin Init()
  */
 
@@ -71,8 +71,12 @@ add_filter( 'script_loader_tag', 'md_modify_jsx_tag', 10, 3 );
 
 		wp_enqueue_script ( 'react-js' );
 		wp_enqueue_script ( 'react-jsx' );
-		
-		
+
+		$path_to_script_a = FBC_URL .'assets/js/attachment.js';
+		wp_register_script( 'react-attachment', $path_to_script_a );
+		wp_enqueue_script ( 'react-attachment' );
+
+
 		$translation_array = array(
 			'FBC_URL' 	=> FBC_URL,
 			'FBC_PATH' 	=> FBC_PATH,
@@ -81,12 +85,17 @@ add_filter( 'script_loader_tag', 'md_modify_jsx_tag', 10, 3 );
 		);
 		$path_to_script = FBC_URL .'assets/js/images.js';
 	 	wp_register_script( 'react-loop', $path_to_script );
-		wp_localize_script( 'react-loop', 'args', $translation_array );		
+		wp_localize_script( 'react-loop', 'args', $translation_array );
 		wp_enqueue_script ( 'react-loop' );
+
 
 		?>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 		<!--script type="text/jsx;harmony=true" src="<?php echo FBC_URL; ?>assets/js/images.js"></script-->
+
+
+		<div id="fbc-main"></div>
+
 			<div id="fbc-loop"></div>
 		<?php
 
