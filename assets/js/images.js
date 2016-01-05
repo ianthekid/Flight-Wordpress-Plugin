@@ -1,11 +1,38 @@
 var Images = React.createClass({
 
 	getInitialState: function() {
-		return {item: null};
+		return {
+			start: parseInt(args.start),
+			limit: parseInt(args.limit),
+			item: []
+		};
 	},
 
 	handleClick: function(item,e) {
-		this.setState({item: item});
+		this.setState({
+			item: [item]
+		});
+	},
+
+	loadMore: function(e) {
+		this.setState({
+			start: this.state.start+this.state.limit
+		});
+	},
+
+	componentDidMount: function() {
+
+	},
+
+	componentWillUpdate: function(nextProps,nextState) {
+
+	},
+
+	componentDidUpdate: function() {
+		React.render(<Attachment attachment={this.state.item} />, document.getElementById('fbc_media-sidebar') );
+
+		var path = args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&token="+ args.token +"&limit="+ this.state.limit +"&start="+ this.state.start;
+		console.log(path);
 	},
 
     render: function() {
@@ -20,6 +47,9 @@ var Images = React.createClass({
 			            </li>
 					);
 				}, this)}
+				<div id="fbc_loadMore_wrap">
+					<button className="btn" id="fbc_loadMore" onClick={this.loadMore}>Load More</button>
+				</div>
             </ul>
         );
     }
@@ -33,16 +63,20 @@ var FlightImages = React.createClass({
         };
     },
 
-    repeat: function(item) {
+    repeat: function(item,cnt) {
         var self = this;
         $.ajax({
-            url: args.FBC_URL +"/includes/lib/download.php?id="+ item.id +"&subdomain="+ args.subdomain +"&token="+ args.token,
-            success: function(e) {
-                var start = e.search("Location: ");
-                var stop = e.search("Server: ");
-                var img = e.substring( (start+10) ,stop);
+            url: args.FBC_URL +"/includes/lib/download.php?id="+ item.id +"&subdomain="+ args.subdomain +"&token="+ args.token
+		})
+		.done(function(e) {
+			var start = e.search("Location: ");
+			var stop = e.search("Server: ");
+			var img = e.substring( (start+10) ,stop);
 
-                var arr = self.state.data.slice();
+			var fileExt = img.split('.').pop();
+			var ext = fileExt.split('%');
+
+			if(ext[0] == "jpg" || ext[0] == "jpeg" || ext[0] == "gif" || ext[0] == "png" || ext[0] == "pdf") {
                 var image = [{
                     "id": item.id,
                     "name": item.name,
@@ -53,26 +87,39 @@ var FlightImages = React.createClass({
                     "img": img
                 }];
 
+				var arr = self.state.data.slice();
                 arr.push(image);
                 self.setState({data: arr});
-            }
-        });
+			}
+
+			if(cnt == args.limit)
+				jQuery("#fbc_loadMore_wrap").show();
+        })
+		.always(function() {
+			//console.log('here');
+		});
     },
 
+	componentDidUpdate: function() {
+	},
+
 	componentDidMount: function() {
+		var self = this;
 		$.ajax({
 			url: this.props.source,
 			dataType: 'json',
-			cache: false,
-			success: function(data) {
-                var self = this;
-                $.each(data, function(k,v) {
-                    self.repeat(v);
-                });
-			}.bind(this),
-			error: function(xhr, status, err) {
-				console.error(this.props.source, status, err.toString());
-			}.bind(this)
+			cache: false
+		})
+		.done(function(data) {
+			console.log(data.length);
+			var cnt = 1;
+            $.each(data, function(k,v) {
+                self.repeat(v,cnt);
+				cnt++;
+            });
+		})
+		.always(function() {
+
 		});
 	},
 
@@ -85,5 +132,5 @@ var FlightImages = React.createClass({
     }
 });
 
-var path = args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&token="+ args.token +"&limit=30&start=0";
+var path = args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&token="+ args.token +"&limit="+ args.limit +"&start="+ args.start;
 React.render(<FlightImages source={path} />, document.getElementById('fbc-loop') );

@@ -11,7 +11,7 @@
     margin: -40px;
 }
 #fbc_loadMore_wrap {
-	clear:both; 
+	clear:both;
 	margin: 30px auto;
 	width: 33%;
 }
@@ -52,7 +52,7 @@
 }
 
 .media-sidebar {
-    position:absolute;
+    position:fixed;
     top:0;
     right:0;
     bottom:0;

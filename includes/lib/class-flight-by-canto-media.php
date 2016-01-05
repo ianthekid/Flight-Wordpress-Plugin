@@ -48,7 +48,7 @@ class flight_by_canto_media {
  */
 function md_modify_jsx_tag( $tag, $handle, $src ) {
   // Check that this is output of JSX file
-  if ( 'react-loop' == $handle ||  'react-attachment' == $handle ) {
+  if ( 'react-loop' == $handle ||  'react-attachment' == $handle  ||  'react-append' == $handle ) {
     $tag = str_replace( "<script type='text/javascript'", "<script type='text/jsx'", $tag );
   }
 
@@ -76,12 +76,18 @@ add_filter( 'script_loader_tag', 'md_modify_jsx_tag', 10, 3 );
 		wp_register_script( 'react-attachment', $path_to_script_a );
 		wp_enqueue_script ( 'react-attachment' );
 
+		$path_to_script_b = FBC_URL .'assets/js/append.js';
+		wp_register_script( 'react-append', $path_to_script_b );
+		wp_enqueue_script ( 'react-append' );
+
 
 		$translation_array = array(
 			'FBC_URL' 	=> FBC_URL,
 			'FBC_PATH' 	=> FBC_PATH,
 			'subdomain' => get_option( 'fbc_flight_domain' ),
 			'token'		=> get_option( 'fbc_app_token' ),
+			'limit'		=> 30,
+			'start'		=> 0
 		);
 		$path_to_script = FBC_URL .'assets/js/images.js';
 	 	wp_register_script( 'react-loop', $path_to_script );
@@ -142,110 +148,8 @@ add_filter( 'script_loader_tag', 'md_modify_jsx_tag', 10, 3 );
 
 			<img src="<?php echo FBC_URL; ?>/assets/wpspin_light-2x.gif" id="loader">
 
-			<!--ul tabindex="-1" class="attachments" id="__attachments-view-fbc"-->
-				<?php
-				/*
-
-				$flight['url']    = get_option( 'fbc_flight_domain' );
-				$flight['appId']  = get_option( 'fbc_app_id' );
-				$flight['secret'] = get_option( 'fbc_app_secret' );
-
-				//INIT PULL
-				$flight['api_url'] = 'https://' . $flight['url'] . '.run.cantoflight.com/api/v1/';
-				$flight['req']     = $flight['api_url'] . 'image?sortBy=name&sortDirection=descending&limit=40&start=0';
 
 
-				//$response = Flight_by_Canto()->curl_action( $flight['req'], 0 );
-
-				$response = json_decode( $response );
-				$results  = $response->results;
-
-				if ( $results == NULL ) :
-					echo '<form><h3 class="media-title"><span style="font-size:14px;font-family:Helvetica,Arial">' . __( "<strong>Oops!</strong> Seems there is a problem accessing your Flight account. Let's double check your account settings: <a href=\"javascript:;\" onclick=\"window.top.location.href='" . get_bloginfo( 'url' ) . "/wp-admin/options-general.php?page=flight_by_canto_settings'\">Plugin Settings</a>",
-					'flight-by-canto' ) . '</span></h3></form>';
-
-					echo '<script>jQuery("#loader").hide();</script>';
-
-				else :
-
-
-
-				$dir = FBC_PATH . 'assets/cache/';
-				$display = FBC_URL . 'assets/cache/';
-
-
-				$allowed_exts = array( 'jpg', 'jpeg', 'gif', 'png' );
-				$images       = array();
-
-				foreach ( $results as $res ) {
-					$namearray = explode( ".", $res->name );
-					$img = array(
-						'id'      => $res->id,
-						'name'    => $res->name,
-						'preview' => $res->url->preview,
-						'ext'     => strtolower( end( $namearray ) )
-					);
-
-					$ext = strtolower( end( $namearray ) );
-
-					if ( in_array( $ext, $allowed_exts ) && ! file_exists( $dir . $res->id . '.' . $ext ) ) {
-						array_push( $images, $img );
-					}
-
-				}
-
-				//If there are new assets that we dont already have cached, go get them
-				$r = Flight_by_Canto()->multiRequest( $images );
-
-				foreach ( $r as $i ) {
-
-					list( $httpheader ) = explode( "\r\n\r\n", $i['img'], 2 );
-					$matches = array();
-					preg_match( '/(Location:|URI:)(.*?)\n/', $httpheader, $matches );
-					$location = trim( str_replace( "Location: ", "", $matches[0] ) );
-					$namearray = explode( ".", $i['name'] );
-					$ext = strtolower( end( $namearray ) );
-					copy( $location, $dir . $i['id'] . '.' . $ext );
-
-				}
-
-				foreach ( $results as $res ) {
-					$namearray = explode( ".", $res->name );
-					$ext = strtolower( end( $namearray ) );
-					if ( in_array( $ext, $allowed_exts ) ) :
-
-						?>
-						<li tabindex="0" role="checkbox" data-id="<?php echo $res->id; ?>"
-						    data-name="<?php echo str_replace( '.' . $ext, "", $res->name ); ?>"
-						    class="fbc_attachment attachment save-ready details">
-							<div class="attachment-preview js--select-attachment type-image subtype-jpeg landscape">
-								<div class="thumbnail">
-									<div class="centered">
-										<img src="<?php echo $display . $res->id . '.' . $ext; ?>" draggable="false"
-										     alt="">
-									</div>
-								</div>
-							</div>
-							<a class="check" href="#" title="Deselect" tabindex="0">
-								<div class="media-modal-icon"></div>
-							</a>
-						</li>
-					<?php
-					//Adding blank LI as fix for LoadMore offset
-					else: echo "<li style='display:none'></li>";
-					endif;
-
-				}
-
-				*/
-
-				?>
-			<!--/ul-->
-
-
-			<div id="fbc_loadMore_wrap">
-				<button class="btn" id="fbc_loadMore">Load More</button>
-			</div>
 
 			<script>
 				jQuery('#loader').hide();
@@ -482,7 +386,7 @@ add_filter( 'script_loader_tag', 'md_modify_jsx_tag', 10, 3 );
 						Attachment Details
             <span class="settings-save-status">
                 <span class="spinner"></span>
-                <span class="saved">Saved.</span>
+                <span class="saved"></span>
             </span>
 					</h3>
 
