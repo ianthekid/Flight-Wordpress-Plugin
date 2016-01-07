@@ -28,14 +28,22 @@ var Images = React.createClass({
 
 	},
 
-	componentDidUpdate: function() {
+	componentDidUpdate: function(prevProps,prevState) {
 		React.render(<Attachment attachment={this.state.item} />, document.getElementById('fbc_media-sidebar') );
 
-		var path = args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&token="+ args.token +"&limit="+ this.state.limit +"&start="+ this.state.start;
-		console.log(path);
+		if( this.state.start > prevState.start ) {
+			var path = args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&token="+ args.token +"&limit="+ this.state.limit +"&start="+ this.state.start;
+			console.log(this.state.start);
+			//React.render(<FlightImages source={path} />, document.getElementById('loadMoreWrap') );
+		}
 	},
 
+
     render: function() {
+
+		if( this.state.start > 0 )
+			var addMore = this.state.start;
+
         return (
             <ul className="attachments" id="__attachments-view-fbc">
 				{ this.props.data.map(function(item, i) {
@@ -47,6 +55,13 @@ var Images = React.createClass({
 			            </li>
 					);
 				}, this)}
+				<li className="fbc_attachment attachment">
+					<div className="attachment-preview">
+						{addMore}
+					</div>
+				</li>
+				<div id="loadMoreWrap">
+				</div>
 				<div id="fbc_loadMore_wrap">
 					<button className="btn" id="fbc_loadMore" onClick={this.loadMore}>Load More</button>
 				</div>
