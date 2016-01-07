@@ -78,6 +78,7 @@ var FlightImages = React.createClass({
 
 			var fileExt = img.split('.').pop();
 			var ext = fileExt.split('%');
+			ext[0] = ext[0].toLowerCase();
 
 			if(ext[0] == "jpg" || ext[0] == "jpeg" || ext[0] == "gif" || ext[0] == "png" || ext[0] == "pdf") {
                 var image = [{
