@@ -14,6 +14,12 @@ var Images = React.createClass({
 		});
 	},
 
+	loadMore: function(e) {
+		this.setState({
+			start: this.state.start+this.state.limit
+		});
+	},
+
 	componentDidMount: function() {
 
 	},
@@ -24,6 +30,12 @@ var Images = React.createClass({
 
 	componentDidUpdate: function(prevProps,prevState) {
 		React.render(<Attachment attachment={this.state.item} />, document.getElementById('fbc_media-sidebar') );
+
+		if( this.state.start > prevState.start ) {
+			var path = args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&token="+ args.token +"&limit="+ this.state.limit +"&start="+ this.state.start;
+			console.log(this.state.start);
+			//React.render(<FlightImages source={path} />, document.getElementById('loadMoreWrap') );
+		}
 	},
 
 
@@ -33,7 +45,7 @@ var Images = React.createClass({
 			var addMore = this.state.start;
 
         return (
-			<span>
+            <ul className="attachments" id="__attachments-view-fbc">
 				{ this.props.data.map(function(item, i) {
 					return (
 						<li className="fbc_attachment attachment">
@@ -43,28 +55,28 @@ var Images = React.createClass({
 			            </li>
 					);
 				}, this)}
-			</span>
+				<li className="fbc_attachment attachment">
+					<div className="attachment-preview">
+						{addMore}
+					</div>
+				</li>
+				<div id="loadMoreWrap">
+				</div>
+				<div id="fbc_loadMore_wrap">
+					<button className="btn" id="fbc_loadMore" onClick={this.loadMore}>Load More</button>
+				</div>
+            </ul>
         );
     }
 
 });
 
 var FlightImages = React.createClass({
-	getInitialState: function() {
-		return {
-			src: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&token="+ args.token +"&limit="+ args.limit +"&start="+ args.start,
-			start: parseInt(args.start),
-			limit: parseInt(args.limit),
+    getInitialState: function() {
+        return {
 			data: []
-		};
-	},
-
-	loadMore: function(e) {
-		this.setState({
-			start: this.state.start+this.state.limit,
-			src: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&token="+ args.token +"&limit="+ this.state.limit +"&start="+ this.state.start
-		});
-	},
+        };
+    },
 
     repeat: function(item,cnt) {
         var self = this;
@@ -103,62 +115,37 @@ var FlightImages = React.createClass({
 		});
     },
 
+	componentDidUpdate: function() {
+	},
+
 	componentDidMount: function() {
 		var self = this;
 		$.ajax({
-			url: this.state.src,
+			url: this.props.source,
 			dataType: 'json',
 			cache: false
 		})
 		.done(function(data) {
+			console.log(data.length);
 			var cnt = 1;
             $.each(data, function(k,v) {
                 self.repeat(v,cnt);
 				cnt++;
             });
+		})
+		.always(function() {
+
 		});
-	},
-
-	componentWillUpdate: function(nextProps,nextState) {
-	},
-
-	componentDidUpdate: function(prevProps,prevState) {
-		if(this.state.start > prevState.start) {
-
-			/*
-			 * TODO: re-use this and trigger from DidMount
-			*/
-			var self = this;
-			$.ajax({
-				url: this.state.src,
-				dataType: 'json',
-				cache: false
-			})
-			.done(function(data) {
-				var cnt = 1;
-	            $.each(data, function(k,v) {
-	                self.repeat(v,cnt);
-					cnt++;
-	            });
-			});
-
-		}
 	},
 
     render: function() {
         return (
-			<div class="grid">
-				<ul className="attachments" id="__attachments-view-fbc">
-
-	                <Images data={this.state.data} />
-
-					<div id="fbc_loadMore_wrap">
-						<button className="btn" id="fbc_loadMore" onClick={this.loadMore}>Load More</button>
-					</div>
-	            </ul>
-			</div>
+            <div class="grid">
+                <Images data={this.state.data} />
+            </div>
         );
     }
 });
 
-React.render(<FlightImages />, document.getElementById('fbc-loop') );
+var path = args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&token="+ args.token +"&limit="+ args.limit +"&start="+ args.start;
+React.render(<FlightImages source={path} />, document.getElementById('fbc-loop') );
