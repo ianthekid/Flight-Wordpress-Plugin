@@ -60,6 +60,7 @@ var FlightImages = React.createClass({
 	},
 
 	loadMore: function(e) {
+		jQuery('#loader').show();
 		this.setState({
 			start: this.state.start+this.state.limit,
 			src: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&token="+ args.token +"&limit="+ this.state.limit +"&start="+ this.state.start
@@ -97,7 +98,7 @@ var FlightImages = React.createClass({
 			}
 
 			if(cnt == args.limit)
-				jQuery("#fbc_loadMore_wrap").show();
+				jQuery('#loader').hide();
         })
 		.always(function() {
 			//console.log('here');

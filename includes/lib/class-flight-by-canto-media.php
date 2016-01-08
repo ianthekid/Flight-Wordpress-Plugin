@@ -48,8 +48,9 @@ class flight_by_canto_media {
  */
 function md_modify_jsx_tag( $tag, $handle, $src ) {
   // Check that this is output of JSX file
-  if ( 'react-loop' == $handle ||  'react-attachment' == $handle  ||  'react-append' == $handle ) {
-    $tag = str_replace( "<script type='text/javascript'", "<script type='text/jsx'", $tag );
+  if( strstr($handle,'react') != FALSE ) {
+  //if($handle == "react-loop") {
+	  $tag = str_replace( "<script type='text/javascript'", "<script type='text/jsx'", $tag );
   }
 
   return $tag;
@@ -66,20 +67,11 @@ add_filter( 'script_loader_tag', 'md_modify_jsx_tag', 10, 3 );
 
 		wp_enqueue_script( 'fbc_media_js', plugins_url() . '/flight-by-canto/assets/js/admin.js' );
 
-		wp_register_script( 'react-js', 'https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/react.min.js' );
-		wp_register_script( 'react-jsx', 'https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/JSXTransformer.js' );
+		wp_register_script( 'fbc-js', 'https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/react.min.js' );
+		wp_register_script( 'fbc-jsx', 'https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/JSXTransformer.js' );
 
-		wp_enqueue_script ( 'react-js' );
-		wp_enqueue_script ( 'react-jsx' );
-
-		$path_to_script_a = FBC_URL .'assets/js/attachment.js';
-		wp_register_script( 'react-attachment', $path_to_script_a );
-		wp_enqueue_script ( 'react-attachment' );
-
-		$path_to_script_b = FBC_URL .'assets/js/append.js';
-		wp_register_script( 'react-append', $path_to_script_b );
-		wp_enqueue_script ( 'react-append' );
-
+		wp_enqueue_script ( 'fbc-js' );
+		wp_enqueue_script ( 'fbc-jsx' );
 
 		$translation_array = array(
 			'FBC_URL' 	=> FBC_URL,
@@ -94,13 +86,125 @@ add_filter( 'script_loader_tag', 'md_modify_jsx_tag', 10, 3 );
 		wp_localize_script( 'react-loop', 'args', $translation_array );
 		wp_enqueue_script ( 'react-loop' );
 
+		$path_to_script_a = FBC_URL .'assets/js/attachment.js';
+		wp_register_script( 'react-attachment', $path_to_script_a );
+		wp_enqueue_script ( 'react-attachment' );
+
+		$path_to_script_b = FBC_URL .'assets/js/append.js';
+		wp_register_script( 'react-append', $path_to_script_b );
+		wp_enqueue_script ( 'react-append' );
+
+		$path_to_script_c = FBC_URL .'assets/js/tree.js';
+		wp_register_script( 'react-tree', $path_to_script_c );
+		wp_localize_script( 'react-tree', 'args', $translation_array );
+		wp_enqueue_script ( 'react-tree' );
+
+
 
 		?>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+		<script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+		<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" />
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
 		<!--script type="text/jsx;harmony=true" src="<?php echo FBC_URL; ?>assets/js/images.js"></script-->
 
+<script type="text/javascript">
+/*
+//jQuery('.tree li:has(ul)').addClass('parent_li').find(' > span').attr('title', 'Collapse this branch');
+//jQuery('.tree li:has(ul)').addClass('parent_li');
+jQuery('.parent_li').find('fa').on('click', function (e) {
+	console.log('click');
+	var children = jQuery(this).parent('li.parent_li').find(' > ul > li');
+	if (children.is(":visible")) {
+		children.hide('fast');
+		//jQuery(this).attr('title', 'Expand this branch').find(' > i').addClass('icon-plus-sign').removeClass('icon-minus-sign');
+	} else {
+		children.show('fast');
+		//jQuery(this).attr('title', 'Collapse this branch').find(' > i').addClass('icon-minus-sign').removeClass('icon-plus-sign');
+	}
+	e.stopPropagation();
+});
+*/
+</script>
 
-		<div id="fbc-main"></div>
+<style type="text/css">
+#fbc-tree { width: 250px; float: left; }
+#fbc-loop { margin-left: 250px; }
+#fbc-tree li {
+    margin-left: 20px;
+}
+#fbc-tree li .fa {
+	padding-right: 5px;
+}
+#fbc-tree .parent_li div {
+	display: none;
+}
+.tree {
+    min-height:20px;
+    padding:19px;
+    margin-bottom:20px;
+    background-color:#fbfbfb;
+    border:1px solid #999;
+    -webkit-border-radius:4px;
+    -moz-border-radius:4px;
+    border-radius:4px;
+    -webkit-box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.05)
+}
+.tree li {
+    list-style-type:none;
+    margin:0;
+    padding:10px 5px 0 5px;
+    position:relative
+}
+.tree li::before, .tree li::after {
+    content:'';
+    left:-10px;
+    position:absolute;
+    right:auto
+}
+.tree li::before {
+    border-left:1px solid #999;
+    bottom:50px;
+    height:100%;
+    top:0;
+    width:1px
+}
+.tree li::after {
+    border-top:1px solid #999;
+    height:20px;
+    top:25px;
+    width:15px
+}
+.tree li span {
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border:1px solid #999;
+    border-radius:5px;
+    display:inline-block;
+    padding:3px 8px;
+    text-decoration:none
+}
+.tree li.parent_li>span {
+    cursor:pointer
+}
+.tree>ul>li::before, .tree>ul>li::after {
+    border:0
+}
+.tree li:last-child::before {
+    height:30px
+}
+.tree li.parent_li>span:hover, .tree li.parent_li>span:hover+ul li span {
+    background:#eee;
+    border:1px solid #94a0b4;
+    color:#000
+}
+</style>
+
+		<div id="fbc-tree"></div>
 
 			<div id="fbc-loop"></div>
 		<?php
@@ -152,7 +256,7 @@ add_filter( 'script_loader_tag', 'md_modify_jsx_tag', 10, 3 );
 
 
 			<script>
-				jQuery('#loader').hide();
+				//jQuery('#loader').hide();
 			</script>
 
 
@@ -477,7 +581,13 @@ add_filter( 'script_loader_tag', 'md_modify_jsx_tag', 10, 3 );
 							foreach ($thesizes as $value => $name) : ?>
 
 								<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $value, 'full' ); ?>>
-									<?php echo esc_html( $name['name'] ); ?> &ndash; <?php echo $name['height'];?> &times; <?php echo $name['width']; ?>
+									<?php echo esc_html( $name['name'] ); ?>
+									<?php
+										/*
+										 * TODO: Calculate image dimensions
+										 <?php echo esc_html( $name['name'] ); ?> &ndash; <?php echo $name['height'];?> &times; <?php echo $name['width']; ?>
+										 */
+									 ?>
 								</option>
 									<?php endforeach; ?>
 
