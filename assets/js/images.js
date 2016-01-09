@@ -44,8 +44,10 @@ var FlightImages = React.createClass({
 		return {
 			src: this.props.path,
 			album: {name: 'Recent Images'},
-			start: parseInt(args.start),
-			limit: parseInt(args.limit),
+			//start: parseInt(args.start),
+			//limit: parseInt(args.limit),
+			start: 0,
+			limit: 30,
 			data: []
 		};
 	},
@@ -54,14 +56,14 @@ var FlightImages = React.createClass({
 		jQuery('#loader').show();
 		this.setState({
 			start: this.state.start+this.state.limit,
-			src: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&token="+ args.token +"&album="+ this.state.album.id +"&limit="+ this.state.limit +"&start="+ this.state.start
+			src: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&token="+ args.token +"&album="+ this.state.album.id +"&limit="+ this.state.limit +"&start="+ (this.state.start+this.state.limit)
 		});
 	},
 
-    repeat: function(item,cnt,length) {
+    repeat: function(item,cnt,length,found) {
         var self = this;
         $.ajax({
-            url: args.FBC_URL +"/includes/lib/download.php?id="+ item.id +"&subdomain="+ args.subdomain +"&token="+ args.token
+            url: args.FBC_URL +"/includes/lib/download.php?id="+ item.id +"&subdomain="+ args.subdomain +"&token="+ args.token +"&limit="+ this.state.limit +"&start="+ this.state.start
 		})
 		.done(function(e) {
 			var start = e.search("Location: ");
@@ -88,8 +90,15 @@ var FlightImages = React.createClass({
                 self.setState({data: arr});
 			}
 
-			if(cnt == length)
+			if(cnt == length) {
 				jQuery('#loader').hide();
+
+				if(found > (self.state.start+self.state.limit))
+					jQuery('#fbc_loadMore').show();
+				else
+					jQuery('#fbc_loadMore').hide();
+			}
+
         })
 		.always(function() {
 		});
@@ -105,8 +114,8 @@ var FlightImages = React.createClass({
 		})
 		.done(function(data) {
 			var cnt = 1;
-            $.each(data, function(k,v) {
-                self.repeat(v,cnt,data.length);
+            $.each(data.results, function(k,v) {
+                self.repeat(v,cnt,data.results.length,data.found);
 				cnt++;
             });
 		});
@@ -116,8 +125,9 @@ var FlightImages = React.createClass({
 		if(nextProps.album.id != this.state.album.id) {
 			this.setState({
 				album: nextProps.album,
+				start: 0,
 				data: [],
-				src: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&album="+ nextProps.album.id +"&token="+ args.token
+				src: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&album="+ nextProps.album.id +"&token="+ args.token +"&limit="+ this.state.limit +"&start=0"
 			});
 		}
 	},
@@ -131,8 +141,8 @@ var FlightImages = React.createClass({
 		})
 		.done(function(data) {
 			var cnt = 1;
-			$.each(data, function(k,v) {
-				self.repeat(v,cnt,data.length);
+			$.each(data.results, function(k,v) {
+                self.repeat(v,cnt,data.results.length,data.found);
 				cnt++;
 			});
 		});
@@ -140,6 +150,7 @@ var FlightImages = React.createClass({
 
 	componentDidUpdate: function(prevProps,prevState) {
 		if(this.state.album.id != prevState.album.id) {
+			jQuery('#fbc_loadMore').hide();
 			jQuery('#loader').show();
 			this.looper();
 		}

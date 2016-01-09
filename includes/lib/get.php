@@ -1,6 +1,6 @@
 <?php
-if(isset($_REQUEST['album']))
-    $url = 'https://'. $_REQUEST['subdomain'] .'.run.cantoflight.com/api/v1/album/'. $_REQUEST['album'] .'?limit=30&start=0';
+if(isset($_REQUEST['album']) && $_REQUEST['album'] != "undefined")
+    $url = 'https://'. $_REQUEST['subdomain'] .'.run.cantoflight.com/api/v1/album/'. $_REQUEST['album'] .'?limit='. $_REQUEST['limit'] .'&start='. $_REQUEST['start'];
 else
     $url = 'https://'. $_REQUEST['subdomain'] .'.run.cantoflight.com/api/v1/image?limit='. $_REQUEST['limit'] .'&start='. $_REQUEST['start'];
 
@@ -27,5 +27,6 @@ curl_close( $ch );
 $out = json_decode($data);
 
 header('Content-Type: application/json;charset=utf-8');
-echo json_encode($out->results);
+echo json_encode($out);
+
 ?>

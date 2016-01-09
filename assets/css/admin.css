@@ -16,6 +16,7 @@
 	width: 33%;
 }
 #fbc_loadMore {
+    display: none;
 	background-color: #fa9100;
 	color: #fff;
 	font-size: 14px;

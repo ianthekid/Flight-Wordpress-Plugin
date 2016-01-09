@@ -15,11 +15,6 @@ var FBC = React.createClass({
 		});
     },
 
-    componentWillUpdate: function(nextProps,nextState,e) {
-        //console.log(nextState.album.name);
-        //console.log(this.state);
-    },
-
     render: function() {
         return (
             <div>
