@@ -23,7 +23,7 @@ var FBC = React.createClass({
     render: function() {
         return (
             <div>
-                <div id="fbc-tree">
+                <div id="fbc-tree" className="collapse">
                     <Tree onValueChange={this.handleChange} />
                 </div>
                 <div id="fbc-loop">
