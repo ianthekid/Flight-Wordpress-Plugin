@@ -1,5 +1,8 @@
 <?php
-$url = 'https://'. $_REQUEST['subdomain'] .'.run.cantoflight.com/api/v1/image?limit='. $_REQUEST['limit'] .'&start='. $_REQUEST['start'];
+if(isset($_REQUEST['album']))
+    $url = 'https://'. $_REQUEST['subdomain'] .'.run.cantoflight.com/api/v1/album/'. $_REQUEST['album'] .'?limit=30&start=0';
+else
+    $url = 'https://'. $_REQUEST['subdomain'] .'.run.cantoflight.com/api/v1/image?limit='. $_REQUEST['limit'] .'&start='. $_REQUEST['start'];
 
 $header = array( 'Authorization: Bearer '. $_REQUEST['token']);
 

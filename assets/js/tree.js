@@ -1,7 +1,7 @@
 var Children = React.createClass({
 
 	handleClick: function(item,e) {
-		console.log(item.id);
+		//console.log(item.id);
 	},
 
 	render: function() {
@@ -18,7 +18,7 @@ var Children = React.createClass({
 						else
 							icon = "fa fa-folder-open";
 
-						children.push(<li><i className={icon}></i><a href="javascript:;" onClick={this.handleClick.bind(this,item.children[i])}>{item.children[i].name}</a></li>);
+						children.push(<li><i className={icon} onClick={this.props.onClick.bind(this,item.children[i])}></i><a href="javascript:;" onClick={this.handleClick.bind(this,item.children[i])}>{item.children[i].name}</a></li>);
 					}
 					var showChildren = <Children item={item.children} />;
 				}
@@ -32,7 +32,9 @@ var Children = React.createClass({
 				return (
 					<ul>
 						<li>
-							<i className={icon}></i><a href="javascript:;" onClick={this.handleClick.bind(this,item)}>{item.name}</a>
+							<i className={icon} onClick={this.props.onClick.bind(this,item)}></i>
+							<a href="javascript:;" onClick={this.handleClick.bind(this,item)}>{item.name}</a>
+
 
 							<ul>
 								{children}
@@ -83,6 +85,10 @@ var Folders = React.createClass({
 		//e.stopPropagation();
 	},
 
+	handleChange: function(e) {
+		this.props.onValueChange(e);
+	},
+
     render: function() {
         return (
 			<span>
@@ -91,7 +97,7 @@ var Folders = React.createClass({
 					if( item.children ) {
 						var c = "parent_li";
 						var f = "fa fa-folder";
-						var showChildren = <Children item={item.children} />;
+						var showChildren = <Children item={item.children} onClick={this.handleChange} />;
 					} else {
 						var c = "";
 						var f = "fa fa-database";
@@ -102,7 +108,8 @@ var Folders = React.createClass({
 					// onClick={this.handleClick.bind(this,item)}
 					return (
 						<li className={c} id={id}>
-							<i className={f} onClick={this.handleClick.bind(this,item)}></i><a href="">{item.name}</a>
+							<i className={f} onClick={this.props.onValueChange.bind(this,item)}></i>
+							<a href="javascript:;" onClick={this.handleClick.bind(this,item)}>{item.name}</a>
 
 							{showChildren}
 			            </li>
@@ -134,7 +141,12 @@ var Tree = React.createClass({
 		});
 	},
 
+	handleChange: function(e) {
+		this.props.onValueChange(e);
+	},
+
 	componentWillUpdate: function(nextProps,nextState) {
+		//console.log(nextProps);
 	},
 
 	componentDidUpdate: function(prevProps,prevState) {
@@ -144,11 +156,11 @@ var Tree = React.createClass({
         return (
 			<div className="tree well">
 				<ul>
-	                <Folders data={this.state.data} />
+	                <Folders data={this.state.data} onValueChange={this.handleChange} />
 	            </ul>
 			</div>
         );
     }
 });
 
-React.render(<Tree />, document.getElementById('fbc-tree') );
+//React.render(, document.getElementById('fbc-tree') );

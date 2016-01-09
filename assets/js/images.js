@@ -52,7 +52,10 @@ var Images = React.createClass({
 var FlightImages = React.createClass({
 	getInitialState: function() {
 		return {
-			src: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&token="+ args.token +"&limit="+ args.limit +"&start="+ args.start,
+			src: this.props.path,
+			album: {
+                name: 'Recent Images'
+            },
 			start: parseInt(args.start),
 			limit: parseInt(args.limit),
 			data: []
@@ -63,7 +66,7 @@ var FlightImages = React.createClass({
 		jQuery('#loader').show();
 		this.setState({
 			start: this.state.start+this.state.limit,
-			src: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&token="+ args.token +"&limit="+ this.state.limit +"&start="+ this.state.start
+			src: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&token="+ args.token +"&album="+ this.state.album.id +"&limit="+ this.state.limit +"&start="+ this.state.start
 		});
 	},
 
@@ -106,6 +109,7 @@ var FlightImages = React.createClass({
     },
 
 	componentDidMount: function() {
+		jQuery('#loader').show();
 		var self = this;
 		$.ajax({
 			url: this.state.src,
@@ -122,34 +126,46 @@ var FlightImages = React.createClass({
 	},
 
 	componentWillUpdate: function(nextProps,nextState) {
+		if(nextProps.album.id != this.props.album.id) {
+			this.setState({
+				album: nextProps.album,
+				data: [],
+				src: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&album="+ nextProps.album.id +"&token="+ args.token
+			});
+		}
+	},
+
+	looper: function() {
+		var self = this;
+		$.ajax({
+			url: this.state.src,
+			dataType: 'json',
+			cache: false
+		})
+		.done(function(data) {
+			var cnt = 1;
+			$.each(data, function(k,v) {
+				self.repeat(v,cnt);
+				cnt++;
+			});
+		});
 	},
 
 	componentDidUpdate: function(prevProps,prevState) {
+		if(prevProps.album.id != this.props.album.id) {
+			jQuery('#loader').show();
+			this.looper();
+		}
+
 		if(this.state.start > prevState.start) {
-
-			/*
-			 * TODO: re-use this and trigger from DidMount
-			*/
-			var self = this;
-			$.ajax({
-				url: this.state.src,
-				dataType: 'json',
-				cache: false
-			})
-			.done(function(data) {
-				var cnt = 1;
-	            $.each(data, function(k,v) {
-	                self.repeat(v,cnt);
-					cnt++;
-	            });
-			});
-
+			this.looper();
 		}
 	},
 
     render: function() {
         return (
 			<div class="grid">
+				<h1 className="text-center">{this.state.album.name}</h1>
 				<ul className="attachments" id="__attachments-view-fbc">
 
 	                <Images data={this.state.data} />
@@ -163,4 +179,4 @@ var FlightImages = React.createClass({
     }
 });
 
-React.render(<FlightImages />, document.getElementById('fbc-loop') );
+//React.render(<FlightImages />, document.getElementById('fbc-loop') );

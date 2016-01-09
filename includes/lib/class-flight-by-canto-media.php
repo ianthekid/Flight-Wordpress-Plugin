@@ -99,6 +99,11 @@ add_filter( 'script_loader_tag', 'md_modify_jsx_tag', 10, 3 );
 		wp_localize_script( 'react-tree', 'args', $translation_array );
 		wp_enqueue_script ( 'react-tree' );
 
+		$path_to_script_d = FBC_URL .'assets/js/fbc.js';
+		wp_register_script( 'react-main', $path_to_script_d );
+		wp_localize_script( 'react-main', 'args', $translation_array );
+		wp_enqueue_script ( 'react-main' );
+
 
 
 		?>
@@ -127,6 +132,14 @@ jQuery('.parent_li').find('fa').on('click', function (e) {
 	e.stopPropagation();
 });
 */
+jQuery( document ).ready(function() {
+	jQuery('.media-upload-form').find('.button').on('click', function() {
+		jQuery('#loader').show();
+	});
+	jQuery( window ).unload(function() {
+		jQuery('#loader').hide();
+	});
+});
 </script>
 
 <style type="text/css">
@@ -140,6 +153,11 @@ jQuery('.parent_li').find('fa').on('click', function (e) {
 }
 #fbc-tree .parent_li div {
 	display: none;
+}
+h1 {
+	text-align: center;
+	font-size: 24px;
+	margin-right: 350px;
 }
 .tree {
     min-height:20px;
@@ -204,9 +222,8 @@ jQuery('.parent_li').find('fa').on('click', function (e) {
 }
 </style>
 
-		<div id="fbc-tree"></div>
+		<div id="fbc-react"></div>
 
-			<div id="fbc-loop"></div>
 		<?php
 
 
