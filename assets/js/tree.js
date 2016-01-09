@@ -1,11 +1,5 @@
 var Children = React.createClass({
-
-	handleClick: function(item,e) {
-		//console.log(item.id);
-	},
-
 	render: function() {
-		//console.log(this.props.item);
 		return (
 			<div>
 			{ this.props.item.map(function(item) {
@@ -13,27 +7,32 @@ var Children = React.createClass({
 				if( item.children ) {
 					for (var i = 0; i < item.children.length; i++) {
 
-						if( item.children[i].scheme == "album" )
+						if( item.children[i].scheme == "album" ) {
 							icon = "fa fa-database";
-						else
+							var click = this.props.onClick.bind(this,item.children[i]);
+						} else {
 							icon = "fa fa-folder-open";
+							var click = '';
+						}
 
-						children.push(<li><i className={icon} onClick={this.props.onClick.bind(this,item.children[i])}></i><a href="javascript:;" onClick={this.handleClick.bind(this,item.children[i])}>{item.children[i].name}</a></li>);
+						children.push(<li><i className={icon} onClick={click}></i><a href="javascript:;" onClick={click}>{item.children[i].name}</a></li>);
 					}
 					var showChildren = <Children item={item.children} />;
 				}
 
-				if( item.scheme == "album" )
+				if( item.scheme == "album" ) {
 					icon = "fa fa-database";
-				else
+					var click = this.props.onClick.bind(this,item);
+				} else {
 					icon = "fa fa-folder-open";
-
+					var click = '';
+				}
 
 				return (
 					<ul>
 						<li>
-							<i className={icon} onClick={this.props.onClick.bind(this,item)}></i>
-							<a href="javascript:;" onClick={this.handleClick.bind(this,item)}>{item.name}</a>
+							<i className={icon} onClick={click}></i>
+							<a href="javascript:;" onClick={click}>{item.name}</a>
 
 
 							<ul>
@@ -50,29 +49,14 @@ var Children = React.createClass({
 });
 
 var Folders = React.createClass({
-
 	handleClick: function(item,e) {
 		this.setState({
 			item: [item]
 		});
 	},
 
-	componentDidMount: function() {
-		jQuery(React.findDOMNode(this.refs.tooltip)).hide();
-
-	},
-
-	componentWillUpdate: function(nextProps,nextState) {
-
-	},
-
-	componentDidUpdate: function(prevProps,prevState) {
-
-	},
-
 	handleClick: function(item,e) {
 		var children = jQuery("#parent_"+ item.id +">div");
-
 		if (children.is(":visible")) {
 			jQuery("#parent_"+ item.id +">i").removeClass("fa-folder-open");
 			jQuery("#parent_"+ item.id +">i").addClass("fa-folder");
@@ -97,19 +81,20 @@ var Folders = React.createClass({
 					if( item.children ) {
 						var c = "parent_li";
 						var f = "fa fa-folder";
+						var click = this.handleClick.bind(this,item);
 						var showChildren = <Children item={item.children} onClick={this.handleChange} />;
 					} else {
 						var c = "";
 						var f = "fa fa-database";
+						var click = this.props.onValueChange.bind(this,item);
 					}
 
 					var id = "parent_"+item.id;
 
-					// onClick={this.handleClick.bind(this,item)}
 					return (
 						<li className={c} id={id}>
-							<i className={f} onClick={this.props.onValueChange.bind(this,item)}></i>
-							<a href="javascript:;" onClick={this.handleClick.bind(this,item)}>{item.name}</a>
+							<i className={f} onClick={click}></i>
+							<a href="javascript:;" onClick={click}>{item.name}</a>
 
 							{showChildren}
 			            </li>
@@ -145,13 +130,6 @@ var Tree = React.createClass({
 		this.props.onValueChange(e);
 	},
 
-	componentWillUpdate: function(nextProps,nextState) {
-		//console.log(nextProps);
-	},
-
-	componentDidUpdate: function(prevProps,prevState) {
-	},
-
     render: function() {
         return (
 			<div className="tree well">
@@ -162,5 +140,3 @@ var Tree = React.createClass({
         );
     }
 });
-
-//React.render(, document.getElementById('fbc-tree') );

@@ -1,5 +1,4 @@
 var Images = React.createClass({
-
 	getInitialState: function() {
 		return {
 			start: parseInt(args.start),
@@ -14,18 +13,9 @@ var Images = React.createClass({
 		});
 	},
 
-	componentDidMount: function() {
-
-	},
-
-	componentWillUpdate: function(nextProps,nextState) {
-
-	},
-
 	componentDidUpdate: function(prevProps,prevState) {
 		React.render(<Attachment attachment={this.state.item} />, document.getElementById('fbc_media-sidebar') );
 	},
-
 
     render: function() {
 
@@ -53,9 +43,7 @@ var FlightImages = React.createClass({
 	getInitialState: function() {
 		return {
 			src: this.props.path,
-			album: {
-                name: 'Recent Images'
-            },
+			album: {name: 'Recent Images'},
 			start: parseInt(args.start),
 			limit: parseInt(args.limit),
 			data: []
@@ -70,7 +58,7 @@ var FlightImages = React.createClass({
 		});
 	},
 
-    repeat: function(item,cnt) {
+    repeat: function(item,cnt,length) {
         var self = this;
         $.ajax({
             url: args.FBC_URL +"/includes/lib/download.php?id="+ item.id +"&subdomain="+ args.subdomain +"&token="+ args.token
@@ -100,11 +88,10 @@ var FlightImages = React.createClass({
                 self.setState({data: arr});
 			}
 
-			if(cnt == args.limit)
+			if(cnt == length)
 				jQuery('#loader').hide();
         })
 		.always(function() {
-			//console.log('here');
 		});
     },
 
@@ -119,14 +106,14 @@ var FlightImages = React.createClass({
 		.done(function(data) {
 			var cnt = 1;
             $.each(data, function(k,v) {
-                self.repeat(v,cnt);
+                self.repeat(v,cnt,data.length);
 				cnt++;
             });
 		});
 	},
 
 	componentWillUpdate: function(nextProps,nextState) {
-		if(nextProps.album.id != this.props.album.id) {
+		if(nextProps.album.id != this.state.album.id) {
 			this.setState({
 				album: nextProps.album,
 				data: [],
@@ -145,18 +132,17 @@ var FlightImages = React.createClass({
 		.done(function(data) {
 			var cnt = 1;
 			$.each(data, function(k,v) {
-				self.repeat(v,cnt);
+				self.repeat(v,cnt,data.length);
 				cnt++;
 			});
 		});
 	},
 
 	componentDidUpdate: function(prevProps,prevState) {
-		if(prevProps.album.id != this.props.album.id) {
+		if(this.state.album.id != prevState.album.id) {
 			jQuery('#loader').show();
 			this.looper();
 		}
-
 		if(this.state.start > prevState.start) {
 			this.looper();
 		}
@@ -178,5 +164,3 @@ var FlightImages = React.createClass({
         );
     }
 });
-
-//React.render(<FlightImages />, document.getElementById('fbc-loop') );
