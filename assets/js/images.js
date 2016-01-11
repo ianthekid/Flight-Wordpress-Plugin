@@ -28,6 +28,9 @@ var Images = React.createClass({
 					return (
 						<li className="fbc_attachment attachment">
 			                <div className="attachment-preview">
+								<a href={item[0].img} className="fullscreen" data-featherlight="image">
+									<i className="fa fa-expand"></i>
+								</a>
 	                            <img src={item[0].img} onClick={this.handleClick.bind(this,item[0])} />
 			                </div>
 			            </li>

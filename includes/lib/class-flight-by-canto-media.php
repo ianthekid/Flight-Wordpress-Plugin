@@ -113,7 +113,8 @@ add_filter( 'script_loader_tag', 'md_modify_jsx_tag', 10, 3 );
 		<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" />
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
-		<!--script type="text/jsx;harmony=true" src="<?php echo FBC_URL; ?>assets/js/images.js"></script-->
+<link href="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.css" type="text/css" rel="stylesheet" />
+<script src="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
 
 
 		<a class="btn" id="hideShow"> <i class="fa fa-bars"></i> Library</a>

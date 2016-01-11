@@ -14,14 +14,15 @@
 	clear:both;
 	margin: 30px auto;
 	width: 33%;
+    padding-top: 20px;
 }
 #fbc_loadMore {
     display: none;
 	background-color: #fa9100;
 	color: #fff;
 	font-size: 14px;
-	padding: 8px 25px;
-	border-radius: 1px;
+	padding: 9px 25px;
+	border-radius: 3px;
 	text-transform: uppercase;
 	border: 1px solid #dddddd;
 	cursor: pointer;
@@ -209,10 +210,35 @@ input.readonly, input[readonly], textarea.readonly, textarea[readonly] {
 #fbc-tree .parent_li div {
 	display: none;
 }
-h1 {
+#fbc-react {
+    padding-left: 15px;
+}
+#fbc-react h1 {
 	text-align: center;
 	font-size: 24px;
 	margin-right: 350px;
+}
+#fbc-react .fullscreen {
+	position: absolute;
+    bottom: 4px;
+    right: 4px;
+    display: block;
+    border: 1px solid white;
+    border-radius: 4px;
+    padding: 4px;
+    color: white;
+    font-size: 14px;
+    background-color: rgba(0,0,0,0.5);
+    opacity: 0.5;
+	transition: all 0.3s ease;
+}
+#fbc-react .fullscreen:hover {
+	opacity: 0.9;
+	color: white !important;
+}
+.featherlight .featherlight-content {
+	padding: 5px 5px !important;
+    border-bottom: 0 !important;
 }
 .tree {
     min-height:20px;
