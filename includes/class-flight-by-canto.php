@@ -154,41 +154,6 @@ class Flight_by_Canto {
 		}
 		add_filter( 'script_loader_tag', 'md_modify_jsx_tag', 10, 3 );
 
-		wp_enqueue_script( 'fbc_media_js', plugins_url() . '/flight-by-canto/assets/js/admin.js' );
-
-		wp_register_script( 'fbc-js', 'https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/react.min.js' );
-		wp_register_script( 'fbc-jsx', 'https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/JSXTransformer.js' );
-
-		wp_enqueue_script ( 'fbc-js' );
-		wp_enqueue_script ( 'fbc-jsx' );
-
-		$translation_array = array(
-			'FBC_URL' 	=> FBC_URL,
-			'FBC_PATH' 	=> FBC_PATH,
-			'subdomain' => get_option( 'fbc_flight_domain' ),
-			'token'		=> get_option( 'fbc_app_token' ),
-			'limit'		=> 30,
-			'start'		=> 0
-		);
-		$path_to_script = FBC_URL .'assets/js/images.js';
-	 	wp_register_script( 'react-loop', $path_to_script );
-		wp_localize_script( 'react-loop', 'args', $translation_array );
-		wp_enqueue_script ( 'react-loop' );
-
-		$path_to_script_a = FBC_URL .'assets/js/attachment.js';
-		wp_register_script( 'react-attachment', $path_to_script_a );
-		wp_enqueue_script ( 'react-attachment' );
-
-		$path_to_script_c = FBC_URL .'assets/js/tree.js';
-		wp_register_script( 'react-tree', $path_to_script_c );
-		wp_localize_script( 'react-tree', 'args', $translation_array );
-		wp_enqueue_script ( 'react-tree' );
-
-		$path_to_script_d = FBC_URL .'assets/js/fbc.js';
-		wp_register_script( 'react-main', $path_to_script_d );
-		wp_localize_script( 'react-main', 'args', $translation_array );
-		wp_enqueue_script ( 'react-main' );
-
 		/* end additions to Constructor */
 
 
@@ -525,6 +490,41 @@ class Flight_by_Canto {
 		wp_register_style( $this->_token . '-admin', esc_url( $this->assets_url ) . 'css/admin.css', array(),
 			$this->_version );
 		wp_enqueue_style( $this->_token . '-admin' );
+
+		wp_enqueue_script( 'fbc_media_js', plugins_url() . '/flight-by-canto/assets/js/admin.js' );
+
+		wp_register_script( 'fbc-js', 'https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/react.min.js' );
+		wp_register_script( 'fbc-jsx', 'https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/JSXTransformer.js' );
+
+		wp_enqueue_script ( 'fbc-js' );
+		wp_enqueue_script ( 'fbc-jsx' );
+
+		$translation_array = array(
+			'FBC_URL' 	=> FBC_URL,
+			'FBC_PATH' 	=> FBC_PATH,
+			'subdomain' => get_option( 'fbc_flight_domain' ),
+			'token'		=> get_option( 'fbc_app_token' ),
+			'limit'		=> 30,
+			'start'		=> 0
+		);
+		$path_to_script = FBC_URL .'assets/js/images.js';
+	 	wp_register_script( 'react-loop', $path_to_script );
+		wp_localize_script( 'react-loop', 'args', $translation_array );
+		wp_enqueue_script ( 'react-loop' );
+
+		$path_to_script_a = FBC_URL .'assets/js/attachment.js';
+		wp_register_script( 'react-attachment', $path_to_script_a );
+		wp_enqueue_script ( 'react-attachment' );
+
+		$path_to_script_c = FBC_URL .'assets/js/tree.js';
+		wp_register_script( 'react-tree', $path_to_script_c );
+		wp_localize_script( 'react-tree', 'args', $translation_array );
+		wp_enqueue_script ( 'react-tree' );
+
+		$path_to_script_d = FBC_URL .'assets/js/fbc.js';
+		wp_register_script( 'react-main', $path_to_script_d );
+		wp_localize_script( 'react-main', 'args', $translation_array );
+		wp_enqueue_script ( 'react-main' );
 	} // End admin_enqueue_styles ()
 
 	/**
