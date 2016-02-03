@@ -385,17 +385,15 @@ class flight_by_canto_media {
 					<div class="setting">
 						<label>
 							<span>Link To</span>
-
-
-							<select data-user-setting="urlbutton" data-setting="link" class="link-to" name="link">
-								<option selected="" value="file">Media File</option>
+							<select name="link" class="link-to" data-setting="link" data-user-setting="urlbutton">
+								<option value="none" selected="">None</option>
+								<option value="file">Media File</option>
 								<option value="post">Attachment Page</option>
-								<!--<option value="custom">Custom URL</option> -->
-								<option value="none">None</option>
+								<option value="custom">Custom URL</option>
 							</select>
 						</label>
+						<input type="text" class="link-to-custom hidden" data-setting="linkUrl">
 					</div>
-
 
 					<label class="setting">
 						<span>Size</span>
@@ -421,6 +419,7 @@ class flight_by_canto_media {
 
 								<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $value, 'full' ); ?>>
 									<?php echo esc_html( $name['name'] ); ?>
+
 									<?php
 										/*
 										 * TODO: Calculate image dimensions
@@ -478,13 +477,11 @@ function get_image_sizes( $size = '' ) {
 
 	// Get only 1 size if found
 	if ( $size ) {
-
 		if ( isset( $sizes[ $size ] ) ) {
 			return $sizes[ $size ];
 		} else {
 			return false;
 		}
-
 	}
 
 	return $sizes;
@@ -507,6 +504,8 @@ function fbc_insert_custom_image_sizes( $sizes ) {
 }
 
 //Add custom image sized to thumbnail selection if the user hasnt already.
+add_filter( 'image_size_names_choose', 'fbc_insert_custom_image_sizes' );
+
 if ( ! has_filter( 'image_size_names_choose' ) ) {
 	add_filter( 'image_size_names_choose', 'fbc_insert_custom_image_sizes' );
 }

@@ -1,15 +1,10 @@
 #loader {
     text-align: center;
-
     background-color: rgba(50,50,50,0.8);
     border-radius: 10px;
-
-
-
     position: fixed;
     z-index: 999;
     padding: 15px;
-
     top: 50%;
     left: 50%;
     width: 60px;
@@ -77,6 +72,9 @@
     position:fixed;
     max-width:350px;
     display:none
+}
+#library-form .button {
+    display: block
 }
 
 .pinkynail,.filename new,.describe-toggle-off {

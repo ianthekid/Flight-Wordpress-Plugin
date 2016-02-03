@@ -26,7 +26,6 @@ if ( isset( $send_id ) ) {
 	$id         = $send_id;
 
 	//Go get the media item from Flight
-	//INIT PULL
 	$flight['api_url']  = 'https://' . get_option( 'fbc_flight_domain' ) . '.run.cantoflight.com/api/v1/';
 	$flight['req']      = $flight['api_url'] . 'image/' . $_POST['fbc_id'];
 
@@ -78,7 +77,7 @@ if ( isset( $send_id ) ) {
 		return $id;
 	}
 	//Save away the default alt text
-//	add_post_meta ($id, '_wp_attachment_image_alt' , $_POST['alt']);
+	add_post_meta ($id, '_wp_attachment_image_alt' , $_POST['alt']);
 
 
 	$attachment_url = wp_get_attachment_url( $id );
@@ -94,12 +93,16 @@ if ( isset( $send_id ) ) {
 		$html = $title = isset( $_POST['title'] ) ? $_POST['title'] : '';
 
 		//Create the link to section here.
-		/*if ( ! empty( $_POST['link'] ) ) {
+		/*
+		if ( $_POST['link'] === "none" ) {
+			$attachment_url = '';
+		} else {
 			$url = $attachment_url;
 			if ( strpos( $url, 'attachment_id') || get_attachment_link( $id ) == $url )
 				$rel = ' rel="attachment wp-att-' . $id . '"';
 			$html = '<a href="' . esc_url( $url ) . '"' . $rel . '>' . $html . '</a>';
-		}*/
+		}
+		*/
 
 			$align = isset( $_POST['align'] ) ? $_POST['align'] : 'none';
 			$size = isset( $_POST['size'] ) ? $_POST['size'] : 'medium';
