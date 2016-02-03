@@ -25,8 +25,6 @@ function flight_by_canto_media_init() {
 		add_filter( 'media_upload_tabs', 'flight_by_canto_media_menu' );
 		add_action( 'media_upload_flight_by_canto', 'flight_by_canto_media_upload_flight_by_canto' );
 		add_action( 'media_upload_flight_by_canto', 'get_meta_data' );
-		add_action( 'media_upload_flight_by_canto', 'load_more' );
-
 	}
 }
 
@@ -41,131 +39,22 @@ class flight_by_canto_media {
 	function media_upload_flight_by_canto( $errors ) {
 		global $wpdb, $wp_query, $wp_locale, $type, $tab, $post_mime_types, $blog_id;
 
-
-
-/*
- * TODO: Move this into Plugin Init()
- */
-function md_modify_jsx_tag( $tag, $handle, $src ) {
-  // Check that this is output of JSX file
-  if( strstr($handle,'react') != FALSE ) {
-  //if($handle == "react-loop") {
-	  $tag = str_replace( "<script type='text/javascript'", "<script type='text/jsx'", $tag );
-  }
-
-  return $tag;
-}
-add_filter( 'script_loader_tag', 'md_modify_jsx_tag', 10, 3 );
-
-
-
-/*
- * TODO: Load these scripts outside of media_upload function. Maybe in Plugin Init()
- */
-
 		media_upload_header();
 
-		wp_enqueue_script( 'fbc_media_js', plugins_url() . '/flight-by-canto/assets/js/admin.js' );
-
-		wp_register_script( 'fbc-js', 'https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/react.min.js' );
-		wp_register_script( 'fbc-jsx', 'https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/JSXTransformer.js' );
-
-		wp_enqueue_script ( 'fbc-js' );
-		wp_enqueue_script ( 'fbc-jsx' );
-
-		$translation_array = array(
-			'FBC_URL' 	=> FBC_URL,
-			'FBC_PATH' 	=> FBC_PATH,
-			'subdomain' => get_option( 'fbc_flight_domain' ),
-			'token'		=> get_option( 'fbc_app_token' ),
-			'limit'		=> 30,
-			'start'		=> 0
-		);
-		$path_to_script = FBC_URL .'assets/js/images.js';
-	 	wp_register_script( 'react-loop', $path_to_script );
-		wp_localize_script( 'react-loop', 'args', $translation_array );
-		wp_enqueue_script ( 'react-loop' );
-
-		$path_to_script_a = FBC_URL .'assets/js/attachment.js';
-		wp_register_script( 'react-attachment', $path_to_script_a );
-		wp_enqueue_script ( 'react-attachment' );
-
-		$path_to_script_b = FBC_URL .'assets/js/append.js';
-		wp_register_script( 'react-append', $path_to_script_b );
-		wp_enqueue_script ( 'react-append' );
-
-		$path_to_script_c = FBC_URL .'assets/js/tree.js';
-		wp_register_script( 'react-tree', $path_to_script_c );
-		wp_localize_script( 'react-tree', 'args', $translation_array );
-		wp_enqueue_script ( 'react-tree' );
-
-		$path_to_script_d = FBC_URL .'assets/js/fbc.js';
-		wp_register_script( 'react-main', $path_to_script_d );
-		wp_localize_script( 'react-main', 'args', $translation_array );
-		wp_enqueue_script ( 'react-main' );
-
-
-
 		?>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
-		<script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
-		<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" />
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+		<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+		<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" />
 
-<link href="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.css" type="text/css" rel="stylesheet" />
-<script src="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+		<link href="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.css" type="text/css" rel="stylesheet" />
+		<script src="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
 
 
-		<a class="btn" id="hideShow"> <i class="fa fa-bars"></i> Library</a>
+		<a class="btn" id="hideShow"> <i class="icon-library"></i> Library</a>
 		<div id="fbc-react"></div>
 
-
-<script type="text/javascript">
-/*
-//jQuery('.tree li:has(ul)').addClass('parent_li').find(' > span').attr('title', 'Collapse this branch');
-//jQuery('.tree li:has(ul)').addClass('parent_li');
-jQuery('.parent_li').find('fa').on('click', function (e) {
-	console.log('click');
-	var children = jQuery(this).parent('li.parent_li').find(' > ul > li');
-	if (children.is(":visible")) {
-		children.hide('fast');
-		//jQuery(this).attr('title', 'Expand this branch').find(' > i').addClass('icon-plus-sign').removeClass('icon-minus-sign');
-	} else {
-		children.show('fast');
-		//jQuery(this).attr('title', 'Collapse this branch').find(' > i').addClass('icon-minus-sign').removeClass('icon-plus-sign');
-	}
-	e.stopPropagation();
-});
-*/
-jQuery( document ).ready(function() {
-	jQuery('.media-upload-form').find('.button').on('click', function() {
-		jQuery('#loader').show();
-	});
-	jQuery( window ).unload(function() {
-		jQuery('#loader').hide();
-	});
-
-	jQuery('#hideShow').on('click', function(){
-	    var tree = jQuery('#fbc-tree');
-	    if (tree.is(':visible')){
-	        tree.animate({"left":"-250px"}, "fast").hide();
-			jQuery('#hideShow>i').addClass('fa-bars');
-			jQuery('#hideShow>i').removeClass('fa-close');
-			jQuery('#fbc-loop').css({'margin-left':'0px' });
-	    } else {
-	        tree.animate({"left":"0px"}, "fast").show();
-			jQuery('#hideShow>i').removeClass('fa-bars');
-			jQuery('#hideShow>i').addClass('fa-close');
-			jQuery('#fbc-loop').css({'margin-left':'250px' });
-	    }
-	});
-});
-</script>
-
 		<?php
-
-
 
 		if ( get_option( 'fbc_flight_domain' ) == '' || get_option( 'fbc_app_id' ) == '' || get_option( 'fbc_app_secret' ) == '' ) :
 			echo '<form><h3 class="media-title"><span style="font-size:14px;font-family:Helvetica,Arial">' . __( "<strong>Oops!</strong> You haven't connected your Flight account yet. <a href=\"javascript:;\" onclick=\"window.top.location.href='" . get_bloginfo( 'url' ) . "/wp-admin/options-general.php?page=flight_by_canto_settings'\">Plugin Settings</a>",
@@ -177,7 +66,7 @@ jQuery( document ).ready(function() {
 
 
 			?>
-			<?php /*
+			<?php /* TODO: Next version, add Filter and Search
     <div class="media-toolbar">
         <div class="media-toolbar-primary search-form" style="float:left; margin: 10px">
             <label for="media-search-input" class="screen-reader-text">Search Media</label>
@@ -206,14 +95,7 @@ jQuery( document ).ready(function() {
 
 			<div style="clear:both"></div>
 
-			<img src="<?php echo FBC_URL; ?>/assets/wpspin_light-2x.gif" id="loader">
-
-
-
-
-			<script>
-				//jQuery('#loader').hide();
-			</script>
+			<img src="<?php echo FBC_URL; ?>/assets/loader_white.gif" id="loader">
 
 
 
@@ -403,6 +285,7 @@ jQuery( document ).ready(function() {
 						<?php /* copied from /wp-admin/includes/media.php media_send_to_editor() */ ?>
 						var win = window.dialogArguments || opener || parent || top;
 						win.send_to_editor(htmlString);
+						document.getElementById("loader").style.display = "none";
 					}
 
 					jQuery(function ($) {
@@ -628,71 +511,10 @@ if ( ! has_filter( 'image_size_names_choose' ) ) {
 	add_filter( 'image_size_names_choose', 'fbc_insert_custom_image_sizes' );
 }
 
-function load_more(){
-?>
-<script type="text/javascript">
-	jQuery('#fbc_loadMore').click(function(e){
-		jQuery('#loader').show();
-		<?php $morenonce = wp_create_nonce('fbc-load-more-nonce'); ?>
-		jQuery.ajax({
-			url: '/wp-content/plugins/flight-by-canto/includes/lib/loadMore.php',
-			type: 'GET',
-			data: {"limit": 12, "start": jQuery('#__attachments-view-fbc li').length,"nonce": "<?php echo $morenonce ?>"},
-            success: function(response){
-				jQuery('#__attachments-view-fbc').append(response);
-				jQuery('#loader').hide();
-			},
-			error: function(xhr, desc, err) {
-				console.log(xhr);
-				//console.log("Details: " + desc + "\nError:" + err);
-			}
-		});
-	});
-	</script><?php
-}
 
 
 function get_meta_data() {
 
 	$nonce = wp_create_nonce( 'flight-by-canto' );
-	/*
-	?>
-	<script type="text/javascript">
-
-		//jQuery('.attachment-preview').live('click', function (e) {
-		jQuery('#__attachments-view-fbc').on('click', '.fbc_attachment', function (e) {
-			e.preventDefault();
-			jQuery('.selected').removeClass('selected');
-			jQuery(this).addClass('selected');
-			var data = {
-				'action': 'fbc_getMetadata',
-				'fbc_id': jQuery(this).data('id'),
-				'nonce': '<?php echo $nonce; ?>'
-			};
-
-			//jQuery('#thumbnail-head-8').find('img').attr('src',jQuery(this).find('img').attr('src'));
-			var src = jQuery(this).find('img').attr('src'); //;alert(src);
-			jQuery.post(ajaxurl, data, function (response) {
-
-				//build out the form
-				response = jQuery.parseJSON(response);
-				jQuery('#library-form').find('img').attr('src', src);
-				jQuery('#library-form #fbc_id').val(response.id);
-				jQuery('#library-form .filename').html(response.name);
-				jQuery('#library-form .filesize').html(response.size);
-				jQuery('#library-form .dimensions').html(response.dimensions);
-				jQuery('#library-form .uploaded').html(response.uploaded);
-				jQuery('#library-form .mime').html(response.mime);
-
-				jQuery("#library-form").appendTo("#fbc_media-sidebar");
-				jQuery("#library-form").show();
-
-			});
-
-
-		});
-
-	</script> <?php
-	*/
 	return;
 }

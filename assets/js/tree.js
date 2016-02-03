@@ -8,10 +8,10 @@ var Children = React.createClass({
 					for (var i = 0; i < item.children.length; i++) {
 
 						if( item.children[i].scheme == "album" ) {
-							icon = "fa fa-database";
+							icon = "icon-icn_album_01";
 							var click = this.props.onClick.bind(this,item.children[i]);
 						} else {
-							icon = "fa fa-folder-open";
+							icon = "icon-icn_flight_folder_open3";
 							var click = '';
 						}
 
@@ -21,10 +21,10 @@ var Children = React.createClass({
 				}
 
 				if( item.scheme == "album" ) {
-					icon = "fa fa-database";
+					icon = "icon-icn_album_01";
 					var click = this.props.onClick.bind(this,item);
 				} else {
-					icon = "fa fa-folder-open";
+					icon = "icon-icn_flight_folder_open3";
 					var click = '';
 				}
 
@@ -58,12 +58,12 @@ var Folders = React.createClass({
 	handleClick: function(item,e) {
 		var children = jQuery("#parent_"+ item.id +">div");
 		if (children.is(":visible")) {
-			jQuery("#parent_"+ item.id +">i").removeClass("fa-folder-open");
-			jQuery("#parent_"+ item.id +">i").addClass("fa-folder");
+			jQuery("#parent_"+ item.id +">i").removeClass("icon-icn_flight_folder_open3");
+			jQuery("#parent_"+ item.id +">i").addClass("icon-icn_flight_folder_01");
 			children.hide('fast');
 		} else {
-			jQuery("#parent_"+ item.id +">i").removeClass("fa-folder");
-			jQuery("#parent_"+ item.id +">i").addClass("fa-folder-open");
+			jQuery("#parent_"+ item.id +">i").removeClass("icon-icn_flight_folder_01");
+			jQuery("#parent_"+ item.id +">i").addClass("icon-icn_flight_folder_open3");
 			children.show('fast');
 		}
 		//e.stopPropagation();
@@ -80,12 +80,12 @@ var Folders = React.createClass({
 
 					if( item.children ) {
 						var c = "parent_li";
-						var f = "fa fa-folder";
+						var f = "icon-icn_flight_folder_01";
 						var click = this.handleClick.bind(this,item);
 						var showChildren = <Children item={item.children} onClick={this.handleChange} />;
 					} else {
 						var c = "";
-						var f = "fa fa-database";
+						var f = "icon-icn_album_01";
 						var click = this.props.onValueChange.bind(this,item);
 					}
 

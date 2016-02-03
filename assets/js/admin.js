@@ -1,33 +1,20 @@
 jQuery( document ).ready( function ( e ) {
-/*	
-	jQuery('.fbc_attachment').click(function(e){
-		var name = jQuery(this).data('name');
-		e.preventDefault();
-		jQuery('#thumbnail-head-8').find('img').attr('src',jQuery(this).find('img').attr('src'));
-		//jQuery('#attachments[8][post_title]').val( name );
-		
-		jQuery('.post_title').find('input').val( name );
-		
-		jQuery("#library-form").show();
-		jQuery('.selected').removeClass('selected');
-		jQuery(this).addClass('selected');
-	});	
-	jQuery("#library-form").appendTo("#fbc_media-sidebar");
-*/
-	/*
-	jQuery('#fbc_loadMore').click(function(e){
-		jQuery.ajax({
-			url: '/wp-content/plugins/Flight_by_Canto/includes/lib/loadMore.php',
-			type: 'GET',
-			data: {"limit": 12, "start": jQuery('#__attachments-view-fbc li').length},
-            success: function(response){
-                jQuery('#__attachments-view-fbc').append(response);
-            },
-			error: function(xhr, desc, err) {
-				console.log(xhr);
-				console.log("Details: " + desc + "\nError:" + err);
-			}
-		});
+	jQuery('.media-upload-form').find('.button').on('click', function() {
+		jQuery('#loader').show();
 	});
-*/
+
+	jQuery('#hideShow').on('click', function(){
+	    var tree = jQuery('#fbc-tree');
+	    if (tree.is(':visible')){
+	        tree.animate({"left":"-250px"}, "fast").hide();
+			jQuery('#hideShow>i').addClass('fa-bars');
+			jQuery('#hideShow>i').removeClass('fa-close');
+			jQuery('#fbc-loop').css({'margin-left':'0px' });
+	    } else {
+	        tree.animate({"left":"0px"}, "fast").show();
+			jQuery('#hideShow>i').removeClass('fa-bars');
+			jQuery('#hideShow>i').addClass('fa-close');
+			jQuery('#fbc-loop').css({'margin-left':'250px' });
+	    }
+	});
 });

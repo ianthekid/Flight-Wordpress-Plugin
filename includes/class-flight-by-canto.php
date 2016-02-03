@@ -137,6 +137,64 @@ class Flight_by_Canto {
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ), 10, 1 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_styles' ), 10, 1 );
 
+
+
+
+
+		/*
+		 * ToDo: separate outside of Constructor
+		 */
+		function md_modify_jsx_tag( $tag, $handle, $src ) {
+		  // Check that this is output of JSX file
+		  if( strstr($handle,'react') != FALSE ) {
+			  $tag = str_replace( "<script type='text/javascript'", "<script type='text/jsx'", $tag );
+		  }
+
+		  return $tag;
+		}
+		add_filter( 'script_loader_tag', 'md_modify_jsx_tag', 10, 3 );
+
+		wp_enqueue_script( 'fbc_media_js', plugins_url() . '/flight-by-canto/assets/js/admin.js' );
+
+		wp_register_script( 'fbc-js', 'https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/react.min.js' );
+		wp_register_script( 'fbc-jsx', 'https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/JSXTransformer.js' );
+
+		wp_enqueue_script ( 'fbc-js' );
+		wp_enqueue_script ( 'fbc-jsx' );
+
+		$translation_array = array(
+			'FBC_URL' 	=> FBC_URL,
+			'FBC_PATH' 	=> FBC_PATH,
+			'subdomain' => get_option( 'fbc_flight_domain' ),
+			'token'		=> get_option( 'fbc_app_token' ),
+			'limit'		=> 30,
+			'start'		=> 0
+		);
+		$path_to_script = FBC_URL .'assets/js/images.js';
+	 	wp_register_script( 'react-loop', $path_to_script );
+		wp_localize_script( 'react-loop', 'args', $translation_array );
+		wp_enqueue_script ( 'react-loop' );
+
+		$path_to_script_a = FBC_URL .'assets/js/attachment.js';
+		wp_register_script( 'react-attachment', $path_to_script_a );
+		wp_enqueue_script ( 'react-attachment' );
+
+		$path_to_script_c = FBC_URL .'assets/js/tree.js';
+		wp_register_script( 'react-tree', $path_to_script_c );
+		wp_localize_script( 'react-tree', 'args', $translation_array );
+		wp_enqueue_script ( 'react-tree' );
+
+		$path_to_script_d = FBC_URL .'assets/js/fbc.js';
+		wp_register_script( 'react-main', $path_to_script_d );
+		wp_localize_script( 'react-main', 'args', $translation_array );
+		wp_enqueue_script ( 'react-main' );
+
+		/* end additions to Constructor */
+
+
+
+
+
 		// Load API for generic admin functions
 		if ( is_admin() ) {
 			$this->admin = new Flight_by_Canto_Admin_API();
