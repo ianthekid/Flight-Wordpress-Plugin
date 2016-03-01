@@ -26,7 +26,7 @@ if ( isset( $send_id ) ) {
 	$id         = $send_id;
 
 	//Go get the media item from Flight
-	$flight['api_url']  = 'https://' . get_option( 'fbc_flight_domain' ) . '.run.cantoflight.com/api/v1/';
+	$flight['api_url']  = 'https://' . get_option( 'fbc_flight_domain' ) . '.cantoflight.com/api/v1/';
 	$flight['req']      = $flight['api_url'] . 'image/' . $_POST['fbc_id'];
 
 

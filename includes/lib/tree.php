@@ -1,5 +1,5 @@
 <?php
-$url = 'https://'. $_REQUEST['subdomain'] .'.run.cantoflight.com/api/v1/tree?sortBy=name&sortDirection=ascending';
+$url = 'https://'. $_REQUEST['subdomain'] .'.cantoflight.com/api/v1/tree?sortBy=name&sortDirection=ascending';
 
 $header = array( 'Authorization: Bearer '. $_REQUEST['token']);
 

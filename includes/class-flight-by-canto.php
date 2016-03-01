@@ -230,7 +230,7 @@ class Flight_by_Canto {
 			$fbc_id = stripslashes( htmlspecialchars( $fbc_id ) );
 		}
 
-		$flight['api_url'] = 'https://' . $this->fbc_flight_domain . '.run.cantoflight.com/api/v1/';
+		$flight['api_url'] = 'https://' . $this->fbc_flight_domain . '.cantoflight.com/api/v1/';
 
 
 //Get the metadata from the server to send off the the library form.
@@ -261,8 +261,8 @@ class Flight_by_Canto {
 	public function getToken() {
 		//authenticate to OATUH -- Need to save the Session Cookie from Set Cookie
 
-		$req = "https://oauth.run.cantoflight.com:8443/oauth/rest/oauth2/authenticate";
-		$postfields = "tenant=" . $this->fbc_flight_domain . '.run.cantoflight.com&user=' . $this->fbc_flight_username;
+		$req = "https://oauth.cantoflight.com:8443/oauth/rest/oauth2/authenticate";
+		$postfields = "tenant=" . $this->fbc_flight_domain . '.cantoflight.com&user=' . $this->fbc_flight_username;
 		$postfields .= '&password=' . $this->fbc_flight_password;
 
 
@@ -303,7 +303,7 @@ class Flight_by_Canto {
 		//Now we have the authorization cookie and we can proceed to get the authorization code
 
 
-		$options[ CURLOPT_URL ] = "https://oauth.run.cantoflight.com:8443/oauth/rest/oauth2/grant";
+		$options[ CURLOPT_URL ] = "https://oauth.cantoflight.com:8443/oauth/rest/oauth2/grant";
 		$options[ CURLOPT_URL ] .= "?action=grant&response_type=code&app_id=" . $this->fbc_app_id ;//. "&app_secret=" . $this->fbc_app_secret;
 		$options[ CURLOPT_COOKIE ] = $cookie;
 		$options[ CURLOPT_POST ]   = false;
@@ -325,7 +325,7 @@ class Flight_by_Canto {
 		//we have a DAM code! make the final request to get the token
 
 
-		$options[ CURLOPT_URL ] = "https://oauth.run.cantoflight.com:8443/oauth/api/oauth2/token";
+		$options[ CURLOPT_URL ] = "https://oauth.cantoflight.com:8443/oauth/api/oauth2/token";
 		$options[ CURLOPT_URL ] .= "?app_id=" . $this->fbc_app_id . "&app_secret=" . $this->fbc_app_secret . "&grant_type=authorization_code&code=" . trim($code);
 		$options[ CURLOPT_POST ]   = true;
 		$options[ CURLOPT_HEADER ] = 0;
@@ -354,7 +354,7 @@ class Flight_by_Canto {
 		//Need to check if we have the tools needed to refresh the token
 //		if ( ! get_option('fbc_app_secret') || ! get_option('fbc_flight_domain') || !get_option('fbc_app_id')){
 
-		$req    = 'https://' . $this->fbc_flight_domain . '.run.cantoflight.com:8443/oauth/api/oauth2/token';
+		$req    = 'https://' . $this->fbc_flight_domain . '.cantoflight.com:8443/oauth/api/oauth2/token';
 		$header = 'app_id=' . $this->fbc_app_id . '&app_secret=' . $this->fbc_app_secret
 		          . '&grant_type=refresh_token&refresh_token=' . $this->fbc_app_refresh_token;
 		$agent  = "Flight Wordpress Plugin";
@@ -403,7 +403,7 @@ class Flight_by_Canto {
 
 			$url = ( is_array( $d ) && ! empty( $d['preview'] ) ) ? $d['preview'] : $d;
 
-			//$imgUrl = 'https://obj.run.cantoflight.com/api_binary/v1/image/'.$url.'/preview';
+			//$imgUrl = 'https://obj.cantoflight.com/api_binary/v1/image/'.$url.'/preview';
 
 			curl_setopt( $curly[ $id ]['img'], CURLOPT_URL, $url );
 			curl_setopt( $curly[ $id ]['img'], CURLOPT_HTTPHEADER,

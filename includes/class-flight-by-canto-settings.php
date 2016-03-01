@@ -127,7 +127,7 @@ class Flight_by_Canto_Settings {
 				array(
 					'id'          => 'flight_domain',
 					'label'       => __( 'Flight Domain', 'flight-by-canto' ),
-					'description' => __( '.run.cantoflight.com', 'flight-by-canto' ),
+					'description' => __( '.cantoflight.com', 'flight-by-canto' ),
 					'type'        => 'text',
 					'default'     => '',
 					'placeholder' => __( 'Flight Domain', 'flight-by-canto' )
@@ -232,7 +232,7 @@ class Flight_by_Canto_Settings {
 	public function oauth_token() {
 		$html = '<h2>' . __( 'Login to Flight Complete Authorization', 'flight-by-canto' ) . '</h2>' . "\n";
 		$html .= '<iframe onload="alert(this.contentWindow.location.href);"';
-		$html .= ' src="https://oauth.run.cantoflight.com:8443/oauth/api/oauth2/authorize?response_type=code&app_id=' . get_option( 'fbc_app_secret' ) . '&state=groovy" ';
+		$html .= ' src="https://oauth.cantoflight.com:8443/oauth/api/oauth2/authorize?response_type=code&app_id=' . get_option( 'fbc_app_secret' ) . '&state=groovy" ';
 		$html .= 'width="500" height="700"></iframe>';
 
 		return $html;

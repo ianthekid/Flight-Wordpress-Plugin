@@ -1,8 +1,8 @@
 <?php
 if(isset($_REQUEST['album']) && $_REQUEST['album'] != "undefined")
-    $url = 'https://'. $_REQUEST['subdomain'] .'.run.cantoflight.com/api/v1/album/'. $_REQUEST['album'] .'?limit='. $_REQUEST['limit'] .'&start='. $_REQUEST['start'];
+    $url = 'https://'. $_REQUEST['subdomain'] .'.cantoflight.com/api/v1/album/'. $_REQUEST['album'] .'?limit='. $_REQUEST['limit'] .'&start='. $_REQUEST['start'];
 else
-    $url = 'https://'. $_REQUEST['subdomain'] .'.run.cantoflight.com/api/v1/image?limit='. $_REQUEST['limit'] .'&start='. $_REQUEST['start'];
+    $url = 'https://'. $_REQUEST['subdomain'] .'.cantoflight.com/api/v1/image?limit='. $_REQUEST['limit'] .'&start='. $_REQUEST['start'];
 
 $header = array( 'Authorization: Bearer '. $_REQUEST['token']);
 

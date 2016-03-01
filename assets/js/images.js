@@ -71,7 +71,10 @@ var FlightImages = React.createClass({
 		.done(function(e) {
 			var start = e.search("Location: ");
 			var stop = e.search("Server: ");
-			var img = e.substring( (start+10) ,stop);
+			var imgFile = e.substring( (start+10) ,stop);
+			
+			var expires = imgFile.split('?Expire');
+			var img = expires[0];
 
 			var fileExt = img.split('.').pop();
 			var ext = fileExt.split('%');
@@ -85,7 +88,7 @@ var FlightImages = React.createClass({
                     "ownerName": item.ownerName,
                     "size": item.size,
                     "time": item.time,
-                    "img": img
+                    "img": imgFile
                 }];
 
 				var arr = self.state.data.slice();
