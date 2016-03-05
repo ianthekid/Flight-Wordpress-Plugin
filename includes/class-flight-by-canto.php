@@ -521,6 +521,11 @@ class Flight_by_Canto {
 		wp_localize_script( 'react-tree', 'args', $translation_array );
 		wp_enqueue_script ( 'react-tree' );
 
+		$path_to_script_c = FBC_URL .'assets/js/search.js';
+		wp_register_script( 'react-search', $path_to_script_c );
+		wp_localize_script( 'react-search', 'args', $translation_array );
+		wp_enqueue_script ( 'react-search' );
+
 		$path_to_script_d = FBC_URL .'assets/js/fbc.js';
 		wp_register_script( 'react-main', $path_to_script_d );
 		wp_localize_script( 'react-main', 'args', $translation_array );

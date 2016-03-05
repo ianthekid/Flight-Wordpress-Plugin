@@ -47,6 +47,7 @@ var FlightImages = React.createClass({
 		return {
 			src: this.props.path,
 			album: {name: 'Recent Images'},
+			search: this.props.search,
 			//start: parseInt(args.start),
 			//limit: parseInt(args.limit),
 			start: 0,
@@ -72,7 +73,7 @@ var FlightImages = React.createClass({
 			var start = e.search("Location: ");
 			var stop = e.search("Server: ");
 			var imgFile = e.substring( (start+10) ,stop);
-			
+
 			var expires = imgFile.split('?Expire');
 			var img = expires[0];
 
@@ -136,6 +137,17 @@ var FlightImages = React.createClass({
 				src: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&album="+ nextProps.album.id +"&token="+ args.token +"&limit="+ this.state.limit +"&start=0"
 			});
 		}
+		if(nextProps.search != this.state.search) {
+			this.setState({
+				album: {
+					name: 'Search Results: '+nextProps.search
+				},
+				search: nextProps.search,
+				start: 0,
+				data: [],
+				src: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&keyword="+ nextProps.search +"&token="+ args.token +"&limit="+ this.state.limit +"&start=0"
+			});
+		}
 	},
 
 	looper: function() {
@@ -156,6 +168,11 @@ var FlightImages = React.createClass({
 
 	componentDidUpdate: function(prevProps,prevState) {
 		if(this.state.album.id != prevState.album.id) {
+			jQuery('#fbc_loadMore').hide();
+			jQuery('#loader').show();
+			this.looper();
+		}
+		if(this.state.search != prevState.search) {
 			jQuery('#fbc_loadMore').hide();
 			jQuery('#loader').show();
 			this.looper();

@@ -4,6 +4,9 @@ if(isset($_REQUEST['album']) && $_REQUEST['album'] != "undefined")
 else
     $url = 'https://'. $_REQUEST['subdomain'] .'.cantoflight.com/api/v1/image?limit='. $_REQUEST['limit'] .'&start='. $_REQUEST['start'];
 
+if(isset($_REQUEST['keyword']))
+    $url = 'https://'. $_REQUEST['subdomain'] .'.cantoflight.com/api/v1/search?keyword='.$_REQUEST['keyword'];
+
 $header = array( 'Authorization: Bearer '. $_REQUEST['token']);
 
 $ch = curl_init();
