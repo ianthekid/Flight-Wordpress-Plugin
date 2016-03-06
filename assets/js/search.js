@@ -10,13 +10,18 @@ var Keyword = React.createClass({
         this.setState({ keyword: keyword });
     },
 
+	handleSubmit: function(e) {
+		e.preventDefault();
+	},
+
     render: function() {
 		var submit = this.props.onValueChange.bind(this,this.state.keyword);
         return (
-			<div>
+			<form id="searchForm" onSubmit={this.handleSubmit}>
 				<input onChange={this.onChange} value={this.state.keyword} placeholder="Global Search" />
-				<button onClick={submit}>Go</button>
-			</div>
+				<i className="icon-search" onClick={submit}></i>
+				<button onClick={submit}></button>
+			</form>
         );
     }
 });

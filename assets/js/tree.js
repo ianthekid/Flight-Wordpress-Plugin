@@ -114,6 +114,16 @@ var Tree = React.createClass({
 		};
 	},
 
+	library: function(e) {
+        this.setState({
+            album: {
+                name: 'Recent Images'
+            },
+            src: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&token="+ args.token +"&limit=30&start=0"
+		});
+		this.props.onValueChange(e);
+    },
+
 	componentDidMount: function() {
 		var self = this;
 		$.ajax({
@@ -131,9 +141,15 @@ var Tree = React.createClass({
 	},
 
     render: function() {
+		var icon = args.FBC_URL +"/assets/flight-icon.png";
         return (
 			<div className="tree well">
 				<ul>
+					<li>
+						<img id="fbc-icon" src={icon} />
+						<a href="javascript:;" onClick={this.library}>Flight Library</a>
+					</li>
+
 	                <Folders data={this.state.data} onValueChange={this.handleChange} />
 	            </ul>
 			</div>

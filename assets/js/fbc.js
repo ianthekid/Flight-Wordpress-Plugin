@@ -9,15 +9,6 @@ var FBC = React.createClass({
 		};
 	},
 
-    library: function(e) {
-        this.setState({
-            album: {
-                name: 'Recent Images'
-            },
-            path: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&token="+ args.token +"&limit=30&start=0"
-		});
-    },
-
     handleChange: function(e) {
         this.setState({
 			album: e,
@@ -31,15 +22,30 @@ var FBC = React.createClass({
 		});
     },
 
+    toggle: function(e) {
+        var tree = jQuery('#fbc-tree');
+	    if (tree.is(':visible')){
+	        tree.animate({"left":"-250px"}, "fast").hide();
+			jQuery('#hideShow>i').addClass('fa-bars');
+			jQuery('#hideShow>i').removeClass('fa-close');
+			jQuery('#fbc-loop').css({'margin-left':'0px' });
+	    } else {
+	        tree.animate({"left":"0px"}, "fast").show();
+			jQuery('#hideShow>i').removeClass('fa-bars');
+			jQuery('#hideShow>i').addClass('fa-close');
+			jQuery('#fbc-loop').css({'margin-left':'250px' });
+	    }
+    },
+
     render: function() {
         return (
             <div>
-                <div id="fbc-search">
+                <div className="searchRow">
+                    <a className="btn" id="hideShow" onClick={this.toggle}> <i className="icon-library"></i> Library</a>
                     <Search onValueChange={this.handleSearch} />
                 </div>
-                <div id="fbc-tree" className="collapse">
-                    <a href="javascript:;" onClick={this.library}>Main Library</a>
 
+                <div id="fbc-tree" className="collapse">
                     <Tree onValueChange={this.handleChange} />
                 </div>
                 <div id="fbc-loop">

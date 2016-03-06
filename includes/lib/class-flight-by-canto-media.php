@@ -51,7 +51,6 @@ class flight_by_canto_media {
 		<script src="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
 
 
-		<a class="btn" id="hideShow"> <i class="icon-library"></i> Library</a>
 		<div id="fbc-react"></div>
 
 		<?php

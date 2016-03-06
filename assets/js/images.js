@@ -187,7 +187,6 @@ var FlightImages = React.createClass({
 			<div class="grid">
 				<h1 className="text-center">{this.state.album.name}</h1>
 				<ul className="attachments" id="__attachments-view-fbc">
-
 	                <Images data={this.state.data} />
 
 					<div id="fbc_loadMore_wrap">
