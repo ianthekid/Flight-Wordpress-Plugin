@@ -30,6 +30,10 @@ var Images = React.createClass({
 						backgroundImage: 'url(' + item[0].img + ')',
 					};
 
+					jQuery('.fbc_attachment').each(function(){
+						jQuery(this).css('opacity',1);
+					});
+
 					return (
 						<li className="fbc_attachment attachment">
 			                <div className="attachment-preview" style={divStyle} onClick={this.handleClick.bind(this,item[0])}>
@@ -149,7 +153,7 @@ var FlightImages = React.createClass({
 				search: nextProps.search,
 				start: 0,
 				data: [],
-				src: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&keyword="+ nextProps.search +"&token="+ args.token +"&limit="+ this.state.limit +"&start=0"
+				src: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&keyword="+ nextProps.search.replace(" ","%2B") +"&token="+ args.token +"&limit=100&start=0"
 			});
 		}
 	},

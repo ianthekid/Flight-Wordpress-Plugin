@@ -37,6 +37,12 @@ var FBC = React.createClass({
 	    }
     },
 
+    library: function(e) {
+        this.setState({
+            album: {name: "Flight Library"}
+		});
+    },
+
     render: function() {
         return (
             <div>
@@ -46,7 +52,7 @@ var FBC = React.createClass({
                 </div>
 
                 <div id="fbc-tree" className="collapse">
-                    <Tree onValueChange={this.handleChange} />
+                    <Tree onValueChange={this.handleChange} library={this.library} />
                 </div>
                 <div id="fbc-loop">
                     <FlightImages search={this.state.search} album={this.state.album} path={this.state.path} />

@@ -119,9 +119,11 @@ var Tree = React.createClass({
             album: {
                 name: 'Recent Images'
             },
+			search: '',
             src: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&token="+ args.token +"&limit=30&start=0"
 		});
 		this.props.onValueChange(e);
+		this.props.library(this.state.album);
     },
 
 	componentDidMount: function() {
