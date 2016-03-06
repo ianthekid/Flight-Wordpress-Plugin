@@ -19,16 +19,32 @@
 }
 #fbc_loadMore {
     display: none;
-	background-color: #fa9100;
-	color: #fff;
-	font-size: 14px;
-	padding: 9px 25px;
-	border-radius: 3px;
-	text-transform: uppercase;
-	border: 1px solid #dddddd;
-	cursor: pointer;
+    background-color: #f00046;
+    color: #fff;
+    font-size: 13px;
+    padding: 9px 35px;
+    border-radius: 25px;
+    text-transform: uppercase;
+    border: 1px solid #f00046;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 1px;
+}
+#fbc_loadMore:hover {
+    background-color: rgba(0,0,0,0);
+    color: #f00046;
+}
+.fbc_attachment {
+    background-color: #000;
+    float: left;
+    width: 147px;
+    height: 147px;
+    margin: 0px;
+    padding: 0;
+    border: 0;
 }
 .attachment-preview {
+    display: none;
     width:145px;
     height:145px;
     display:inline-block;
@@ -38,14 +54,18 @@
     background-position:center center;
     background-size:cover;
     float:left;
-    border:1px solid rgba(0,0,0,0.01);
+    border: 1px solid #fff;
     position:relative;
     -webkit-box-shadow:inset 0 0 15px rgba(0,0,0,0.1),inset 0 0 0 1px rgba(0,0,0,0.05);
     box-shadow:inset 0 0 15px rgba(0,0,0,0.1),inset 0 0 0 1px rgba(0,0,0,0.05);
     background:#eee;
-    cursor:pointer
+    cursor:pointer;
+    opacity: 0.7;
+    transition: all 0.33s ease;
 }
-
+.attachment-preview:hover {
+    opacity: 1;
+}
 .selected .attachment-preview {
     border:5px solid #1e8cbe
 }
@@ -232,7 +252,7 @@ input.readonly, input[readonly], textarea.readonly, textarea[readonly] {
     margin-left: -220px;
     left: 0;
 }
-#fbc-react .fullscreen {
+.fullscreen {
 	position: absolute;
     bottom: 4px;
     right: 4px;
@@ -242,13 +262,16 @@ input.readonly, input[readonly], textarea.readonly, textarea[readonly] {
     padding: 4px;
     color: white;
     font-size: 14px;
-    background-color: rgba(0,0,0,0.5);
-    opacity: 0.5;
-	transition: all 0.3s ease;
+    background-color: rgba(0,0,0,0.7);
+    opacity: 0.6;
+    visibility: hidden;
 }
-#fbc-react .fullscreen:hover {
+.fullscreen:hover {
 	opacity: 0.9;
 	color: white !important;
+}
+.attachment-preview:hover>a.fullscreen {
+    visibility: visible;
 }
 .featherlight .featherlight-content {
 	padding: 5px 5px !important;
@@ -259,10 +282,12 @@ input.readonly, input[readonly], textarea.readonly, textarea[readonly] {
     padding: 0 10px;
     margin-bottom:20px;
     background-color:#fcfcfc;
-    border:1px solid #dfdfdf;
-    -webkit-box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.05);
-    -moz-box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.05);
-    box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.05)
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    border-width: 1px 1px 1px 0;
+    border-style: solid;
+    border-color: #ccc;
 }
 .tree li {
     list-style-type:none;

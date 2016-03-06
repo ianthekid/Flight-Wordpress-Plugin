@@ -25,13 +25,17 @@ var Images = React.createClass({
         return (
 			<span>
 				{ this.props.data.map(function(item, i) {
+
+					var divStyle = {
+						backgroundImage: 'url(' + item[0].img + ')',
+					};
+
 					return (
 						<li className="fbc_attachment attachment">
-			                <div className="attachment-preview">
+			                <div className="attachment-preview" style={divStyle} onClick={this.handleClick.bind(this,item[0])}>
 								<a href={item[0].img} className="fullscreen" data-featherlight="image">
 									<i className="icon-resize"></i>
 								</a>
-	                            <img src={item[0].img} onClick={this.handleClick.bind(this,item[0])} />
 			                </div>
 			            </li>
 					);

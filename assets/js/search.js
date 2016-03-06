@@ -11,6 +11,7 @@ var Keyword = React.createClass({
     },
 
 	handleSubmit: function(e) {
+		React.findDOMNode(this.refs.fbcSearch).value = "";
 		e.preventDefault();
 	},
 
@@ -18,7 +19,7 @@ var Keyword = React.createClass({
 		var submit = this.props.onValueChange.bind(this,this.state.keyword);
         return (
 			<form id="searchForm" onSubmit={this.handleSubmit}>
-				<input onChange={this.onChange} value={this.state.keyword} placeholder="Global Search" />
+				<input onChange={this.onChange} value={this.state.keyword} placeholder="Global Search" ref="fbcSearch" />
 				<i className="icon-search" onClick={submit}></i>
 				<button onClick={submit}></button>
 			</form>
