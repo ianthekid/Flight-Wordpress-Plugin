@@ -120,20 +120,25 @@ var FlightImages = React.createClass({
     },
 
 	componentDidMount: function() {
-		jQuery('#loader').show();
-		var self = this;
-		$.ajax({
-			url: this.state.src,
-			dataType: 'json',
-			cache: false
-		})
-		.done(function(data) {
-			var cnt = 1;
-            $.each(data.results, function(k,v) {
-                self.repeat(v,cnt,data.results.length,data.found);
-				cnt++;
-            });
-		});
+		if(args.token == '') {
+			jQuery('#loader').hide();
+			jQuery("#fbc-react").html("<h2 style='font-size: 16px; margin: 70px 370px 0 40px; color:#222;'>Sorry, but authentication failed. Please visit plugin settings to login.</h2>");
+		} else {
+			jQuery('#loader').show();
+			var self = this;
+			$.ajax({
+				url: this.state.src,
+				dataType: 'json',
+				cache: false
+			})
+			.done(function(data) {
+				var cnt = 1;
+	            $.each(data.results, function(k,v) {
+	                self.repeat(v,cnt,data.results.length,data.found);
+					cnt++;
+	            });
+			});
+		}
 	},
 
 	componentWillUpdate: function(nextProps,nextState) {

@@ -305,6 +305,7 @@ class Flight_by_Canto_Settings {
 
 		}
 		$html .= '</p>' . "\n";
+		$html .= '<img src="'.FBC_URL.'/assets/loader_white.gif" id="loader" style="display:none">';
 		$html .= '</form>' . "\n";
 		$html .= '</div>' . "\n";
 
@@ -321,6 +322,7 @@ class Flight_by_Canto_Settings {
 		<script type="text/javascript">
 			jQuery('#getToken').click(function (e) {
 				e.preventDefault();
+				jQuery('#loader').show();
 				var data = {
 					'action': 'fbc_getToken',
 				};
@@ -328,8 +330,10 @@ class Flight_by_Canto_Settings {
 				jQuery.post(ajaxurl, data, function (response) {
 
 					response = jQuery.parseJSON(response);
+
 					if (typeof response.error === "undefined") {
-						alert("Authorization successful. You're all set.");
+						jQuery('#loader').hide();
+						alert("Authentication successful. Click Ok to save and reload");
 						location.reload();
 					} else {
 						(response.error == "Invalid Login Credentials") ? alert("<?php echo __('Invalid login credentials: Please edit then Save the credentials before trying again','flight-by-canto'); ?>") : '';

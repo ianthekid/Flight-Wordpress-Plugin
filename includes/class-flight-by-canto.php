@@ -278,6 +278,7 @@ class Flight_by_Canto {
 			CURLOPT_USERAGENT      => "Flight Wordpress Plugin",                             // who am i
 			CURLOPT_HTTPHEADER     => array(),                             // provides authorization and token
 			//CURLOPT_SSLVERSION     => 3,                                   // required for api handshake
+			CURLOPT_SSL_VERIFYPEER => 0,
 			CURLOPT_HEADER         => 1,                               // include header in output?
 			CURLOPT_RETURNTRANSFER => 1,                                   // output as string instead of file
 			CURLOPT_TIMEOUT        => 10,                                  // how long til i give up?
@@ -287,6 +288,8 @@ class Flight_by_Canto {
 
 		curl_setopt_array( $ch, $options );
 		$response = curl_exec( $ch );
+
+//		var_dump(curl_error($ch));
 
 
 		list( $httpheader ) = explode( "\r\n\r\n", $response);
@@ -336,14 +339,13 @@ class Flight_by_Canto {
 		curl_close( $ch );
 
 		//now set the DAM Authentication tokens
-
 		$response = json_decode( $response );
 		update_option( 'fbc_app_token', $response->accessToken );
 		update_option( 'fbc_app_refresh_token', $response->refreshToken );
 		update_option( 'fbc_app_token_expire', time() + $response->expiresIn );
 		update_option( 'fbc_app_refresh_token_expire', time() + ( 86400 * 365 ) );
 
-//var_dump($response);
+		//var_dump($response);
 	}
 
 	/**
