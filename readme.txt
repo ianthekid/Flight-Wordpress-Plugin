@@ -1,23 +1,23 @@
 === Flight by Canto ===
 Contributors: Canto Inc.
-Tags: wordpress, plugin, Flight by Canto
+Tags: brand management, Cloud Storage, DAM, digital asset management, file storage, Flight by Canto, image management, marketing tool
 Requires at least: 4.0
 Tested up to: 4.4.2
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Pull in photos, images and graphics from your Flight instance.
+Easily find and publish your creative assets directly to wordpress without searching through emails or folders using Flight.
 
 == Description ==
 
-Pull in photos, images, and any other web-safe graphic file format from your Flight account directly into Wordpress.
+Easily find and publish photos, images, and any other web-safe media file from directly to your WordPress website. Simplify collaboration with your your creative team by retrieving media without having to search through emails or folders.
 
-You can browse your Library using the Folder and Album tree menu to quickly find files. Or use the Global Search to find exactly what you need by searching within filenames, descriptions, comments, keywords, tags, and even the person who uploaded it.
+You can browse your Library using the Folder tree menu to quickly find files saved within Albums. Or use the Global Search to find exactly what you need by searching within filenames, descriptions, comments, keywords, tags, and even by the name of person who uploaded it.
 
-Once you locate your image file, simply select it to bring up the familiar, native Wordpress image attachment. Select your size, alignment and link options. The image alt tag will be auto-populated with file information for you. As the image is being inserted into post, it will be saved locally to your Wordpress Media library. This will ensure it is indexed by Google for SEO within your permalink structure, and also saved with your website backup and CDN processes.
+Once you locate your file, simply select it as your image attachment. Define your size, alignment and link options as you normally would. Once you click to insert the image, it will be automatically saved locally to your Wordpress Media library. This will ensure it is indexed by Google for SEO within your permalink structure, and also saved when you backup your website or cache images on a CDN.
 
-Don't have a Flight account? https://www.canto.com/flight/
+Don't have a Flight account? <a href="https://www.canto.com/flight/?utm_source=wordpress&utm_medium=plugin&utm_campaign=wordpress">Start free trial</a>
 
 == Installation ==
 
@@ -29,19 +29,23 @@ Installing "Flight by Canto" can be done either by searching for "Flight by Cant
 
 == Screenshots ==
 
-1. Flight Add Media seemless integration
+1. Flight Add Media seamless integration
 2. Flight Insert into Post with customized image sizes
 3. Flight Plugin settings to integrate with your account
 
 == Frequently Asked Questions ==
 
+= RTFM - Read the Flight Manual! =
+
+For help installing or using the plugin, refer to <a href="https://www.canto.com/flight-help/knowledge-base/flight-wordpress-plugin/?utm_source=wordpress&utm_medium=plugin&utm_campaign=wordpress">Flight Help - Wordpress</a>
+
 = Can I use this plugin without a Flight account? =
 
-Unfortunately not. However, you are welcome to sign up today for free! https://www.canto.com/flight/
+Unfortunately not. However, you are welcome to sign up today for free! <a href="https://www.canto.com/flight/?utm_source=wordpress&utm_medium=plugin&utm_campaign=wordpress">Start free trial</a>
 
 = How do I authorize my account? =
 
-This plugin requires you to connect to your Flight account using a registered Pilot account.
+This plugin requires you to connect to your Flight account using an admin (Pilot) account.
 
 == Changelog ==
 

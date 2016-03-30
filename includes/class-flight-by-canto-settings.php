@@ -117,7 +117,7 @@ class Flight_by_Canto_Settings {
 
 		$settings['standard'] = array(
 			'title'       => "Flight Settings",
-			'description' => __( 'Connect to your Flight instance using the Flight API. All fields are required, and you must be a Pilot to enable API access.<br><br><a href="https://www.canto.com/flight/api/">API Documentation</a> or <a href="https://www.canto.com/flight/api/request/">Request for API Access</a>',
+			'description' => __( 'Connect to your Flight instance using the Flight API. All fields are required, and you must be a Pilot to enable API access.<br><br><a target="_blank" href="https://www.canto.com/flight/api/">API Documentation</a> or <a target="_blank" href="https://www.canto.com/flight/api/request/">Request for API Access</a>',
 
 
 
@@ -289,6 +289,7 @@ class Flight_by_Canto_Settings {
 		}
 
 		$html .= '<form method="post" action="options.php" enctype="multipart/form-data">' . "\n";
+		$html .= '<div id="fbc_settings_form">' . "\n";
 
 		// Get settings fields
 		ob_start();
@@ -305,6 +306,8 @@ class Flight_by_Canto_Settings {
 
 		}
 		$html .= '</p>' . "\n";
+		$html .= '</div>' . "\n";
+
 		$html .= '<img src="'.FBC_URL.'/assets/loader_white.gif" id="loader" style="display:none">';
 		$html .= '</form>' . "\n";
 		$html .= '</div>' . "\n";
