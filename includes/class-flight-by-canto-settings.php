@@ -302,7 +302,7 @@ class Flight_by_Canto_Settings {
 		$html .= '<input name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Save Settings',
 				'flight-by-canto' ) ) . '" />' . "\n";
 		if ( ( get_option( 'fbc_flight_domain' ) != '' && get_option( 'fbc_app_id' ) != '' && get_option( 'fbc_app_secret' ) != '' && get_option( 'fbc_flight_username' ) != '' && get_option( 'fbc_flight_password' ) != '' ) ) {
-			$html .= '<input class="button-primary" value="Grant access, get Token" id="getToken" name="getToken">' . "\n";
+			$html .= '<input class="button-primary" value="Grant Access" id="getToken" name="getToken">' . "\n";
 
 		}
 		$html .= '</p>' . "\n";
