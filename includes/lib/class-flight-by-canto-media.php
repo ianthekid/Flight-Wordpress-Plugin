@@ -66,19 +66,19 @@ class flight_by_canto_media {
 
 			?>
 			<?php /* TODO: Next version, add Filter and Search
-    <div class="media-toolbar">
-        <div class="media-toolbar-primary search-form" style="float:left; margin: 10px">
-            <label for="media-search-input" class="screen-reader-text">Search Media</label>
-            <input type="search" placeholder="Search" id="media-search-input" class="search">
-        </div>
-        <div class="media-toolbar-secondary" style="float:left; margin: 10px">
-            <label for="media-attachment-filters" class="screen-reader-text">Filter by type</label>
-            <select id="media-attachment-filters" class="attachment-filters"><option value="all">All media items</option><option value="image">Images</option></select>
-            <label for="media-attachment-date-filters" class="screen-reader-text">Filter by date</label>
-            <select id="media-attachment-date-filters" class="attachment-filters"><option value="all">Order by Date</option><option value="0">Ascending</option><option value="0">Descending</option></select>
-            <span class="spinner"></span>
-        </div>
-    </div> */
+				<div class="media-toolbar">
+					<div class="media-toolbar-primary search-form" style="float:left; margin: 10px">
+						<label for="media-search-input" class="screen-reader-text">Search Media</label>
+						<input type="search" placeholder="Search" id="media-search-input" class="search">
+					</div>
+					<div class="media-toolbar-secondary" style="float:left; margin: 10px">
+						<label for="media-attachment-filters" class="screen-reader-text">Filter by type</label>
+						<select id="media-attachment-filters" class="attachment-filters"><option value="all">All media items</option><option value="image">Images</option></select>
+						<label for="media-attachment-date-filters" class="screen-reader-text">Filter by date</label>
+						<select id="media-attachment-date-filters" class="attachment-filters"><option value="all">Order by Date</option><option value="0">Ascending</option><option value="0">Descending</option></select>
+						<span class="spinner"></span>
+					</div>
+				</div> */
 			?>
 			<div id="fbc_media-sidebar" class="media-sidebar">
 				<div class="media-uploader-status">
@@ -103,8 +103,7 @@ class flight_by_canto_media {
 
 
 		endif;
-
-//Stop checking to see if user has valid flight credentials
+		//Stop checking to see if user has valid flight credentials
 
 		// set the first part of the form action url now, to the current active site, to prevent X-Frame-Options problems
 		$form_action_url = plugins_url( 'copy-media.php', __FILE__ );
@@ -286,7 +285,6 @@ class flight_by_canto_media {
 						win.send_to_editor(htmlString);
 						document.getElementById("loader").style.display = "none";
 					}
-
 					jQuery(function ($) {
 						$('input[id^=send].button').click(function (event) {
 							event.preventDefault();
@@ -297,6 +295,13 @@ class flight_by_canto_media {
 								type: form.attr('method'),
 								data: form.serialize() + '&' + encodeURIComponent($this.attr('id')) + '=true&chromeless=1',
 								success: fbc_media_send_to_editor
+								/*						
+								,error: function (xhr, ajaxOptions, thrownError) {
+										   console.log(xhr.status);
+										   console.log(xhr.responseText);
+										   console.log(thrownError);
+									   },
+								*/
 							});
 						});
 					});
@@ -321,15 +326,17 @@ class flight_by_canto_media {
 
 			<div id="media-items">
 				<input id="fbc_id" name="fbc_id" type="hidden" value=""/>
-
+                <input id="abspath" name="abspath" type="hidden" value="<?php echo urlencode(ABSPATH); ?>"/>
+                <input id="fbc_flight_domain" name="fbc_flight_domain" type="hidden" value="<?php echo get_option( 'fbc_flight_domain' ); ?>"/>
+                <input id="fbc_app_token" name="fbc_app_token" type="hidden" value="<?php echo get_option( 'fbc_app_token' ); ?>"/>
 
 				<div tabindex="0" data-id="0" class="fbc attachment-details save-ready">
 					<h3>
 						Attachment Details
-            <span class="settings-save-status">
-                <span class="spinner"></span>
-                <span class="saved"></span>
-            </span>
+                        <span class="settings-save-status">
+                            <span class="spinner"></span>
+                            <span class="saved"></span>
+                        </span>
 					</h3>
 
 					<div class="attachment-info">
@@ -388,7 +395,6 @@ class flight_by_canto_media {
 								<option value="none" selected="">None</option>
 								<option value="file">Media File</option>
 								<option value="post">Attachment Page</option>
-								<option value="custom">Custom URL</option>
 							</select>
 						</label>
 						<input type="text" class="link-to-custom hidden" data-setting="linkUrl">
@@ -428,7 +434,6 @@ class flight_by_canto_media {
 								</option>
 									<?php endforeach; ?>
 
-									//Get available thumbnail sizes
 						</select>
 					</label>
 					<?php echo get_submit_button( __( 'Insert into Post' ), 'button', "send[$post_id]", false );

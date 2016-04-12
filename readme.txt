@@ -3,7 +3,7 @@ Contributors: Canto Inc, ianthekid
 Tags: brand management, cloud storage, DAM, digital asset management, file storage, image management, marketing collaboration, Flight by Canto
 Requires at least: 4.0
 Tested up to: 4.5-RC1
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -53,6 +53,11 @@ This plugin requires you to connect to your Flight account using an admin (Pilot
 
 == Changelog ==
 
+= 1.2.3 =
+* 2016-04-12
+* Bug Fix: Copying media now uses a more stable connection with shared hosting providers
+* Added inherited styles to avoid conflict with other backend plugins
+
 = 1.2.0 =
 * 2016-03-07
 * NEW: Global Search - Searches within filenames, descriptions, comments, keywords, tags, and author.
@@ -98,10 +103,7 @@ This plugin requires you to connect to your Flight account using an admin (Pilot
 
 == Upgrade Notice ==
 
-= 1.2.0 =
-* 2016-03-07
-* NEW: Global Search - Searches within filenames, descriptions, comments, keywords, tags, and author.
-* NEW: Added Flight Library in Folder/Album structure
-* Added error notification for missing token
-* Added curl option for token request issues experienced for some users
-* Added loading spinner during authorization
+= 1.2.3 =
+* 2016-04-12
+* Bug Fix: Copying media now uses a more stable connection with shared hosting providers
+* Added inherited styles to avoid conflict with other backend plugins

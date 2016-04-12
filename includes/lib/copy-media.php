@@ -3,14 +3,45 @@
  * @package Flight_By_Canto
  * @version 1.0.0
  */
+ 
+function curl_action( $url, $echo ) {
+
+	if ( ! function_exists( 'curl_init' ) ) {
+		die( 'Sorry cURL is not installed!' );
+	}
+
+	$agent  = "WordPress Plugin";
+	$header = array( 'Authorization: Bearer ' . $_POST['fbc_app_token'] );
+
+	$ch = curl_init();
+
+	$options = array(
+		CURLOPT_URL            => $url,              
+		CURLOPT_REFERER        => "Wordpress Plugin",
+		CURLOPT_USERAGENT      => $agent,            
+		CURLOPT_HTTPHEADER     => $header,           
+		//CURLOPT_SSLVERSION     => 3,               
+		CURLOPT_SSL_VERIFYHOST => 0,
+		CURLOPT_SSL_VERIFYPEER => 0,
+		CURLOPT_HEADER         => $echo,             
+		CURLOPT_RETURNTRANSFER => 1,                 
+		CURLOPT_TIMEOUT        => 10,                
+	);
+
+	curl_setopt_array( $ch, $options );
+	$output = curl_exec( $ch );
+	curl_close( $ch );
+
+	//return curl_error($ch);
+	return $output;
+}
+
 define( 'WP_ADMIN', false );
 define( 'WP_LOAD_IMPORTERS', false );
 
-require_once( dirname( dirname( dirname( dirname( dirname( dirname( __FILE__ ) ) ) ) ) ) . '/wp-admin/admin.php' );
+//require_once( dirname( dirname( dirname( dirname( dirname( dirname( __FILE__ ) ) ) ) ) ) . '/wp-admin/admin.php' );
 
-if ( ! current_user_can( 'upload_files' ) ) {
-	wp_die( __( 'You do not have permission to upload files.' ) );
-}
+require_once ( urldecode($_POST["abspath"]) . 'wp-admin/admin.php' );
 
 if ( isset( $_POST['send'] ) ) {
 	reset( $_POST['send'] );
@@ -26,17 +57,17 @@ if ( isset( $send_id ) ) {
 	$id         = $send_id;
 
 	//Go get the media item from Flight
-	$flight['api_url']  = 'https://' . get_option( 'fbc_flight_domain' ) . '.cantoflight.com/api/v1/';
+	$flight['api_url']  = 'https://' . $_POST['fbc_flight_domain'] . '.cantoflight.com/api/v1/';
 	$flight['req']      = $flight['api_url'] . 'image/' . $_POST['fbc_id'];
 
 
-	$instance = Flight_by_Canto::instance();
-	$response = $instance->curl_action( $flight['req'], 0 );
+//	$instance = Flight_by_Canto::instance();
+	$response = curl_action( $flight['req'], 0 );
 	$response = ( json_decode( $response ) );
 
 	//Get the download url
 	$detail = $response->url->download;
-	$detail = $instance->curl_action( $detail, 1 );
+	$detail = curl_action( $detail, 1 );
 
 
 	list( $httpheader ) = explode( "\r\n\r\n", $detail, 2 );
@@ -81,7 +112,8 @@ if ( isset( $send_id ) ) {
 
 
 	$attachment_url = wp_get_attachment_url( $id );
-	// Do whatever you have to here
+
+	// Additional parameters
 
 	//$caption = $title = $align = $rel = $size = $alt = '';
 	//$rel     = false;
@@ -134,7 +166,6 @@ if ( isset( $send_id ) ) {
 		),
 		$html
 	);
-
 
 	if ( isset( $_POST['chromeless'] ) && $_POST['chromeless'] ) {
 		// WP3.5+ media browser is identified by the 'chromeless' parameter
