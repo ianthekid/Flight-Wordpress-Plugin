@@ -20,6 +20,7 @@
 #fbc_loadMore {
     display: none;
     background-color: #f00046;
+    background-image: none;
     color: #fff;
     font-size: 13px;
     padding: 9px 35px;
@@ -34,7 +35,7 @@
     background-color: rgba(0,0,0,0);
     color: #f00046;
 }
-.fbc_attachment {
+#fbc-loop .fbc_attachment {
     background-color: #222;
     float: left;
     width: 162px;
