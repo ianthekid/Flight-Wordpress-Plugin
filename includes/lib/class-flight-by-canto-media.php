@@ -55,7 +55,7 @@ class flight_by_canto_media {
 
 		<?php
 
-		if ( get_option( 'fbc_flight_domain' ) == '' || get_option( 'fbc_app_id' ) == '' || get_option( 'fbc_app_secret' ) == '' ) :
+		if ( get_option( 'fbc_flight_domain' ) == '' || get_option( 'fbc_app_token' ) == '' ) :
 			echo '<form><h3 class="media-title"><span style="font-size:14px;font-family:Helvetica,Arial">' . __( "<strong>Oops!</strong> You haven't connected your Flight account yet. <a href=\"javascript:;\" onclick=\"window.top.location.href='" . get_bloginfo( 'url' ) . "/wp-admin/options-general.php?page=flight_by_canto_settings'\">Plugin Settings</a>",
 					'flight-by-canto' ) . '</span></h3></form>';
 
@@ -295,7 +295,7 @@ class flight_by_canto_media {
 								type: form.attr('method'),
 								data: form.serialize() + '&' + encodeURIComponent($this.attr('id')) + '=true&chromeless=1',
 								success: fbc_media_send_to_editor
-								/*						
+								/*
 								,error: function (xhr, ajaxOptions, thrownError) {
 										   console.log(xhr.status);
 										   console.log(xhr.responseText);

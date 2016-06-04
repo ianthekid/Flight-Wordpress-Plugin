@@ -120,11 +120,8 @@ class Flight_by_Canto {
 		$this->script_suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		$this->fbc_app_token       = get_option( 'fbc_app_token' );
-		$this->fbc_app_id          = get_option( 'fbc_app_id' );
-		$this->fbc_app_secret      = get_option( 'fbc_app_secret' );
 		$this->fbc_flight_domain   = get_option( 'fbc_flight_domain' );
 		$this->fbc_refresh_token   = get_option( 'fbc_refresh_token' );
-		$this->fbc_flight_password = get_option( 'fbc_flight_password' );
 		$this->fbc_flight_username = get_option( 'fbc_flight_username' );
 
 		register_activation_hook( $this->file, array( $this, 'install' ) );

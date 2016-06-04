@@ -117,12 +117,7 @@ class Flight_by_Canto_Settings {
 
 		$settings['standard'] = array(
 			'title'       => "Flight Settings",
-			'description' => __( 'Connect to your Flight instance using the Flight API. All fields are required, and you must be a Pilot to enable API access.<br><br><a target="_blank" href="https://www.canto.com/flight/api/">API Documentation</a> or <a target="_blank" href="https://www.canto.com/flight/api/request/">Request for API Access</a>',
-
-
-
-
-				'flight-by-canto' ),
+			'description' => __( '','flight-by-canto' ),
 			'fields'      => array(
 				array(
 					'id'          => 'flight_domain',
@@ -133,22 +128,6 @@ class Flight_by_Canto_Settings {
 					'placeholder' => __( 'Flight Domain', 'flight-by-canto' )
 				),
 				array(
-					'id'          => 'app_id',
-					'label'       => __( 'App ID', 'flight-by-canto' ),
-					'description' => __( 'Your API Client ID', 'flight-by-canto' ),
-					'type'        => 'text',
-					'default'     => '',
-					'placeholder' => __( 'App ID', 'flight-by-canto' )
-				),
-				array(
-					'id'          => 'app_secret',
-					'label'       => __( 'Secret Key', 'flight-by-canto' ),
-					'description' => __( 'Your API Secret Key', 'flight-by-canto' ),
-					'type'        => 'password',
-					'default'     => '',
-					'placeholder' => __( 'Secret Key', 'flight-by-canto' )
-				),
-				array(
 					'id'          => 'flight_username',
 					'label'       => __( 'Flight Username', 'flight-by-canto' ),
 					'description' => __( 'Username for granting access', 'flight-by-canto' ),
@@ -156,14 +135,6 @@ class Flight_by_Canto_Settings {
 					'default'     => '',
 					'placeholder' => __( 'Flight Username', 'flight-by-canto' )
 				),
-				array(
-					'id'          => 'flight_password',
-					'label'       => __( 'Flight Password', 'flight-by-canto' ),
-					'description' => __( 'Flight Password for granting access', 'flight-by-canto' ),
-					'type'        => 'password',
-					'default'     => '',
-					'placeholder' => __( 'Flight Password', 'flight-by-canto' )
-				)
 			)
 		);
 
@@ -305,6 +276,10 @@ class Flight_by_Canto_Settings {
 			$html .= '<input class="button-primary" value="Grant Access" id="getToken" name="getToken">' . "\n";
 
 		}
+		if ( ( get_option( 'fbc_flight_domain' ) != '' && get_option( 'fbc_flight_username' ) != '' ) ) {
+			$html .= '<a target="_blank" href="https://oauth.run.cantoflight.com:8443/oauth/api/oauth2/authorize?response_type=code&app_id=2883b274ab9740d8bfb96366a0adead2&redirect_uri=http%3A%2F%2Fwordpress.flightbycanto.com%2Fcallback.php&state='.urlencode('http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']).'">Login to Flight</a>';
+
+		}
 		$html .= '</p>' . "\n";
 		$html .= '</div>' . "\n";
 
@@ -315,51 +290,14 @@ class Flight_by_Canto_Settings {
 		echo $html;
 
 		//Generate OAuth Token -- Unused until API {Redirect URI} is fixed
-		if ( ( get_option( 'fbc_flight_domain' ) != '' && get_option( 'fbc_app_id' ) != '' && get_option( 'fbc_app_secret' ) != '' ) ) {
-			//	echo $this->oauth_token();
-		}
-
+		if ( isset($_REQUEST['token']) ) :
+			update_option( 'fbc_app_token', $_REQUEST['token'] );
 		?>
-
-
 		<script type="text/javascript">
-			jQuery('#getToken').click(function (e) {
-				e.preventDefault();
-				jQuery('#loader').show();
-				var data = {
-					'action': 'fbc_getToken',
-				};
-
-				jQuery.post(ajaxurl, data, function (response) {
-
-					response = jQuery.parseJSON(response);
-
-					if (typeof response.error === "undefined") {
-						jQuery('#loader').hide();
-						alert("Authentication successful. Click Ok to save and reload");
-						location.reload();
-					} else {
-						(response.error == "Invalid Login Credentials") ? alert("<?php echo __('Invalid login credentials: Please edit then Save the credentials before trying again','flight-by-canto'); ?>") : '';
-						(response.error == "Invalid AppID") ? alert("<?php echo __('Invalid AppID: Please edit then Save the credentials before trying again','flight-by-canto'); ?>") : '';
-						jQuery('#getToken').hide();
-					}
-				});
-
-			});
-			<?php /* Add in refresh method
-                jQuery('#refreshToken').click(function (e) {
-				e.preventDefault();
-				var data = {
-					'action': 'fbc_refreshToken',
-				};
-
-				jQuery.post(ajaxurl, data, function (response) {
-//        	        	        alert('Got this from the server: ' + response);
-				});
-
-			}); */ ?>
+			alert("all set");
 		</script>
 	<?php
+		endif;
 
 	}
 
