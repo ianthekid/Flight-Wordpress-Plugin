@@ -5,7 +5,7 @@ var FBC = React.createClass({
                 name: 'Recent Images'
             }],
             search: '',
-            path: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&token="+ args.token +"&limit=30&start=0"
+            path: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&token="+ args.token +"&limit=36&start=0"
 		};
 	},
 

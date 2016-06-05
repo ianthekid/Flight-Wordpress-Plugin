@@ -14,6 +14,10 @@ var Images = React.createClass({
 	},
 
 	componentDidUpdate: function(prevProps,prevState) {
+		if(prevState.item != this.state.item) {
+			jQuery('#fbc_media-sidebar').animate({"right":"0px"}, "fast").show();
+			jQuery('#__attachments-view-fbc').css({'margin-right':'300px' });
+		}
 		React.render(<Attachment attachment={this.state.item} />, document.getElementById('fbc_media-sidebar') );
 	},
 
@@ -35,8 +39,8 @@ var Images = React.createClass({
 					});
 
 					return (
-						<li className="fbc_attachment attachment">
-			                <div className="attachment-preview" style={divStyle} onClick={this.handleClick.bind(this,item[0])}>
+						<li className="fbc_attachment attachment" onClick={this.handleClick.bind(this,item[0])}>
+			                <div className="attachment-preview" style={divStyle}>
 								<a href={item[0].img} className="fullscreen" data-featherlight="image">
 									<i className="icon-resize"></i>
 								</a>

@@ -16,6 +16,7 @@ var Keyword = React.createClass({
 
 	handleSubmit: function(e) {
 		React.findDOMNode(this.refs.fbcSearch).value = "";
+		this.setState({ keyword: '' });
 		e.preventDefault();
 	},
 

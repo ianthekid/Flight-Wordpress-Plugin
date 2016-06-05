@@ -286,7 +286,7 @@ class flight_by_canto_media {
 						document.getElementById("loader").style.display = "none";
 					}
 					jQuery(function ($) {
-						$('input[id^=send].button').click(function (event) {
+						$('input[id^=send]:submit').click(function (event) {
 							event.preventDefault();
 							var $this = $(event.target);
 							var form = $('#library-form');
@@ -436,8 +436,8 @@ class flight_by_canto_media {
 
 						</select>
 					</label>
-					<?php echo get_submit_button( __( 'Insert into Post' ), 'button', "send[$post_id]", false );
-					?>
+					<a href="javascript:;" class="button" id="fbc_media-sidebar-cancel">Cancel</a> &nbsp;
+					<?php echo get_submit_button( __( 'Insert into Post' ), 'button submit', "send[$post_id]", false ); ?>
 				</div>
 
 

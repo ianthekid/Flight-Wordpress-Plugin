@@ -28,7 +28,7 @@ var Attachment = React.createClass({
                     jQuery('#library-form .uploaded').html(date);
                     jQuery("#library-form").appendTo("#fbc_media-sidebar");
                     jQuery("#library-form").show();
-
+                    
                     //return();
                 }, this)}
             </div>
