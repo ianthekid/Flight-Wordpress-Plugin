@@ -4,6 +4,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/*
+function fbc_admin_notice__success() {
+	?>
+	<div class="notice notice-success">
+		<p><?php _e( 'Done!', 'flight-by-canto' ); ?></p>
+	</div>
+	<?php
+}
+add_action( 'admin_notices', 'fbc_admin_notice__success' );
+*/
+
 class Flight_by_Canto {
 
 	/**
