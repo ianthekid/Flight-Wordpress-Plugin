@@ -63,8 +63,8 @@ class Flight_by_Canto_Settings {
 	 */
 	public function init_settings() {
 		$this->settings = $this->settings_fields();
-		add_action( 'wp_ajax_fbc_getToken', array( $this, 'fbc_getToken' ) );
-		add_action( 'wp_ajax_fbc_refreshToken', array( $this, 'fbc_refreshToken' ) );
+		//add_action( 'wp_ajax_fbc_getToken', array( $this, 'fbc_getToken' ) );
+		//add_action( 'wp_ajax_fbc_refreshToken', array( $this, 'fbc_refreshToken' ) );
 	}
 
 	/**
@@ -192,16 +192,6 @@ class Flight_by_Canto_Settings {
 		echo $html;
 	}
 
-	public function oauth_token() {
-		$html = '<h2>' . __( 'Login to Flight Complete Authorization', 'flight-by-canto' ) . '</h2>' . "\n";
-		$html .= '<iframe onload="alert(this.contentWindow.location.href);"';
-		$html .= ' src="https://oauth.cantoflight.com:8443/oauth/api/oauth2/authorize?response_type=code&app_id=' . get_option( 'fbc_app_secret' ) . '&state=groovy" ';
-		$html .= 'width="500" height="700"></iframe>';
-
-		return $html;
-	}
-
-
 	/**
 	 * Load settings page content
 	 * @return void
@@ -277,18 +267,16 @@ class Flight_by_Canto_Settings {
 
 */
 
-
-
-
-
 		if ( get_option( 'fbc_flight_domain' ) != '' && get_option( 'fbc_app_token' ) != '') :
+			$html .= "<i class='icon-icn_checkmark_circle_01'></i>";
 			$html .= '<strong>Status:</strong> You are connected to Flight<br><br>';
 			$html .= '<em>You connected on ' . date("M d Y, g:i a", get_option( 'fbc_app_timestamp' ) ) . '<br><br>';
-			$html .= '<a class="btn" href="http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'&disconnect">Disconnect</a>';
+			$html .= '<a class="button-primary" href="http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'&disconnect">Disconnect</a>';
 
 		elseif ( get_option( 'fbc_flight_domain' ) != '' && get_option( 'fbc_app_token' ) == '') :
+			$html .= "<i class='icon-icn_close_circle_x_01'></i>";
 			$html .= '<strong>Status:</strong> You are not logged to Flight<br><br>';
-			$html .= '<a class="btn" target="_blank" href="https://oauth.run.cantoflight.com:8443/oauth/api/oauth2/authorize?response_type=code&app_id=2883b274ab9740d8bfb96366a0adead2&redirect_uri=http%3A%2F%2Fwordpress.flightbycanto.com%2Fcallback.php&state='.urlencode('http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']).'">Login to Flight</a>';
+			$html .= '<a class="button-primary" target="_blank" href="https://oauth.run.cantoflight.com:8443/oauth/api/oauth2/authorize?response_type=code&app_id=2883b274ab9740d8bfb96366a0adead2&redirect_uri=http%3A%2F%2Fwordpress.flightbycanto.com%2Fcallback.php&state='.urlencode('http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']).'">Login to Flight</a>';
 
 
 		else :
@@ -373,6 +361,9 @@ class Flight_by_Canto_Settings {
 		if ( isset($_REQUEST['token']) ) :
 			update_option( 'fbc_app_token', $_REQUEST['token'] );
 			update_option( 'fbc_app_timestamp', time() );
+			update_option( 'fbc_app_refresh_token', $_REQUEST['refreshToken'] );
+			update_option( 'fbc_app_expire_token', time() + $_REQUEST['expiresIn'] );
+
 
 			$arr = explode("&token=",$_SERVER['REQUEST_URI']);
 			$rURI = $arr[0];

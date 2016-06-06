@@ -422,6 +422,25 @@ input.readonly, input[readonly], textarea.readonly, textarea[readonly] {
     margin-left: -22px;
     font-size: 14px;
 }
+.icon-icn_checkmark_circle_01:before {
+  content: "\e610";
+}
+.icon-icn_close_circle_x_01:before {
+  content: "\e60f";
+}
+
+#flight_by_canto_settings .icon-icn_checkmark_circle_01:before {
+    display: block;
+    font-size: 72px;
+    color: #5cb85c;
+    margin: 0 0 20px 0;
+}
+#flight_by_canto_settings .icon-icn_close_circle_x_01:before {
+    display: block;
+    font-size: 72px;
+    color: #d9534f;
+    margin: 0 0 20px 0;
+}
 
 .header {
     background-color: #f0f0f0;

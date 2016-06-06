@@ -179,54 +179,11 @@ class Flight_by_Canto {
 
 		// Add Ajax functions
 		add_action( 'wp_ajax_fbc_get_token', array( $this, 'getToken' ) );
-		add_action( 'wp_ajax_fbc_refresh_token', array( $this, 'refreshToken' ) );
+		//add_action( 'wp_ajax_fbc_refresh_token', array( $this, 'refreshToken' ) );
 		add_action( 'wp_ajax_fbc_getMetadata', array( $this, 'getMetadata' ) );
 
 	} // End __construct ()
 
-
-	/**
-	 * CURL function to query Flight API
-	 *
-	 * @param  string $url Full Flight API query string
-	 * @param  string $header Flight API token authorization
-	 * @param  string $agent Standard browser agent for CURL requests
-	 * @param  int $echo True/False (1/0) for including CURL header in output
-	 *
-	 * @return object                CURL response output
-	 */
-	//public function curl_action($url,$header,$agent,$echo) {
-	public function curl_action( $url, $echo ) {
-
-		if ( ! function_exists( 'curl_init' ) ) {
-			die( 'Sorry cURL is not installed!' );
-		}
-
-		$agent  = get_bloginfo( 'name' ) . " WordPress Plugin";
-		$header = array( 'Authorization: Bearer ' . $this->fbc_app_token );
-
-		$ch = curl_init();
-
-		$options = array(
-			CURLOPT_URL            => $url,                // get request
-			CURLOPT_REFERER        => get_bloginfo( 'url' ), // who r u
-			CURLOPT_USERAGENT      => $agent,                // who am i
-			CURLOPT_HTTPHEADER     => $header,                // provides authorization and token
-			//CURLOPT_SSLVERSION     => 3,                    // required for api handshake
-			CURLOPT_SSL_VERIFYHOST => 0,
-			CURLOPT_SSL_VERIFYPEER => 0,
-			CURLOPT_HEADER         => $echo,                // include header in output?
-			CURLOPT_RETURNTRANSFER => 1,                    // output as string instead of file
-			CURLOPT_TIMEOUT        => 10,                    // how long til i give up?
-		);
-
-		curl_setopt_array( $ch, $options );
-		$output = curl_exec( $ch );
-		curl_close( $ch );
-
-		//return curl_error($ch);
-		return $output;
-	}
 
 	public function getMetaData( $fbc_id ) {
 		check_ajax_referer( 'flight-by-canto', 'nonce' );
@@ -281,17 +238,17 @@ class Flight_by_Canto {
 		$ch = curl_init();
 
 		$options = array(
-			CURLOPT_URL            => $req,                                // get request
-			CURLOPT_REFERER        => get_bloginfo( 'url' ), // who r u
-			CURLOPT_USERAGENT      => "Flight Wordpress Plugin",                             // who am i
-			CURLOPT_HTTPHEADER     => array(),                             // provides authorization and token
-			//CURLOPT_SSLVERSION     => 3,                                   // required for api handshake
+			CURLOPT_URL            => $req,
+			CURLOPT_REFERER        => get_bloginfo( 'url' ),
+			CURLOPT_USERAGENT      => "Flight Wordpress Plugin",
+			CURLOPT_HTTPHEADER     => array(),
+			//CURLOPT_SSLVERSION     => 3,
 			CURLOPT_SSL_VERIFYPEER => 0,
-			CURLOPT_HEADER         => 1,                               // include header in output?
-			CURLOPT_RETURNTRANSFER => 1,                                   // output as string instead of file
-			CURLOPT_TIMEOUT        => 10,                                  // how long til i give up?
-			CURLOPT_POST           => true,                   // Set to true to POST instead of GET
-			CURLOPT_POSTFIELDS     => $postfields,                 // Set to true to POST instead of GET
+			CURLOPT_HEADER         => 1,
+			CURLOPT_RETURNTRANSFER => 1,
+			CURLOPT_TIMEOUT        => 10,
+			CURLOPT_POST           => true,
+			CURLOPT_POSTFIELDS     => $postfields,
 		);
 
 		curl_setopt_array( $ch, $options );
@@ -380,90 +337,6 @@ class Flight_by_Canto {
 //		echo "Fail";
 	}
 
-
-	/**
-	 * Multi-Threaded CURL function to loop through Flight API response, and request multiple items
-	 *
-	 * @param  string $data Full Flight API query string
-	 * @param  string $header Flight API token authorization
-	 * @param  string $agent Standard browser agent for CURL requests
-	 * @param  int $echo True/False (1/0) for including CURL header in output
-	 *
-	 * @return object                CURL response output + associative File ID and Name
-	 */
-	public function multiRequest( $data, $options = array() ) {
-
-		// array of curl handles
-		$curly = array();
-		// data to be returned
-		$result = array();
-
-		// multi handle
-		$mh = curl_multi_init();
-
-		// loop through $data and create curl handles
-		// then add them to the multi-handle
-		foreach ( $data as $id => $d ) {
-
-
-			$curly[ $id ]['img']  = curl_init();
-			$curly[ $id ]['id']   = $d['id'];
-			$curly[ $id ]['name'] = $d['name'];
-
-
-			$url = ( is_array( $d ) && ! empty( $d['preview'] ) ) ? $d['preview'] : $d;
-
-			//$imgUrl = 'https://obj.cantoflight.com/api_binary/v1/image/'.$url.'/preview';
-
-			curl_setopt( $curly[ $id ]['img'], CURLOPT_URL, $url );
-			curl_setopt( $curly[ $id ]['img'], CURLOPT_HTTPHEADER,
-				array( 'Authorization: Bearer ' . $this->fbc_app_token ) );
-			curl_setopt( $curly[ $id ]['img'], CURLOPT_USERAGENT, 'Flight Wordpress Plugin' );
-			curl_setopt( $curly[ $id ]['img'], CURLOPT_HEADER, 1 );
-			//curl_setopt( $curly[ $id ]['img'], CURLOPT_SSLVERSION, 3 );
-			curl_setopt( $curly[ $id ]['img'], CURLOPT_SSL_VERIFYHOST, 0 );
-			curl_setopt( $curly[ $id ]['img'], CURLOPT_SSL_VERIFYPEER, 0 );
-
-			curl_setopt( $curly[ $id ]['img'], CURLOPT_RETURNTRANSFER, 1 );
-
-			// post?
-			if ( is_array( $d ) ) {
-				if ( ! empty( $d['post'] ) ) {
-					curl_setopt( $curly[ $id ]['img'], CURLOPT_POST, 1 );
-					curl_setopt( $curly[ $id ]['img'], CURLOPT_POSTFIELDS, $d['post'] );
-				}
-			}
-
-			// extra options?
-			if ( ! empty( $options ) ) {
-				curl_setopt_array( $curly[ $id ]['img'], $options );
-			}
-
-			curl_multi_add_handle( $mh, $curly[ $id ]['img'] );
-		}
-
-		// execute the handles
-		$running = null;
-		do {
-			curl_multi_exec( $mh, $running );
-		} while ( $running > 0 );
-
-
-		// get content and remove handles
-		foreach ( $curly as $idRes ) {
-			array_push( $result, array(
-				'img'  => curl_multi_getcontent( $idRes['img'] ),
-				'id'   => $idRes['id'],
-				'name' => $idRes['name']
-			) );
-			curl_multi_remove_handle( $mh, $idRes['img'] );
-		}
-
-		// all done
-		curl_multi_close( $mh );
-
-		return $result;
-	}
 
 	/**
 	 * Load frontend CSS.
