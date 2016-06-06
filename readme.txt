@@ -2,12 +2,12 @@
 Contributors: Canto Inc, ianthekid
 Tags: brand management, cloud storage, DAM, digital asset management, file storage, image management, marketing collaboration, Flight by Canto
 Requires at least: 4.0
-Tested up to: 4.5-RC1
-Stable tag: 1.2.3
+Tested up to: 4.5.2
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Easily find and publish your creative assets directly to wordpress without having to search through emails or folders.
+Easily find and publish your creative assets directly to wordpress without having to search through emails or folders, using digital asset management by Canto.
 
 == Description ==
 
@@ -52,6 +52,11 @@ Unfortunately not. However, you are welcome to sign up today for free! <a href="
 This plugin requires you to connect to your Flight account using an admin (Pilot) account.
 
 == Changelog ==
+
+= 1.3.0 =
+* 2016-06-06
+* NEW: New process for authenticating using OAuth method, no longer need an API key to use plugin. Improved compatibility with different hosting providers.
+* UPDATE: Improved UI with interface enhancements for browsing and scrolling. Larger thumbnail previews.
 
 = 1.2.3 =
 * 2016-04-12
@@ -103,7 +108,7 @@ This plugin requires you to connect to your Flight account using an admin (Pilot
 
 == Upgrade Notice ==
 
-= 1.2.3 =
-* 2016-04-12
-* Bug Fix: Copying media now uses a more stable connection with shared hosting providers
-* Added inherited styles to avoid conflict with other backend plugins
+= 1.3.0 =
+* 2016-06-06
+* NEW: New process for authenticating using OAuth method, no longer need an API key to use plugin. Improved compatibility with different hosting providers.
+* UPDATE: Improved UI with interface enhancements for browsing and scrolling. Larger thumbnail previews.
