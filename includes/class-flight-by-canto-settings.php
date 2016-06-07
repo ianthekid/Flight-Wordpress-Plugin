@@ -275,7 +275,7 @@ class Flight_by_Canto_Settings {
 
 		elseif ( get_option( 'fbc_flight_domain' ) != '' && get_option( 'fbc_app_token' ) == '') :
 			$html .= "<i class='icon-icn_close_circle_x_01'></i>";
-			$html .= '<strong>Status:</strong> You are not logged to Flight<br><br>';
+			$html .= '<strong>Status:</strong> You are not connected to Flight<br><br>';
 			$html .= '<a class="button-primary" target="_blank" href="https://oauth.run.cantoflight.com:8443/oauth/api/oauth2/authorize?response_type=code&app_id=2883b274ab9740d8bfb96366a0adead2&redirect_uri=http%3A%2F%2Fwordpress.flightbycanto.com%2Fcallback.php&state='.urlencode('http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']).'">Login to Flight</a>';
 
 
