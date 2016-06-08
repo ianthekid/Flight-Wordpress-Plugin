@@ -267,31 +267,29 @@ class Flight_by_Canto_Settings {
 
 */
 
-		if ( get_option( 'fbc_flight_domain' ) != '' && get_option( 'fbc_app_token' ) != '') :
-			$html .= "<i class='icon-icn_checkmark_circle_01'></i>";
-			$html .= '<strong>Status:</strong> You are connected to Flight<br><br>';
-			$html .= '<em>You connected on ' . date("M d Y, g:i a", get_option( 'fbc_app_timestamp' ) ) . '<br><br>';
-			$html .= '<a class="button-primary" href="http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'&disconnect">Disconnect</a>';
-
-		elseif ( get_option( 'fbc_flight_domain' ) != '' && get_option( 'fbc_app_token' ) == '') :
+		if ( get_option( 'fbc_flight_domain' ) == '' && get_option( 'fbc_app_token' ) == '') :
 			$html .= "<i class='icon-icn_close_circle_x_01'></i>";
 			$html .= '<strong>Status:</strong> You are not connected to Flight<br><br>';
-			$html .= '<a class="button-primary" target="_blank" href="https://oauth.run.cantoflight.com:8443/oauth/api/oauth2/authorize?response_type=code&app_id=2883b274ab9740d8bfb96366a0adead2&redirect_uri=http%3A%2F%2Fwordpress.flightbycanto.com%2Fcallback.php&state='.urlencode('http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']).'">Login to Flight</a>';
+			$html .= '<a class="button-primary"  href="https://oauth.cantoflight.com:8443/oauth/api/oauth2/authorize?response_type=code&app_id=2883b274ab9740d8bfb96366a0adead2&redirect_uri=http%3A%2F%2Fwordpress.flightbycanto.com%2Fcallback.php&state='.urlencode('http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']).'">Login to Flight</a>';
+
+
+		elseif ( get_option( 'fbc_flight_domain' ) != '' && get_option( 'fbc_app_token' ) != '') :
+			$html .= "<i class='icon-icn_checkmark_circle_01'></i>";
+			$html .= '<strong>Status:</strong> You are connected to Flight<br><br>';
+			$html .= '<em>Last login: <strong>' . date("F d Y, g:i A", get_option( 'fbc_app_timestamp' ) ) . '</strong></em><br>';
+			$html .= '<em>For security purposes you will need to login again after <strong>' . date("F d Y, g:i a", get_option( 'fbc_app_expire_token' ) ) . '</strong> </em><br><br>';
+			$html .= '<a class="button-primary" href="http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'&disconnect">Disconnect</a>';
 
 
 		else :
 
 			// Get settings fields
-			ob_start();
-			settings_fields( $this->parent->_token . '_settings' );
-			do_settings_sections( $this->parent->_token . '_settings' );
-			$html .= ob_get_clean();
+//			ob_start();
+//			settings_fields( $this->parent->_token . '_settings' );
+//			do_settings_sections( $this->parent->_token . '_settings' );
+//			$html .= ob_get_clean();
 
-			$html .= '<p class="submit">' . "\n";
-			$html .= '<input type="hidden" name="tab" value="' . esc_attr( $tab ) . '" />' . "\n";
-			$html .= '<input name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Continue',
-					'flight-by-canto' ) ) . '" />' . "\n";
-			$html .= '</p>' . "\n";
+			$html .= 'There was a problem installing the plugin. Please contact support' . "\n";
 	/*
 			if ( ( get_option( 'fbc_flight_domain' ) != '' && get_option( 'fbc_app_id' ) != '' && get_option( 'fbc_app_secret' ) != '' && get_option( 'fbc_flight_username' ) != '' && get_option( 'fbc_flight_password' ) != '' ) ) {
 				$html .= '<input class="button-primary" value="Grant Access" id="getToken" name="getToken">' . "\n";
@@ -358,8 +356,9 @@ class Flight_by_Canto_Settings {
 
 
 		//Generate OAuth Token -- Unused until API {Redirect URI} is fixed
-		if ( isset($_REQUEST['token']) ) :
+		if ( isset($_REQUEST['token']) && isset($_REQUEST['domain']) ) :
 			update_option( 'fbc_app_token', $_REQUEST['token'] );
+			update_option( 'fbc_flight_domain', $_REQUEST['domain'] );
 			update_option( 'fbc_app_timestamp', time() );
 			update_option( 'fbc_app_refresh_token', $_REQUEST['refreshToken'] );
 			update_option( 'fbc_app_expire_token', time() + $_REQUEST['expiresIn'] );
