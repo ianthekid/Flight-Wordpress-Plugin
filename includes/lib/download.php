@@ -1,5 +1,5 @@
 <?php
-$url = 'https://'. $_REQUEST['subdomain'] .'.cantoflight.com/api_binary/v1/image/'. $_REQUEST['id'] .'';
+$url = 'https://'. $_REQUEST['subdomain'] .'.cantoflight.com/api_binary/v1/image/'. $_REQUEST['id'] .'/preview';
 
 $header = array( 'Authorization: Bearer '. $_REQUEST['token']);
 
