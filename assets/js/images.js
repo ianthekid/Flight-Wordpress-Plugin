@@ -86,7 +86,7 @@ var FlightImages = React.createClass({
 			var stop = e.search("Server: ");
 			var imgFile = e.substring( (start+10) ,stop);
 
-			var expires = imgFile.split('?Expire');
+			var expires = imgFile.split('?x-amz-security-token');
 			var img = expires[0];
 
 			var fileExt = img.split('.').pop();

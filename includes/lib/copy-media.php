@@ -3,7 +3,7 @@
  * @package Flight_By_Canto
  * @version 1.0.0
  */
- 
+
 function curl_action( $url, $echo ) {
 
 	if ( ! function_exists( 'curl_init' ) ) {
@@ -16,16 +16,16 @@ function curl_action( $url, $echo ) {
 	$ch = curl_init();
 
 	$options = array(
-		CURLOPT_URL            => $url,              
+		CURLOPT_URL            => $url,
 		CURLOPT_REFERER        => "Wordpress Plugin",
-		CURLOPT_USERAGENT      => $agent,            
-		CURLOPT_HTTPHEADER     => $header,           
-		//CURLOPT_SSLVERSION     => 3,               
+		CURLOPT_USERAGENT      => $agent,
+		CURLOPT_HTTPHEADER     => $header,
+		//CURLOPT_SSLVERSION     => 3,
 		CURLOPT_SSL_VERIFYHOST => 0,
 		CURLOPT_SSL_VERIFYPEER => 0,
-		CURLOPT_HEADER         => $echo,             
-		CURLOPT_RETURNTRANSFER => 1,                 
-		CURLOPT_TIMEOUT        => 10,                
+		CURLOPT_HEADER         => $echo,
+		CURLOPT_RETURNTRANSFER => 1,
+		CURLOPT_TIMEOUT        => 10,
 	);
 
 	curl_setopt_array( $ch, $options );
@@ -69,11 +69,20 @@ if ( isset( $send_id ) ) {
 	$detail = $response->url->download;
 	$detail = curl_action( $detail, 1 );
 
-
+/*
 	list( $httpheader ) = explode( "\r\n\r\n", $detail, 2 );
 	$matches = array();
-	preg_match( '/(Location:|URI:)(.*?)\n/', $httpheader, $matches );
+	preg_match( '/(Location:|URI:)(.*?)\?x-amz-security-token/', $httpheader, $matches );
 	$location = trim( str_replace( "Location: ", "", $matches[0] ) );
+*/
+
+    $matches = array();
+    $httpheader = explode("Server: ",$detail);
+    preg_match( '/(Location:|URI:)(.*?)\n/', $httpheader[0], $matches );
+    $uri = str_replace( array("Location: "), "", $matches[0] );
+    $location = trim( $uri );
+
+
 
 	$tmp        = download_url( $location );
 	$file_array = array(

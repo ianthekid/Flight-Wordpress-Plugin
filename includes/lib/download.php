@@ -1,5 +1,5 @@
 <?php
-$url = 'https://'. $_REQUEST['subdomain'] .'.cantoflight.com/api_binary/v1/image/'. $_REQUEST['id'] .'/preview';
+$url = 'https://'. $_REQUEST['subdomain'] .'.cantoflight.com/api_binary/v1/image/'. $_REQUEST['id'] .'';
 
 $header = array( 'Authorization: Bearer '. $_REQUEST['token']);
 
@@ -23,10 +23,9 @@ $data = curl_exec( $ch );
 curl_close( $ch );
 
 echo $data;
-//$out = json_decode($data);
 
+//$out = json_decode($data);
 //header('Content-Type: application/json;charset=utf-8');
 //echo json_encode($out->url->LowJPG);
-
 //var_dump($out->url->LowJPG);
 ?>
