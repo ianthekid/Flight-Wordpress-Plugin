@@ -215,8 +215,9 @@ input.readonly, input[readonly], textarea.readonly, textarea[readonly] {
 }
 
 #hideShow {
+	float:left;
 	margin: 0 0 0 10px;
-	top: 45px;
+	top: 5px;
 	font-size: 14px;
 	color: #333;
 	cursor: pointer;
@@ -422,6 +423,44 @@ input.readonly, input[readonly], textarea.readonly, textarea[readonly] {
     margin-left: -22px;
     font-size: 14px;
 }
+#filterHideShow {
+	font-size: 14px;
+	color: #333;
+	cursor: pointer;
+}
+.icon-filter:before {
+    content: "\35";
+    font-size: 14px;
+}
+.icon-type-all:before {
+    content: "\69";
+    font-size: 14px;
+    margin-left: 5px;
+}
+.icon-type-image:before {
+    content: "\62";
+    font-size: 14px;
+}
+.icon-type-video:before {
+    content: "\65";
+    font-size: 14px;
+}
+.icon-type-audio:before {
+    content: "\64";
+    font-size: 14px;
+}
+.icon-type-document:before {
+    content: "\6b";
+    font-size: 14px;
+}
+.icon-type-presentation:before {
+    content: "\74";
+    font-size: 14px;
+}
+.icon-type-other:before {
+    content: "\6a";
+    font-size: 14px;
+}
 .icon-icn_checkmark_circle_01:before {
   content: "\e610";
 }
@@ -448,7 +487,7 @@ input.readonly, input[readonly], textarea.readonly, textarea[readonly] {
 }
 
 .searchRow {
-    padding: 0 0 15px 10px;
+    padding: 50px 0 15px 10px;
     position: fixed;
     top: 0;
     z-index: 9;
@@ -456,8 +495,12 @@ input.readonly, input[readonly], textarea.readonly, textarea[readonly] {
     width: 100%;
     box-shadow: 0 0 5px rgba(0,0,0,0.8);
 }
+.searchRow>div{
+	float: left;
+	margin-left: 20px;
+}
 #searchForm {
-    margin: 20px 0 0 110px
+    margin: 0 0 0 0;
 }
 #searchForm input {
     width: 220px;

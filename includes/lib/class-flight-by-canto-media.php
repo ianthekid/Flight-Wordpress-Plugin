@@ -326,6 +326,7 @@ class flight_by_canto_media {
 
 			<div id="media-items">
 				<input id="fbc_id" name="fbc_id" type="hidden" value=""/>
+				<input id="fbc_scheme" name="fbc_scheme" type="hidden" value=""/>
                 <input id="abspath" name="abspath" type="hidden" value="<?php echo urlencode(ABSPATH); ?>"/>
                 <input id="fbc_flight_domain" name="fbc_flight_domain" type="hidden" value="<?php echo get_option( 'fbc_flight_domain' ); ?>"/>
                 <input id="fbc_app_token" name="fbc_app_token" type="hidden" value="<?php echo get_option( 'fbc_app_token' ); ?>"/>
@@ -372,6 +373,16 @@ class flight_by_canto_media {
 					<label data-setting="description" class="setting">
 						<span class="name">Description</span>
 						<textarea id="description" name="description"></textarea>
+					</label>
+					
+					<label data-setting="copyright" class="setting">
+						<span class="name">Copyright</span>
+						<input type="text" id="copyright" name="copyright" value="">
+					</label>
+					
+					<label data-setting="terms" class="setting">
+						<span class="name">Terms & Conditions</span>
+						<textarea id="terms" name="terms"></textarea>
 					</label>
 				</div>
 				<div class="attachment-display-settings">

@@ -30,6 +30,7 @@ require_once( 'includes/class-flight-by-canto-settings.php' );
 // Load plugin libraries
 require_once( 'includes/lib/class-flight-by-canto-admin-api.php' );
 require_once( 'includes/lib/class-flight-by-canto-media.php' );
+require_once( 'includes/lib/class-flight-by-canto-attachment.php' );
 
 /**
  * Returns the main instance of Flight_by_Canto to prevent the need to use globals.
