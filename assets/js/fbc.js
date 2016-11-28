@@ -5,20 +5,35 @@ var FBC = React.createClass({
                 name: 'Recent Images'
             }],
             search: '',
-            path: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&token="+ args.token +"&limit=36&start=0"
+            path: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&token="+ args.token +"&limit=36&start=0",
+            filter: '',
+            type: 'library'
 		};
 	},
 
     handleChange: function(e) {
         this.setState({
 			album: e,
-            path: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&album="+ e.id +"&token="+ args.token
+            path: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&album="+ e.id +"&token="+ args.token,
+            filter: '',
+            search: '',
+            type: 'library'
 		});
     },
 
     handleSearch: function(e) {
         this.setState({
-            search: e
+            search: e,
+            filter: '',
+            album: {name: "Recent Images"},
+            type: 'search'
+		});
+    },
+    
+    handleFilter: function(e) {
+        this.setState({
+        	filter: e,
+        	type: 'filter'
 		});
     },
 
@@ -39,7 +54,9 @@ var FBC = React.createClass({
 
     library: function(e) {
         this.setState({
-            album: {name: "Flight Library"}
+            album: {name: "Flight Library"},
+            filter: '',
+            type: 'library'
 		});
     },
 
@@ -48,14 +65,15 @@ var FBC = React.createClass({
             <div>
                 <div className="searchRow">
                     <a className="btn" id="hideShow" onClick={this.toggle}> <i className="icon-library"></i> Library</a>
-                    <Search onValueChange={this.handleSearch} />
+                    <Search onValueChange={this.handleSearch} />   
+                    <Filter onValueChange={this.handleFilter} filter={this.state.filter}/>
                 </div>
 
                 <div id="fbc-tree" className="collapse">
                     <Tree onValueChange={this.handleChange} library={this.library} />
                 </div>
                 <div id="fbc-loop">
-                    <FlightImages search={this.state.search} album={this.state.album} path={this.state.path} />
+                    <FlightImages search={this.state.search} album={this.state.album} path={this.state.path} filter={this.state.filter} type={this.state.type}/>
                 </div>
             </div>
         );

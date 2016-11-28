@@ -58,7 +58,7 @@ if ( isset( $send_id ) ) {
 
 	//Go get the media item from Flight
 	$flight['api_url']  = 'https://' . $_POST['fbc_flight_domain'] . '.cantoflight.com/api/v1/';
-	$flight['req']      = $flight['api_url'] . 'image/' . $_POST['fbc_id'];
+	$flight['req']      = $flight['api_url'] . $_POST['fbc_scheme'] . '/' . $_POST['fbc_id'];
 
 
 //	$instance = Flight_by_Canto::instance();
@@ -118,7 +118,9 @@ if ( isset( $send_id ) ) {
 	}
 	//Save away the default alt text
 	add_post_meta ($id, '_wp_attachment_image_alt' , $_POST['alt']);
-
+	add_post_meta ($id, 'description' , $_POST['description']);
+	add_post_meta ($id, 'copyright' , $_POST['copyright']);
+	add_post_meta ($id, 'terms' , $_POST['terms']);
 
 	$attachment_url = wp_get_attachment_url( $id );
 
@@ -160,6 +162,9 @@ if ( isset( $send_id ) ) {
 	$attachment['image-size'] = $_POST['size'];
 	$attachment['image_alt'] = $_POST['alt'];
 	$attachment['align'] = $_POST['align'];
+	$attachment['description'] = $_POST['description'];
+	$attachment['copyright'] = $_POST['copyright'];
+	$attachment['terms'] = $_POST['terms'];
 	/** This filter is documented in wp-admin/includes/media.php */
 	$html = apply_filters( 'media_send_to_editor', $html, $id, $attachment );
 

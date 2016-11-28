@@ -19,6 +19,10 @@ var Images = React.createClass({
 			jQuery('#__attachments-view-fbc').css({'margin-right':'300px' });
 		}
 		React.render(<Attachment attachment={this.state.item} />, document.getElementById('fbc_media-sidebar') );
+	
+		jQuery('.fbc_attachment').each(function(){
+			jQuery(this).css('opacity',1);
+		});
 	},
 
     render: function() {
@@ -64,7 +68,10 @@ var FlightImages = React.createClass({
 			//limit: parseInt(args.limit),
 			start: 0,
 			limit: 30,
-			data: []
+			data: [],
+			filter: this.props.filter,
+			type: this.props.type,
+			processingCount: 0
 		};
 	},
 
@@ -76,51 +83,82 @@ var FlightImages = React.createClass({
 		});
 	},
 
-    repeat: function(item,cnt,length,found) {
-        var self = this;
-        $.ajax({
-            url: args.FBC_URL +"/includes/lib/download.php?id="+ item.id +"&subdomain="+ args.subdomain +"&token="+ args.token +"&limit="+ this.state.limit +"&start="+ this.state.start
-		})
-		.done(function(e) {
-			var start = e.search("Location: ");
-			var stop = e.search("Server: ");
-			var imgFile = e.substring( (start+10) ,stop);
-
-			var expires = imgFile.split('?x-amz-security-token');
-			var img = expires[0];
-
-			var fileExt = img.split('.').pop();
-			var ext = fileExt.split('%');
-			ext[0] = ext[0].toLowerCase();
-
-			if(ext[0] == "jpg" || ext[0] == "jpeg" || ext[0] == "gif" || ext[0] == "png" || ext[0] == "pdf") {
-                var image = [{
-                    "id": item.id,
-                    "name": item.name,
-                    "owner": item.owner,
-                    "ownerName": item.ownerName,
-                    "size": item.size,
-                    "time": item.time,
-                    "img": imgFile
-                }];
-
-				var arr = self.state.data.slice();
-                arr.push(image);
-                self.setState({data: arr});
-			}
-
-			if(cnt == length) {
-				jQuery('#loader').hide();
-
-				if(found > (self.state.start+self.state.limit))
-					jQuery('#fbc_loadMore').show();
-				else
-					jQuery('#fbc_loadMore').hide();
-			}
-
-        })
-		.always(function() {
-		});
+    repeat: function(item,cnt,length,found, targetUrl) {        
+        var self = this;        
+		if (this.state.src == targetUrl) {			
+			if (this.props.filter == 'all' || this.props.filter == '' || this.props.filter == item.scheme) {
+	        	// do filter work, only show sepcified scheme
+		        $.ajax({
+		            url: args.FBC_URL +"/includes/lib/download.php?id="+ item.id +"&subdomain="+ args.subdomain +"&token="+ args.token +"&limit="+ this.state.limit +"&start="+ this.state.start
+				})
+				.done(function(e) {
+					$.ajax({
+			            url: args.FBC_URL +"/includes/lib/detail.php?id="+ item.id + "&scheme=" + item.scheme + "&subdomain="+ args.subdomain +"&token="+ args.token,
+			            dataType: 'json',
+					})
+					.done(function(result) {
+						if (self.state.src == targetUrl) {
+							var start = e.search("Location: ");
+							var stop = e.search("Server: ");
+							var imgFile = e.substring( (start+10) ,stop);
+			
+							var expires = imgFile.split('?x-amz-security-token');
+							var img = expires[0];
+			
+							var fileExt = img.split('.').pop();
+							var ext = fileExt.split('%');
+							ext[0] = ext[0].toLowerCase();
+			
+							//if(ext[0] == "jpg" || ext[0] == "jpeg" || ext[0] == "gif" || ext[0] == "png" || ext[0] == "pdf") {
+				                var image = [{
+				                    "id": item.id,
+									"scheme": item.scheme,
+				                    "name": item.name,
+				                    "owner": item.owner,
+				                    "ownerName": item.ownerName,
+				                    "size": item.size,
+				                    "time": item.time,
+				                    "img": imgFile,
+				                    "description": item.description,
+				                    "copyright": result.copyright,
+				                    "terms": result.termsAndConditions
+				                }];
+			
+								var arr = self.state.data.slice();
+				                arr.push(image);
+				                self.setState({data: arr});
+							//}
+			
+							var currentCount = self.state.processingCount + 1;
+							self.setState({processingCount: currentCount});
+							if(currentCount == length) {
+								jQuery('#loader').hide();
+			
+								if(found > (self.state.start+self.state.limit))
+									jQuery('#fbc_loadMore').show();
+								else
+									jQuery('#fbc_loadMore').hide();
+							}
+						}
+			        })
+					.always(function() {
+					});				
+				})
+				.always(function() {
+				});	
+	        } else {
+				var currentCount = this.state.processingCount + 1;
+				this.setState({processingCount: currentCount});
+	        	if(currentCount == length) {
+					jQuery('#loader').hide();
+	
+					if(found > (self.state.start+self.state.limit))
+						jQuery('#fbc_loadMore').show();
+					else
+						jQuery('#fbc_loadMore').hide();
+				}
+	        }
+		}
     },
 
 	componentDidMount: function() {
@@ -137,24 +175,33 @@ var FlightImages = React.createClass({
 			})
 			.done(function(data) {
 				var cnt = 1;
-	            $.each(data.results, function(k,v) {
-	                self.repeat(v,cnt,data.results.length,data.found);
-					cnt++;
-	            });
+				if (data.results != null) {
+		            $.each(data.results, function(k,v) {
+		                self.repeat(v,cnt,data.results.length,data.found, self.state.src);
+						cnt++;
+		            });
+				} else {
+					jQuery('#loader').hide();
+					jQuery('#fbc_loadMore').hide();
+				}
 			});
 		}
 	},
 
-	componentWillUpdate: function(nextProps,nextState) {
-		if(nextProps.album.id != this.state.album.id) {
+	componentWillReceiveProps: function(nextProps) {
+		this.setState({
+			type: nextProps.type
+		});
+		if(nextProps.type == 'library' && nextProps.album.id != this.state.album.id) {
 			this.setState({
 				album: nextProps.album,
 				start: 0,
 				data: [],
+				filter: nextProps.filter,
 				src: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&album="+ nextProps.album.id +"&token="+ args.token +"&limit="+ this.state.limit +"&start=0"
 			});
-		}
-		if(nextProps.search != this.state.search) {
+		} 
+		if(nextProps.type == 'search' && nextProps.search != this.state.search) {
 			this.setState({
 				album: {
 					name: 'Search Results: '+nextProps.search
@@ -162,40 +209,73 @@ var FlightImages = React.createClass({
 				search: nextProps.search,
 				start: 0,
 				data: [],
+				filter: nextProps.filter,
 				src: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&keyword="+ nextProps.search.replace(" ","%2B") +"&token="+ args.token +"&limit=100&start=0"
+			});
+		} 
+		if(nextProps.type == 'filter' && nextProps.filter != this.state.filter) {
+			this.setState({
+				filter: nextProps.filter,
+				start: 0,
+				data: []
 			});
 		}
 	},
 
-	looper: function() {
+	looper: function(needClean) {
+		// reset processing count
+		this.setState({processingCount: 0});
+		
+		if(needClean) {
+			this.setState({
+				data: []
+			});
+		}
 		var self = this;
+		var currentUrl = this.state.src;
 		$.ajax({
 			url: this.state.src,
 			dataType: 'json',
 			cache: false
 		})
 		.done(function(data) {
+			if(needClean) {
+				self.setState({
+					data: []
+				});
+			}
 			var cnt = 1;
-			$.each(data.results, function(k,v) {
-                self.repeat(v,cnt,data.results.length,data.found);
-				cnt++;
-			});
+			if (data.results != null) {
+				$.each(data.results, function(k,v) {
+					if (currentUrl == self.state.src) {
+		                self.repeat(v,cnt,data.results.length,data.found, currentUrl);
+						cnt++;
+					}
+				});
+			} else {
+				jQuery('#loader').hide();
+				jQuery('#fbc_loadMore').hide();
+			}
 		});
 	},
 
 	componentDidUpdate: function(prevProps,prevState) {
-		if(this.state.album.id != prevState.album.id) {
+		if(this.state.type == 'library' && this.state.album.id != prevState.album.id) {
 			jQuery('#fbc_loadMore').hide();
 			jQuery('#loader').show();
-			this.looper();
-		}
-		if(this.state.search != prevState.search) {
+			this.looper(true);
+		} else if(this.state.type == 'search' && this.state.search != prevState.search) {
 			jQuery('#fbc_loadMore').hide();
 			jQuery('#loader').show();
-			this.looper();
-		}
-		if(this.state.start > prevState.start) {
-			this.looper();
+			this.looper(true);
+		} else if(this.state.type == 'filter' && this.state.filter != prevState.filter) {
+			jQuery('#fbc_loadMore').hide();
+			jQuery('#loader').show();
+			this.looper(true);
+		} else if(this.state.start > prevState.start) {
+			jQuery('#fbc_loadMore').hide();
+			jQuery('#loader').show();
+			this.looper(false);
 		}
 	},
 
