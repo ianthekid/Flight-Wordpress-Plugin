@@ -77,8 +77,7 @@ if ( isset( $send_id ) ) {
 */
 
     $matches = array();
-    $httpheader = explode("Server: ",$detail);
-    preg_match( '/(Location:|URI:)(.*?)\n/', $httpheader[0], $matches );
+    preg_match( '/(Location:|URI:)(.*?)[\n\r]/', $detail, $matches );
     $uri = str_replace( array("Location: "), "", $matches[0] );
     $location = trim( $uri );
 
