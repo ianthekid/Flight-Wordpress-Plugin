@@ -98,11 +98,12 @@ var FlightImages = React.createClass({
 					})
 					.done(function(result) {
 						if (self.state.src == targetUrl) {
-							var start = e.search("Location: ");
-							var stop = e.search("Server: ");
-							var imgFile = e.substring( (start+10) ,stop);
+							var start = e.search('Location: .*[\r\n]');
+							var startStr = e.substring(start);
+							var stop = startStr.search('[\r\n]');
+							var imgFile = startStr.substring( 10 ,stop);
 			
-							var expires = imgFile.split('?x-amz-security-token');
+							var expires = imgFile.split('?X-Amz-Security-Token');
 							var img = expires[0];
 			
 							var fileExt = img.split('.').pop();
