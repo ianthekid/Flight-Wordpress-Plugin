@@ -19,7 +19,7 @@ var Images = React.createClass({
 			jQuery('#__attachments-view-fbc').css({'margin-right':'300px' });
 		}
 		React.render(<Attachment attachment={this.state.item} />, document.getElementById('fbc_media-sidebar') );
-	
+
 		jQuery('.fbc_attachment').each(function(){
 			jQuery(this).css('opacity',1);
 		});
@@ -83,84 +83,82 @@ var FlightImages = React.createClass({
 		});
 	},
 
-    repeat: function(item,cnt,length,found, targetUrl) {        
-        var self = this;        
-		if (this.state.src == targetUrl) {			
+	repeat: function(item,cnt,length,found, targetUrl) {
+		var self = this;
+		if (this.state.src == targetUrl) {
 			if (this.props.filter == 'all' || this.props.filter == '' || this.props.filter == item.scheme) {
 	        	// do filter work, only show sepcified scheme
-		        $.ajax({
+		    $.ajax({
 		            url: args.FBC_URL +"/includes/lib/download.php?id="+ item.id +"&subdomain="+ args.subdomain +"&token="+ args.token +"&limit="+ this.state.limit +"&start="+ this.state.start
 				})
 				.done(function(e) {
-					$.ajax({
-			            url: args.FBC_URL +"/includes/lib/detail.php?id="+ item.id + "&scheme=" + item.scheme + "&subdomain="+ args.subdomain +"&token="+ args.token,
-			            dataType: 'json',
-					})
-					.done(function(result) {
-						if (self.state.src == targetUrl) {
-							var start = e.search('Location: .*[\r\n]');
-							var startStr = e.substring(start);
-							var stop = startStr.search('[\r\n]');
-							var imgFile = startStr.substring( 10 ,stop);
-			
-							var expires = imgFile.split('?X-Amz-Security-Token');
-							var img = expires[0];
-			
-							var fileExt = img.split('.').pop();
-							var ext = fileExt.split('%');
-							ext[0] = ext[0].toLowerCase();
-			
-							//if(ext[0] == "jpg" || ext[0] == "jpeg" || ext[0] == "gif" || ext[0] == "png" || ext[0] == "pdf") {
-				                var image = [{
-				                    "id": item.id,
+
+
+					if (self.state.src == targetUrl) {
+						var start = e.search('Location: .*[\r\n]');
+						var startStr = e.substring(start);
+						var stop = startStr.search('[\r\n]');
+						var imgFile = startStr.substring( 10 ,stop);
+
+						var expires = imgFile.split('?X-Amz-Security-Token');
+						var img = expires[0];
+
+						var fileExt = img.split('.').pop();
+						var ext = fileExt.split('%');
+						ext[0] = ext[0].toLowerCase();
+
+						//if(ext[0] == "jpg" || ext[0] == "jpeg" || ext[0] == "gif" || ext[0] == "png" || ext[0] == "pdf") {
+							var image = [{
+									"id": item.id,
 									"scheme": item.scheme,
-				                    "name": item.name,
-				                    "owner": item.owner,
-				                    "ownerName": item.ownerName,
-				                    "size": item.size,
-				                    "time": item.time,
-				                    "img": imgFile,
-				                    "description": item.description,
-				                    "copyright": result.copyright,
-				                    "terms": result.termsAndConditions
-				                }];
-			
-								var arr = self.state.data.slice();
-				                arr.push(image);
-				                self.setState({data: arr});
-							//}
-			
-							var currentCount = self.state.processingCount + 1;
-							self.setState({processingCount: currentCount});
-							if(currentCount == length) {
-								jQuery('#loader').hide();
-			
-								if(found > (self.state.start+self.state.limit))
-									jQuery('#fbc_loadMore').show();
-								else
-									jQuery('#fbc_loadMore').hide();
-							}
+									"name": item.name,
+									"owner": item.owner,
+									"ownerName": item.ownerName,
+									"size": item.size,
+									"time": item.time,
+									"img": imgFile,
+									"description": item.description,
+									//"copyright": result.copyright,
+									//"terms": result.termsAndConditions
+							}];
+
+							var arr = self.state.data.slice();
+							arr.push(image);
+							self.setState({data: arr});
+						//}
+
+						var currentCount = self.state.processingCount + 1;
+						self.setState({processingCount: currentCount});
+						if(currentCount == length) {
+							jQuery('#loader').hide();
+
+							if(found > (self.state.start+self.state.limit))
+								jQuery('#fbc_loadMore').show();
+							else
+								jQuery('#fbc_loadMore').hide();
 						}
-			        })
-					.always(function() {
-					});				
+					}
+
+
+
+
 				})
 				.always(function() {
-				});	
-	        } else {
+				});
+			} else {
 				var currentCount = this.state.processingCount + 1;
 				this.setState({processingCount: currentCount});
-	        	if(currentCount == length) {
+				if(currentCount == length) {
 					jQuery('#loader').hide();
-	
+
 					if(found > (self.state.start+self.state.limit))
 						jQuery('#fbc_loadMore').show();
 					else
 						jQuery('#fbc_loadMore').hide();
 				}
-	        }
+	  	}
 		}
-    },
+	},
 
 	componentDidMount: function() {
 		if(args.token == '') {
@@ -201,7 +199,7 @@ var FlightImages = React.createClass({
 				filter: nextProps.filter,
 				src: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&album="+ nextProps.album.id +"&token="+ args.token +"&limit="+ this.state.limit +"&start=0"
 			});
-		} 
+		}
 		if(nextProps.type == 'search' && nextProps.search != this.state.search) {
 			this.setState({
 				album: {
@@ -213,7 +211,7 @@ var FlightImages = React.createClass({
 				filter: nextProps.filter,
 				src: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&keyword="+ nextProps.search.replace(" ","%2B") +"&token="+ args.token +"&limit=100&start=0"
 			});
-		} 
+		}
 		if(nextProps.type == 'filter' && nextProps.filter != this.state.filter) {
 			this.setState({
 				filter: nextProps.filter,
@@ -226,7 +224,7 @@ var FlightImages = React.createClass({
 	looper: function(needClean) {
 		// reset processing count
 		this.setState({processingCount: 0});
-		
+
 		if(needClean) {
 			this.setState({
 				data: []

@@ -1,9 +1,9 @@
 === Flight by Canto ===
 Contributors: Canto Inc, ianthekid, flightjim
-Tags: brand management, cloud storage, DAM, digital asset management, file storage, image management, marketing collaboration, Flight by Canto
-Requires at least: 4.0
-Tested up to: 4.6.1
-Stable tag: 1.3.3
+Tags: brand management, cloud storage, DAM, digital asset management, file storage, image management, photo library, Flight by Canto
+Requires at least: 4.4
+Tested up to: 4.8.3
+Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,7 +27,7 @@ Installing "Flight by Canto" can be done either by searching for "Flight by Cant
 2. Upload the ZIP file through the 'Plugins > Add New > Upload' screen in your WordPress dashboard
 3. Activate the plugin through the 'Plugins' menu in WordPress
 
-Configure and authorize your account under "Settings > Flight by Canto" the left nav menu. Enter in your account credentials, and click Save Settings. Once you save your account, click "Grant Access" to authorize and connect to Flight.
+Configure and authorize your account under "Settings > Flight by Canto" the left nav menu. Click "Connect" and enter in your account credentials. You will be autmatically redirected back to Wordpress.
 
 All set, enjoy!
 
@@ -53,6 +53,18 @@ This plugin requires you to connect to your Flight account using an admin (Pilot
 
 == Changelog ==
 
+= 2.0.0 =
+* 2017-11-05
+* New Media Upload interface using latest version of ReactJS
+* NEW: Duplicate check option added to settings. Will check for existing Flight media imports when enabled
+* NEW: Automatic updater to pull in new versions of files added to Wordpress from Flight
+* NEW: Load more images by scrolling to bottom instead of button
+* NEW: Full size preview to Insert into Post modal. Additional metadata provided in modal
+* Bug Fix: Automatically pulls in filenames, tags for descriptions, copyright and terms for SEO
+* Bug Fix: stability and speed improvements
+* Bug Fix: Folders open/close one at a time instead of entire tree
+* Bug Fix: Flight API update for S3 location paths
+
 = 1.3.3 =
 * 2017-09-20
 * Bug Fix: fix some header parse issue when we use new version of AWS load balancer
@@ -60,7 +72,7 @@ This plugin requires you to connect to your Flight account using an admin (Pilot
 = 1.3.2 =
 * 2016-11-28
 * NEW: add filter function
-* NEW: retrieve Copyright and Terms & Conditions information for contents 
+* NEW: retrieve Copyright and Terms & Conditions information for contents
 * Bug Fix: fix some mall defects
 
 = 1.3.1 =

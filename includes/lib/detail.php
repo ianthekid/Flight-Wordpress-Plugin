@@ -7,8 +7,8 @@ $ch = curl_init();
 
 $options = array(
     CURLOPT_URL            => $url,
-    CURLOPT_REFERER        => 'ian',
-    CURLOPT_USERAGENT      => 'ian',
+    CURLOPT_REFERER        => 'Wordpress Plugin',
+    CURLOPT_USERAGENT      => 'Wordpress Plugin',
     CURLOPT_HTTPHEADER     => $header,
     CURLOPT_SSL_VERIFYHOST => 0,
     CURLOPT_SSL_VERIFYPEER => 0,

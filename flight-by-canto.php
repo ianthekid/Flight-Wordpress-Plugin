@@ -1,13 +1,13 @@
 <?php
 /*
  * Plugin Name: Flight by Canto
- * Version: 1.3.3
+ * Version: 2.0.0
  * Plugin URI: https://www.canto.com/flight/
  * Description: Easily find and publish your creative assets directly to wordpress without having to search through emails or folders, using digital asset management by Canto.
  * Author: Canto Inc
  * Author URI: https://www.canto.com/
- * Requires at least: 4.0
- * Tested up to: 4.6.1
+ * Requires at least: 4.4
+ * Tested up to: 4.8.3
  *
  * Text Domain: flight-by-canto
  * Domain Path: /lang/

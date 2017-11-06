@@ -138,15 +138,12 @@ class Flight_by_Canto {
 		register_activation_hook( $this->file, array( $this, 'install' ) );
 
 		// Load frontend JS & CSS
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ), 10 );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ), 10 );
+		//add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ), 10 );
+		//add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ), 10 );
 
 		// Load admin JS & CSS
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ), 10, 1 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_styles' ), 10, 1 );
-
-
-
 
 
 		/*
@@ -155,7 +152,7 @@ class Flight_by_Canto {
 		function md_modify_jsx_tag( $tag, $handle, $src ) {
 		  // Check that this is output of JSX file
 		  if( strstr($handle,'react') != FALSE ) {
-			  $tag = str_replace( "<script type='text/javascript'", "<script type='text/jsx'", $tag );
+			  //$tag = str_replace( "<script type='text/javascript'", "<script type='text/jsx'", $tag );
 		  }
 
 		  return $tag;
@@ -164,6 +161,39 @@ class Flight_by_Canto {
 
 		/* end additions to Constructor */
 
+
+		/**
+		 ** FBC WP CRON CUSTOM SCHEDULED TASK
+		 **/
+		if(get_option('fbc_cron') == "true") {
+			add_filter( 'cron_schedules', 'fbc_scheduled_update' );
+
+			function fbc_scheduled_update( $schedules ) {
+				// Add custom intervals: See http://codex.wordpress.org/Plugin_API/Filter_Reference/cron_schedules
+					$schedules = array(
+						'every_day' => array(
+								'interval'  => 86400,
+								'display'   => __( 'Every Day' )
+						),
+						'every_week' => array(
+								'interval'  => 604800,
+								'display'   => __( 'Once a Week' )
+						),
+						'every_month' => array(
+								'interval'  => 2592000,
+								'display'   => __( 'Once a Month' )
+						)
+					);
+
+					return $schedules;
+			}
+
+			if(!wp_next_scheduled( 'fbc_scheduled_update' )) {
+				wp_schedule_event(get_option('fbc_cron_start'), get_option('fbc_schedule'), 'fbc_scheduled_update' );
+			}
+			//add_action('fbc_scheduled_update', 'fbc_scheduler');
+			add_action( 'fbc_scheduled_update', array($this,'fbc_scheduler') );
+		}
 
 
 
@@ -182,8 +212,143 @@ class Flight_by_Canto {
 		//add_action( 'wp_ajax_fbc_refresh_token', array( $this, 'refreshToken' ) );
 		add_action( 'wp_ajax_fbc_getMetadata', array( $this, 'getMetadata' ) );
 
+		add_action( 'wp_ajax_updateOptions', array( $this, 'updateOptions' ) );
+
 	} // End __construct ()
 
+	/**
+	 * CURL function to query Flight API
+	 *
+	 * @param  string $url Full Flight API query string
+	 * @param  string $header Flight API token authorization
+	 * @param  string $agent Standard browser agent for CURL requests
+	 * @param  int $echo True/False (1/0) for including CURL header in output
+	 *
+	 * @return object                CURL response output
+	 */
+	//public function curl_action($url,$header,$agent,$echo) {
+	public function curl_action( $url, $echo ) {
+
+		$header = array( 'Authorization: Bearer ' . get_option('fbc_app_token') );
+		$ch = curl_init();
+		$options = array(
+			CURLOPT_URL            => $url,
+			CURLOPT_REFERER        => "Wordpress Plugin",
+			CURLOPT_USERAGENT      => "WordPress Plugin",
+			CURLOPT_HTTPHEADER     => $header,
+			//CURLOPT_SSLVERSION     => 3,
+			CURLOPT_SSL_VERIFYHOST => 0,
+			CURLOPT_SSL_VERIFYPEER => 0,
+			CURLOPT_HEADER         => $echo,
+			CURLOPT_RETURNTRANSFER => 1,
+			CURLOPT_TIMEOUT        => 10,
+		);
+
+		curl_setopt_array( $ch, $options );
+		$output = curl_exec( $ch );
+		curl_close( $ch );
+
+		return $output;
+	}
+
+
+	/**
+	 * WP CRON CUSTOM SCHEDULED TASK
+	 * @access  public
+	 * @since   2.0.0
+	 * @return  void
+	 */
+	public function fbc_scheduler() {
+			if(!function_exists('download_url')) {
+				require_once(ABSPATH.'wp-admin/includes/file.php');
+			}
+			if(!function_exists('wp_generate_attachment_metadata')) {
+				require_once(ABSPATH.'wp-admin/includes/image.php');
+			}
+
+			$args = array(
+				'post_type'   => 'attachment',
+				'post_status' => 'inherit',
+				'meta_query'  => array(
+					array(
+						'key'     => 'fbc_id'
+					)
+				)
+			);
+			$query = new WP_Query($args);
+			$posts = $query->posts;
+			foreach($posts as $p) {
+				$fbc_id = get_post_meta($p->ID,'fbc_id','true');
+				$scheme = get_post_meta($p->ID,'fbc_scheme','true');
+				$id = $p->ID;
+
+
+				//Go get the media item from Flight
+				$flight['api_url']  = 'https://' . get_option('fbc_flight_domain') . '.cantoflight.com/api/v1/';
+				$flight['req']      = $flight['api_url'] . $scheme . '/' . $fbc_id;
+
+				$response = $this->curl_action( $flight['req'], 0 );
+				$response = ( json_decode( $response ) );
+
+				//Get the download url
+				$detail = $response->url->download;
+				$detail = $this->curl_action( $detail, 1 );
+
+				$matches = array();
+				preg_match( '/(Location:|URI:)(.*?)[\n\r]/', $detail, $matches );
+				$uri = str_replace( array("Location: "), "", $matches[0] );
+				$location = trim( $uri );
+
+
+				$tmp        = download_url( $location );
+				$file_array = array(
+					'name'     => $response->name,
+					'tmp_name' => $tmp
+				);
+
+				$guid = explode("/",$p->guid);
+				$file = array_pop($guid);
+				$meta = wp_get_attachment_metadata( $id );
+				$uploads = wp_upload_dir();
+				$dir_path = $uploads['path'];
+				$file_sub = $uploads['subdir'];
+				$file_perms = fileperms($dir_path.'/'.$file) & 0777;
+
+
+				if (file_exists($dir_path.'/'.$file))
+			  	unlink($dir_path.'/'.$file);
+
+
+				if(is_array($meta)) {
+					foreach($meta["sizes"] as $size) {
+						$fileName = $size["file"];
+						// Create array with all old sizes for replacing in posts later
+						$oldfilesAr[] = $thisfile;
+						// Look for files and delete them
+						if (strlen($fileName)) {
+							$fp = $dir_path.'/'.$size["file"];
+							if (file_exists($fp)) {
+								unlink($fp);
+							}
+						}
+					}
+				}
+
+				// Move new file to old location/name; set permissions
+				$copy = copy($tmp,$dir_path.'/'.$file);
+				@chmod($dir_path.'/'.$file, $file_perms);
+
+
+				// Make thumb and/or update metadata
+				wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $dir_path.'/'.$file ) );
+				update_attached_file( $id, $dir_path.'/'.$file);
+				if(file_exists($file_array['tmp_name']))
+					unlink($file_array['tmp_name']);
+
+				 //file_put_contents(FBC_PATH."/cron_log.txt", "\n".date("Y-m-d h:i:sa",time())." - ".$fbc_id." - ".$file, FILE_APPEND | LOCK_EX);
+
+			}
+	}
 
 	public function getMetaData( $fbc_id ) {
 		check_ajax_referer( 'flight-by-canto', 'nonce' );
@@ -314,6 +479,48 @@ class Flight_by_Canto {
 	}
 
 	/**
+	 * Update options for plugin settings
+	 * @access  public
+	 * @since   2.0.0
+	 * @return  void
+	 */
+	public function updateOptions() {
+		update_option( 'fbc_duplicates', $_POST['duplicates'] );
+		update_option( 'fbc_cron', $_POST['cron'] );
+
+		if($_POST['cron'] == "true") {
+			wp_clear_scheduled_hook('fbc_scheduled_update');
+			update_option( 'fbc_schedule', $_POST['schedule'] );
+			update_option( 'fbc_cron_time_day', $_POST['cron_time_day'] );
+			update_option( 'fbc_cron_time_hour', $_POST['cron_time_hour'] );
+
+
+			switch(get_option('fbc_schedule')){
+				case 'every_day':
+					$start = mktime($_POST['cron_time_hour'],0,0);
+					break;
+				case 'every_week':
+				case 'every_month':
+					$text = $_POST['cron_time_day'].' '.$_POST['cron_time_hour'].':00';
+					$start = strtotime($text);
+					break;
+				default:
+					$start = time();
+					break;
+			}
+			update_option( 'fbc_cron_start', $start );
+
+
+
+		} else {
+			delete_option('fbc_schedule');
+			delete_option('fbc_cron_start');
+			wp_clear_scheduled_hook('fbc_scheduled_update');
+		}
+	}
+
+
+	/**
 	 * Refreshes the current token saved in options via the Refresh Token
 	 */
 	public function refreshToken() {
@@ -376,11 +583,7 @@ class Flight_by_Canto {
 
 		wp_enqueue_script( 'fbc_media_js', plugins_url() . '/flight-by-canto/assets/js/admin.js' );
 
-		wp_register_script( 'fbc-js', 'https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/react.min.js' );
-		wp_register_script( 'fbc-jsx', 'https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/JSXTransformer.js' );
 
-		wp_enqueue_script ( 'fbc-js' );
-		wp_enqueue_script ( 'fbc-jsx' );
 
 		$translation_array = array(
 			'FBC_URL' 	=> FBC_URL,
@@ -390,29 +593,8 @@ class Flight_by_Canto {
 			'limit'		=> 30,
 			'start'		=> 0
 		);
-		$path_to_script = FBC_URL .'assets/js/images.js';
-	 	wp_register_script( 'react-loop', $path_to_script );
-		wp_localize_script( 'react-loop', 'args', $translation_array );
-		wp_enqueue_script ( 'react-loop' );
 
-		$path_to_script_a = FBC_URL .'assets/js/attachment.js';
-		wp_register_script( 'react-attachment', $path_to_script_a );
-		wp_enqueue_script ( 'react-attachment' );
 
-		$path_to_script_c = FBC_URL .'assets/js/tree.js';
-		wp_register_script( 'react-tree', $path_to_script_c );
-		wp_localize_script( 'react-tree', 'args', $translation_array );
-		wp_enqueue_script ( 'react-tree' );
-
-		$path_to_script_c = FBC_URL .'assets/js/search.js';
-		wp_register_script( 'react-search', $path_to_script_c );
-		wp_localize_script( 'react-search', 'args', $translation_array );
-		wp_enqueue_script ( 'react-search' );
-
-		$path_to_script_d = FBC_URL .'assets/js/fbc.js';
-		wp_register_script( 'react-main', $path_to_script_d );
-		wp_localize_script( 'react-main', 'args', $translation_array );
-		wp_enqueue_script ( 'react-main' );
 	} // End admin_enqueue_styles ()
 
 	/**

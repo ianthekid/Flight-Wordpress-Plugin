@@ -13,7 +13,7 @@ var FBC = React.createClass({
 
     handleChange: function(e) {
         this.setState({
-			album: e,
+      			album: e,
             path: args.FBC_URL +"/includes/lib/get.php?subdomain="+ args.subdomain +"&album="+ e.id +"&token="+ args.token,
             filter: '',
             search: '',
@@ -29,7 +29,7 @@ var FBC = React.createClass({
             type: 'search'
 		});
     },
-    
+
     handleFilter: function(e) {
         this.setState({
         	filter: e,
@@ -65,7 +65,7 @@ var FBC = React.createClass({
             <div>
                 <div className="searchRow">
                     <a className="btn" id="hideShow" onClick={this.toggle}> <i className="icon-library"></i> Library</a>
-                    <Search onValueChange={this.handleSearch} />   
+                    <Search onValueChange={this.handleSearch} />
                     <Filter onValueChange={this.handleFilter} filter={this.state.filter}/>
                 </div>
 

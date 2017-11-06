@@ -63,6 +63,7 @@ class Flight_by_Canto_Settings {
 	 */
 	public function init_settings() {
 		$this->settings = $this->settings_fields();
+		add_action( 'wp_ajax_fbc_updateOptions', array( $this, 'fbc_updateOptions' ) );
 		//add_action( 'wp_ajax_fbc_getToken', array( $this, 'fbc_getToken' ) );
 		//add_action( 'wp_ajax_fbc_refreshToken', array( $this, 'fbc_refreshToken' ) );
 	}
@@ -275,7 +276,7 @@ class Flight_by_Canto_Settings {
 
 		elseif ( get_option( 'fbc_flight_domain' ) != '' && get_option( 'fbc_app_token' ) != '') :
 			$html .= "<i class='icon-icn_checkmark_circle_01'></i>";
-			$html .= '<strong>Status:</strong> You are connected to Flight<br><br>';
+			$html .= '<strong>Status:</strong> You are connected to Flight -  <strong>'.get_option('fbc_flight_domain').'.cantoflight.com</strong><br><br>';
 			$html .= '<em>Last login: <strong>' . date("F d Y, g:i A", get_option( 'fbc_app_timestamp' ) ) . '</strong></em><br>';
 			$html .= '<em>For security purposes you will need to login again after <strong>' . date("F d Y, g:i a", get_option( 'fbc_app_expire_token' ) ) . '</strong> </em><br><br>';
 			$html .= '<a class="button-primary" href="http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'&disconnect">Disconnect</a>';
@@ -301,34 +302,66 @@ class Flight_by_Canto_Settings {
 		endif;
 
 
+		$duplicates = (get_option('fbc_duplicates') === "true") ? "checked" : "";
+		$cron = (get_option('fbc_cron') === "true") ? "checked" : "";
+
+		$html .= "\n\n";
+
+		//Only show options if connected to Flight
+		if( get_option( 'fbc_flight_domain' ) != '' && get_option( 'fbc_app_token' ) != '') :
+
+		$html .= '<p><hr /></p><h3>Options</h3>';
+		$html .= '<div class="checkbox"><div style="display: table-cell;padding: 5px 0;"><input type="checkbox" name="duplicates" id="duplicates" '.$duplicates.'></div>';
+		$html .= '<label style="display: table-cell;padding: 0 10px;"><strong>Duplicate Check</strong> - Updates Wordpress Media Library with latest version from Flight if image is added again</label></div>' . "\n";
+		$html .= '<div style="clear:both"><br /></div>';
+
+		$html .= '<div class="checkbox"><div style="display: table-cell;padding: 5px 0;"><input type="checkbox" name="cron" id="cron" '.$cron.'></div>';
+		$html .= '<label style="display: table-cell;padding: 0 10px;"><strong>Automatic Update</strong> - Check for new versions of files added from Flight and update Wordpress Media Library with latest version'. "\n";
 
 
+		//Cron schedule options
+		$html .= '<div id="cron_schedule_options" style="padding: 10px; '.((get_option('fbc_cron') === "true") ? "" : "display:none").'">';
+		$html .= '<select name="schedule" id="schedule">';
+		$html .= '<option value="every_day" '.((get_option('fbc_schedule') === "every_day") ? "selected" : "").'>Every Day</option>';
+		$html .= '<option value="every_week" '.((get_option('fbc_schedule') === "every_week") ? "selected" : "").'>Once a Week</option>';
+		$html .= '<option value="every_month" '.((get_option('fbc_schedule') === "every_month") ? "selected" : "").'>Once a Month</option>';
+		$html .= '</select>' . "\n";
+
+		$days = array('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday');
+		$html .= '<select style="'.((get_option('fbc_schedule') === "every_week" || get_option('fbc_schedule') === "every_month") ? "" : "display:none").'" class="cron_times" name="cron_time_day" id="cron_time_day">' . "\n";
+		foreach($days as $d)
+			$html .= '<option value="'.$d.'" '.((get_option('fbc_cron_time_day') == $d) ? "selected" : "").'>'.$d.'</option>';
+		$html .= '</select>';
+
+		$html .= '<select class="cron_times" name="cron_time_hour" id="cron_time_hour">' . "\n";
+		for($i=0;$i<24;$i++)
+			$html .= '<option value="'.$i.'" '.((get_option('fbc_cron_time_hour') == $i) ? "selected" : "").'>'.$i.':00</option>';
+		$html .= '</select>';
+
+		$html .= '<p style="'.((get_option('fbc_schedule') != "every_month") ? "display:none;" : "").' margin:0;" class="cron_times" id="cron_time_month"><em>Will run each month on the first occurrence for the selected day of the week</em></p>';
+
+		$html .= '</div>';
+
+		$html .= '</label></div>' . "\n";
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		$html .= '<p class="submit">' . "\n";
+		$html .= '<button id="updateOptions" class="button-primary">Save Options</button>' . "\n";
+		$html .= '</p>' . "\n";
 
 		$html .= '</div>' . "\n";
+
+		endif;
+		//End options
+
 
 		$html .= '<img src="'.FBC_URL.'/assets/loader_white.gif" id="loader" style="display:none">';
 		$html .= '</form>' . "\n";
 		$html .= '</div>' . "\n";
 
 		echo $html;
+
+
 
 
 
@@ -345,6 +378,7 @@ class Flight_by_Canto_Settings {
 			delete_option('fbc_flight_password');
 			delete_option('fbc_refresh_token_expire');
 
+
 			$arr = explode("&disconnect",$_SERVER['REQUEST_URI']);
 			$rURI = $arr[0];
 
@@ -352,7 +386,6 @@ class Flight_by_Canto_Settings {
 			echo "window.location.href = 'http://" . $_SERVER['HTTP_HOST'] . $rURI . "';";
 			echo '</script>';
 		}
-
 
 
 		//Generate OAuth Token -- Unused until API {Redirect URI} is fixed
@@ -374,8 +407,57 @@ class Flight_by_Canto_Settings {
 
 		endif;
 
+		?>
+				<script type="text/javascript">
+					jQuery('#updateOptions').click(function (e) {
+						e.preventDefault();
+						var data = {
+							'action': 'fbc_updateOptions',
+							'duplicates': jQuery("#duplicates").prop('checked'),
+							'cron': jQuery("#cron").prop('checked'),
+							'schedule': jQuery("#schedule").val(),
+							'cron_time_day': jQuery("#cron_time_day").val(),
+							'cron_time_hour': jQuery("#cron_time_hour").val()
+						};
+						jQuery.post(ajaxurl, data, function (response) {
+							response = jQuery.parseJSON(response);
+							if (typeof response.error === "undefined") {
+								location.reload();
+							}
+						});
+					});
+
+					jQuery('#cron').on('change',function(){
+						if(jQuery(this).is(':checked')) {
+							jQuery('#cron_schedule_options').show();
+						} else {
+							jQuery('#cron_schedule_options').hide();
+						}
+					});
+
+					jQuery('#schedule').on('change',function(){
+						jQuery('.cron_times').hide();
+						var schedule = jQuery(this).val();
+						if(schedule == 'every_week' || schedule == 'every_month') {
+							jQuery('#cron_time_day').show();
+						}
+						jQuery('#cron_time_hour').show();
+						if(schedule == 'every_month') {
+							jQuery('#cron_time_month').show();
+						}
+					});
+				</script>
+			<?php
+
+
 	}
 
+
+	public function fbc_updateOptions() {
+		$instance = Flight_by_Canto::instance();
+		//var_dump($instance); wp_die();
+		return $instance->updateOptions();
+	}
 
 	public function fbc_getToken() {
 		$instance = Flight_by_Canto::instance();
