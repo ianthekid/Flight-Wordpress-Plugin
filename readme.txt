@@ -2,8 +2,8 @@
 Contributors: Canto Inc, ianthekid, flightjim
 Tags: brand management, cloud storage, DAM, digital asset management, file storage, image management, photo library, Flight by Canto
 Requires at least: 4.4
-Tested up to: 4.8.3
-Stable tag: 2.0.0
+Tested up to: 4.9.5
+Stable tag: 2.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,6 +52,11 @@ Unfortunately not. However, you are welcome to sign up today for free! <a href="
 This plugin requires you to connect to your Flight account using an admin (Pilot) account.
 
 == Changelog ==
+
+= 2.0.1 =
+* 2018-04-05
+* Bug Fix: Ability to edit text fields on Insert Image modal
+* Bug Fix: Attachment Link To dropdown setting on modal
 
 = 2.0.0 =
 * 2017-11-05
