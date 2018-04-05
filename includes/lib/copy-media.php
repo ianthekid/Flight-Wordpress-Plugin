@@ -203,7 +203,6 @@ if($posts && get_option('fbc_duplicates') === "true") {
 }
 
 
-
 	$attachment_url = wp_get_attachment_url( $id );
 
 	// Additional parameters
@@ -226,7 +225,6 @@ if($posts && get_option('fbc_duplicates') === "true") {
 
 
 	$attachment                 = array();
-	$attachment['url']          = $attachment_url;
 	$attachment['post_title']   = $_POST['title'];
 	$attachment['post_excerpt'] = $_POST['caption'];
 	$attachment['image-size'] = $_POST['size'];
@@ -235,6 +233,10 @@ if($posts && get_option('fbc_duplicates') === "true") {
 	$attachment['description'] = $_POST['description'];
 	$attachment['copyright'] = $_POST['copyright'];
 	$attachment['terms'] = $_POST['terms'];
+
+	if($_POST['link'] != "none")
+		$attachment['url'] = $attachment_url;
+
 	//This filter is documented in wp-admin/includes/media.php
 	$html = apply_filters( 'media_send_to_editor', $html, $id, $attachment );
 
