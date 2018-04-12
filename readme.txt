@@ -3,7 +3,7 @@ Contributors: Canto Inc, ianthekid, flightjim
 Tags: brand management, cloud storage, DAM, digital asset management, file storage, image management, photo library, Flight by Canto
 Requires at least: 4.4
 Tested up to: 4.9.5
-Stable tag: 2.0.1
+Stable tag: 2.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,6 +52,10 @@ Unfortunately not. However, you are welcome to sign up today for free! <a href="
 This plugin requires you to connect to your Flight account using an admin (Pilot) account.
 
 == Changelog ==
+
+= 2.0.2 =
+* 2018-04-12
+* Bug Fix: Error log reporting with file download
 
 = 2.0.1 =
 * 2018-04-05

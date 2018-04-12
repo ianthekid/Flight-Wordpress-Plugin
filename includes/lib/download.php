@@ -1,5 +1,5 @@
 <?php
-$quality = ($_REQUEST['quality']) ? $_REQUEST['quality'] : 'preview';
+$quality = isset($_REQUEST['quality']) ? $_REQUEST['quality'] : 'preview';
 $url = 'https://'. $_REQUEST['subdomain'] .'.cantoflight.com/api_binary/v1/image/'. $_REQUEST['id'] .'/'.$quality;
 
 $header = array( 'Authorization: Bearer '. $_REQUEST['token']);
