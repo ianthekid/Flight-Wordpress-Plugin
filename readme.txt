@@ -53,6 +53,10 @@ This plugin requires you to connect to your Flight account using an admin (Pilot
 
 == Changelog ==
 
+= 2.0.3 =
+* 2019-10-10
+* FIX: The tree structure data is too large to be rendered. Now load the first layer for the first time.
+
 = 2.0.2 =
 * 2018-04-12
 * Bug Fix: Error log reporting with file download
